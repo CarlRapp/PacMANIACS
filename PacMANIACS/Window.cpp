@@ -83,7 +83,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, 
 	int centerX = (Rect->left + Rect->right) * 0.5f;
 	int centerY = (Rect->top + Rect->bottom) * 0.5f;
 	SetCursorPos(centerX, centerY);
-	ShowCursor(true);	
+	ShowCursor(false);	
 
 	//objLoader	=	new ObjLoader(g_Device, g_DeviceContext, "../DATA/bth.obj");
 
