@@ -39,6 +39,7 @@ D3DXVECTOR3				lampPosition			= D3DXVECTOR3(0, 0, -50);
 char*					g_Title					= "3D Labb 2, OBJ Reader";
 ObjLoader*				objLoader				= NULL;
 
+int hej = 0;
 //--------------------------------------------------------------------------------------
 // Forward declarations
 //--------------------------------------------------------------------------------------
