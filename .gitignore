@@ -3,6 +3,8 @@
 ## Eclipse
 #################
 
+External/
+
 *.pydevproject
 .project
 .metadata
