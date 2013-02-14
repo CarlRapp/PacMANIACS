@@ -4,6 +4,7 @@
 #include "ObjLoader.h"
 #include "Camera.h"
 #include "Model.h"
+#include "GameObject.h"
 
 #include <stdio.h>
 #include <io.h>
@@ -29,16 +30,12 @@ ID3D11DeviceContext*	g_DeviceContext			= NULL;
 
 Camera*					camera					= new Camera(D3DXVECTOR3(0, 0, -150), 
 															D3DXVECTOR3(0, 0, 1), 5);
-Model*					model					= new Model();
-Model*					plane					= new Model();
 
-Model*					lampSphere				= new Model();
-D3DXVECTOR3				lampPosition			= D3DXVECTOR3(0, 0, -50);
-int DERP = 2;
-
-
-char*					g_Title					= "3D Labb 2, OBJ Reader";
+char*					g_Title					= "Pacman::Reloaded";
 ObjLoader*				objLoader				= NULL;
+GameObject*				gameObject				=	new GameObject();
+
+Model*					modelExample			=	new Model();
 
 //--------------------------------------------------------------------------------------
 // Forward declarations
@@ -85,9 +82,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, 
 	SetCursorPos(centerX, centerY);
 	ShowCursor(false);	
 
-	//objLoader	=	new ObjLoader(g_Device, g_DeviceContext, "../DATA/bth.obj");
-
-	//model->Initialize(g_Device, g_DeviceContext, objLoader->GetVertices(), "../DATA/bthcolor.dds");
+	objLoader	=	new ObjLoader("Models/bth.obj");
+	modelExample->Initialize(g_Device, g_DeviceContext, objLoader->GetVertices(), "Models/bthcolor.dds");
 
 	camera->Update(0, D3DXVECTOR2(0, 0));
 
@@ -351,16 +347,14 @@ HRESULT Update(float deltaTime)
 
 	SetCursorPos(centerX, centerY);
 	camera->Update(deltaTime, mouseMovement);
+	modelExample->Frame(deltaTime);
 
 
-	/*
-	char cVal[32];
-	sprintf(cVal,"%f", 1 / deltaTime);
-	
-	cout << cVal  << " fps" << endl;
-	*/
+	char title[255];
+	sprintf_s(title, sizeof(title), "Pacman::Reloaded | FPS: %d",
+		(int)(1.0f / deltaTime));
 
-
+	SetWindowText(g_hWndMain, title);
 
 	return S_OK;
 }
@@ -380,6 +374,8 @@ HRESULT Render(float deltaTime)
 
 	float width = Rect->right - Rect->left;
 	float height = Rect->bottom - Rect->top;
+
+	modelExample->Render(g_DeviceContext, *camera, &camera->GetProjectionMatrix((float)D3DX_PI * (80 / 180), width / height, 0.5f, 500.0f));
 
 	if(FAILED(g_SwapChain->Present( 0, 0 )))
 		return E_FAIL;

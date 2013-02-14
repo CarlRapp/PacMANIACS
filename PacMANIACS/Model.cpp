@@ -59,10 +59,10 @@ void Model::Frame(float dt)
 	transformation =  matScale * matRotation * matTranslation;
 }
 
-void Model::Render(ID3D11DeviceContext* deviceContext, Camera& camera, D3DXMATRIX* projection, D3DXVECTOR3* lightPosition)
+void Model::Render(ID3D11DeviceContext* deviceContext, Camera& camera, D3DXMATRIX* projection)
 {
 	// Put the vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	RenderBuffers(deviceContext, camera, projection, lightPosition);
+	RenderBuffers(deviceContext, camera, projection);
 
 	return;
 }
@@ -112,7 +112,7 @@ bool Model::InitializeBuffers(ID3D11Device* device, ID3D11DeviceContext* deviceC
 	return true;
 }
 
-void Model::RenderBuffers(ID3D11DeviceContext* deviceContext, Camera& camera, D3DXMATRIX* projection, D3DXVECTOR3* lightPosition)
+void Model::RenderBuffers(ID3D11DeviceContext* deviceContext, Camera& camera, D3DXMATRIX* projection)
 {
 	//	Set topology to TriangleList
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -137,8 +137,6 @@ void Model::RenderBuffers(ID3D11DeviceContext* deviceContext, Camera& camera, D3
 	
 	//Skickar värden för cameran till shader
 	shader->SetFloat3("CameraPos", camera.Position);
-	shader->SetFloat3("LightPosition", *lightPosition);
-	
 
 	shader->Apply(0);
 	

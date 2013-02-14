@@ -69,8 +69,6 @@ struct Vertex
 class ObjLoader
 {
 	ID3D11DeviceContext*	mDeviceContext;
-	Shader*				shader;
-	Buffer*				vertexBuffer;
 
 	vector<Position>	vertexPositions;
 	vector<Position>	vertexTexturePos;
@@ -83,7 +81,7 @@ class ObjLoader
 
 public:
 	ObjLoader(void);
-	ObjLoader(ID3D11Device* Device, ID3D11DeviceContext* DeviceContext, string ObjFile);
+	ObjLoader(string ObjFile);
 	~ObjLoader(void);
 
 	vector<Vertex>* GetVertices();

@@ -30,7 +30,7 @@ public:
 
 	bool Initialize(ID3D11Device*, ID3D11DeviceContext*, vector<Vertex>*, LPCSTR);
 	void Frame(float);
-	void Render(ID3D11DeviceContext*, Camera&, D3DXMATRIX*, D3DXVECTOR3*);
+	void Render(ID3D11DeviceContext*, Camera&, D3DXMATRIX*);
 	void SetPosition(float, float, float);
 	void UpdateScale(float, float, float);
 
@@ -43,7 +43,7 @@ private:
 	D3DXMATRIX transformation;
 
 	bool InitializeBuffers(ID3D11Device*, ID3D11DeviceContext*, vector<Vertex>*, LPCSTR);
-	void RenderBuffers(ID3D11DeviceContext*,  Camera&, D3DXMATRIX*, D3DXVECTOR3*);
+	void RenderBuffers(ID3D11DeviceContext*,  Camera&, D3DXMATRIX*);
 };
 
 
