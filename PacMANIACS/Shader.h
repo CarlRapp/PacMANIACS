@@ -38,6 +38,7 @@ public:
 	{
 		return m_pEffect;
 	}
+
 };
 
 #endif
