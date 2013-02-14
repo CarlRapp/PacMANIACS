@@ -162,10 +162,8 @@ void ObjLoader::GetVertices(string Line, vector<Position> &Positions, vector<Pos
 	}
 }
 
-ObjLoader::ObjLoader(ID3D11Device* Device, ID3D11DeviceContext* DeviceContext, string ObjFile)
+ObjLoader::ObjLoader(string ObjFile)
 {
-	mDeviceContext		=	DeviceContext;
-
 	vertexPositions		=	vector<Position>();
 	vertexTexturePos	=	vector<Position>();
 	vertexNormals		=	vector<Position>();
