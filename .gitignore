@@ -4,6 +4,8 @@
 #################
 
 External/
+.vcxproj
+.filters
 
 *.pydevproject
 .project
