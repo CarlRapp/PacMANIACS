@@ -11,8 +11,8 @@
 #include <iostream>
 
 
-#define WINDOW_WIDTH 1600
-#define WINDOW_Height 900
+#define WINDOW_WIDTH 1280
+#define WINDOW_Height 720
 using namespace std;
 
 //--------------------------------------------------------------------------------------
