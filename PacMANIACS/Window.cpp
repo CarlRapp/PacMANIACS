@@ -12,7 +12,7 @@
 
 
 #define WINDOW_WIDTH 1280
-#define WINDOW_Height 720
+#define WINDOW_Height 800
 using namespace std;
 
 //--------------------------------------------------------------------------------------
