@@ -29,10 +29,10 @@ ID3D11DeviceContext*	g_DeviceContext			= NULL;
 
 Camera*					camera					= new Camera(D3DXVECTOR3(0, 0, -150), 
 															D3DXVECTOR3(0, 0, 1), 5);
-Model*					model					= new Model();
+/*Model*					model					= new Model();
 Model*					plane					= new Model();
 
-Model*					lampSphere				= new Model();
+Model*					lampSphere				= new Model();*/
 D3DXVECTOR3				lampPosition			= D3DXVECTOR3(0, 0, -50);
 
 
