@@ -48,6 +48,7 @@ HRESULT Buffer::Apply(UINT32 misc)
 		break;
 	};
 
+
 	return hr;
 }
 

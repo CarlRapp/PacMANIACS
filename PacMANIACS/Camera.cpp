@@ -14,7 +14,8 @@ Camera::Camera(D3DXVECTOR3 Position, D3DXVECTOR3 Forward, float Offset)
 }
 
 float sens = 0.0016;
-void Camera::Update(float deltaTime,  D3DXVECTOR2 mouseMovement)
+
+void Camera::Update(float deltaTime)
 {
 	float rotUp = 0, rotRight = 0;
 
@@ -54,24 +55,21 @@ void Camera::Update(float deltaTime,  D3DXVECTOR2 mouseMovement)
 
 D3DXMATRIX Camera::GetViewMatrix()
 {
-	float pr = Position.x * Right.x		+ Position.y * Right.y		+ Position.z * Right.z;
-	float pu = Position.x * Up.x		+ Position.y * Up.y			+ Position.z * Up.z;
-	float pf = Position.x * Forward.x	+ Position.y * Forward.y	+ Position.z * Forward.z;
+	float	pr	=	gPosition.x * gRight.x		+ gPosition.y * gRight.y	+ gPosition.z * gRight.z;
+	float	pu	=	gPosition.x * gUp.x			+ gPosition.y * gUp.y		+ gPosition.z * gUp.z;
+	float	pf	=	gPosition.x * gForward.x	+ gPosition.y * gForward.y	+ gPosition.z * gForward.z;
 	
-	return D3DXMATRIX(	Right.x			, Up.x				, Forward.x			, 0,
-						Right.y			, Up.y				, Forward.y			, 0,
-						Right.z			, Up.z				, Forward.z			, 0,
-						-pr				, -pu				, -pf				, 1);						
+
+	return D3DXMATRIX(	gRight.x	,	gUp.x	, gForward.x	, 0,
+						gRight.y	,	gUp.y	, gForward.y	, 0,
+						gRight.z	,	gUp.z	, gForward.z	, 0,
+						-pr			,	-pu		, -pf			, 1);
 }
 
-D3DXMATRIX Camera::GetProjectionMatrix(float FovY, float aspectRatio, float nearLimit, float farLimit)
+D3DXMATRIX Camera::GetProjectionMatrix()
 {
 	D3DXMATRIX projcetion;
-	D3DXMatrixPerspectiveFovLH(&projcetion, FovY, aspectRatio, nearLimit, farLimit);
-	return projcetion;
-}
+	D3DXMatrixPerspectiveFovLH(&projcetion, gFoV, gAspectRatio, gNear, gFar);
 
-float Camera::GetOffset()
-{
-	return offset;
+	return projcetion;
 }

@@ -35,6 +35,7 @@ struct BUFFER_INIT_DESC
 	{
 		InitData = NULL;
 	}
+
 };
 
 class Buffer

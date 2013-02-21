@@ -29,8 +29,19 @@ ID3D11DeviceContext*	g_DeviceContext			= NULL;
 
 Camera*					camera					= new Camera(D3DXVECTOR3(0, 0, -150), 
 															D3DXVECTOR3(0, 0, 1), 5);
+<<<<<<< HEAD
+/*Model*					model					= new Model();
+Model*					plane					= new Model();
+
+Model*					lampSphere				= new Model();*/
+D3DXVECTOR3				lampPosition			= D3DXVECTOR3(0, 0, -50);
+
+
+char*					g_Title					= "3D Labb 2, OBJ Reader";
+=======
 
 char*					g_Title					= "Pacman::Reloaded";
+>>>>>>> 5c1de7b2165a946e219c76ddfed4c31053735a72
 ObjLoader*				objLoader				= NULL;
 GameObject*				gameObject				=	new GameObject();
 
