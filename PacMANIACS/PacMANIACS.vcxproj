@@ -74,6 +74,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="ObjLoader.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="SoundManager.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
@@ -82,6 +83,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="ObjLoader.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
