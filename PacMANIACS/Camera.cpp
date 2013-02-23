@@ -12,6 +12,7 @@ Camera::Camera(float FoV, float AspectRatio, float Near, float Far)
 	gNear			=	Near;
 	gFar			=	Far;
 	gState			=	CameraState::Free;
+	gPosition		=	D3DXVECTOR3(0, 0, 0);
 
 	D3DXVec3Normalize(&(gForward), &D3DXVECTOR3(gForward.x, 0 , gForward.z));
 	gUp	=	D3DXVECTOR3(0, 1, 0);
@@ -60,6 +61,7 @@ void Camera::UpdateFree(float deltaTime)
 
 	D3DXVECTOR2	mousePos		=	D3DXVECTOR2(mouseCoords->x, mouseCoords->y);
 	D3DXVECTOR2	mouseMovement	=	D3DXVECTOR2(mousePos.x - oldMousePos.x, oldMousePos.y - mousePos.y);
+
 	
 	float	rotUp		=	mouseMovement.x * sens;
 	float	rotRight	=	mouseMovement.y * sens;

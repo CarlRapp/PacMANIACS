@@ -1,9 +1,8 @@
 #include "stdafx.h"
 #include "Shader.h"
 #include "Buffer.h"
-#include "ObjLoader.h"
-#include "Camera.h"
-#include "GameObject.h"
+
+#include "World.h"
 
 #include <stdio.h>
 #include <io.h>
@@ -18,21 +17,18 @@ using namespace std;
 //--------------------------------------------------------------------------------------
 // Global Variables
 //--------------------------------------------------------------------------------------
-HWND					g_hWndMain				= NULL;
+HWND					g_hWndMain				=	NULL;
 
-IDXGISwapChain*         g_SwapChain				= NULL;
-ID3D11RenderTargetView* g_RenderTargetView		= NULL;
-ID3D11Texture2D*        g_DepthStencil			= NULL;
-ID3D11DepthStencilView* g_DepthStencilView		= NULL;
-ID3D11Device*			g_Device				= NULL;
-ID3D11DeviceContext*	g_DeviceContext			= NULL;
+IDXGISwapChain*         g_SwapChain				=	NULL;
+ID3D11RenderTargetView* g_RenderTargetView		=	NULL;
+ID3D11Texture2D*        g_DepthStencil			=	NULL;
+ID3D11DepthStencilView* g_DepthStencilView		=	NULL;
+ID3D11Device*			g_Device				=	NULL;
+ID3D11DeviceContext*	g_DeviceContext			=	NULL;
 
-Camera*					camera					=	new Camera((float)D3DX_PI * 0.45f, WINDOW_WIDTH / WINDOW_Height, 0.5f, 500.0f);
-GameObject*				GO						=	new GameObject();
+char*					g_Title					=	"Pacman::Reloaded";
 
-char*					g_Title					= "Pacman::Reloaded";
-ObjLoader*				objLoader				= NULL;
-GameObject*				gameObject				=	new GameObject();
+World*					gWorld					=	new World(g_DeviceContext, D3DXVECTOR2(WINDOW_WIDTH, WINDOW_Height));
 
 //--------------------------------------------------------------------------------------
 // Forward declarations
@@ -78,8 +74,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, 
 	int centerY = (int)((Rect->top + Rect->bottom) * 0.5f);
 	SetCursorPos(centerX, centerY);
 	ShowCursor(false);
-
-	camera->SetTarget(GO);
 
 	return Run();
 }
@@ -331,16 +325,7 @@ void CenterMouse()
 
 HRESULT Update(float deltaTime)
 {
-
-
-	GO->Update(deltaTime);
-	camera->Update(deltaTime);
-
-
-
-
-
-
+	gWorld->Update(deltaTime);
 
 
 	char title[255];
@@ -357,7 +342,6 @@ HRESULT Update(float deltaTime)
 
 HRESULT Render(float deltaTime)
 {
-
 	//	Clear the render target
 	float ClearColor[4] = {0.05f,  0.05f, 0.05f, 1.0f};
 	g_DeviceContext->ClearRenderTargetView( g_RenderTargetView, ClearColor );
@@ -370,6 +354,8 @@ HRESULT Render(float deltaTime)
 
 	float width = (float)(Rect->right - Rect->left);
 	float height = (float)(Rect->bottom - Rect->top);
+
+	gWorld->Render();
 
 	if(FAILED(g_SwapChain->Present( 0, 0 )))
 		return E_FAIL;
