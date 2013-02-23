@@ -19,6 +19,7 @@ World::World(ID3D11DeviceContext* deviceContext, D3DXVECTOR2 Resolution)
 									0.5f, 
 									500.0f
 									);
+	gCamera->SetInputManager(gInput);
 }
 
 
