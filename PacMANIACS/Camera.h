@@ -18,11 +18,18 @@ private:
 	D3DXVECTOR3	gForward, gUp, gRight;
 	float		gOffset;
 
-	GameObject	gTarget;
+	GameObject*	gTarget;
 
 	float		gFoV;
 	float		gAspectRatio;
 	float		gNear, gFar;
+
+
+	void	UpdateFollow(float deltaTime);
+
+
+	void		UpdateFree(float deltaTime);
+	D3DXVECTOR2	oldMousePos;
 
 public:
 	Camera(float FoV, float AspectRatio, float Near, float Far);
@@ -31,7 +38,7 @@ public:
 	void	Update(float deltaTime);
 	void	ChangeState(CameraState State);
 
-	void	SetTarget(GameObject Target);
+	void	SetTarget(GameObject* Target);
 
 	D3DXMATRIX	GetViewMatrix();
 	D3DXMATRIX	GetProjectionMatrix();

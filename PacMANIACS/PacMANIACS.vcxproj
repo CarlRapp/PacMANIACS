@@ -72,17 +72,21 @@
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="InputManager.h" />
     <ClInclude Include="ObjLoader.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="World.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="ObjLoader.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Window.cpp" />
+    <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Shader.fx" />
