@@ -2,6 +2,7 @@
 #define CAMERA_H	
 #include "stdafx.h"
 #include "GameObject.h"
+#include "InputManager.h"
 
 enum CameraState
 {
@@ -28,8 +29,9 @@ private:
 	void	UpdateFollow(float deltaTime);
 
 
-	void		UpdateFree(float deltaTime);
-	D3DXVECTOR2	oldMousePos;
+	void	UpdateFree(float deltaTime);
+	InputManager*	gInput;
+	D3DXVECTOR2		oldMousePos;
 
 public:
 	Camera(float FoV, float AspectRatio, float Near, float Far);
@@ -42,6 +44,7 @@ public:
 
 	D3DXMATRIX	GetViewMatrix();
 	D3DXMATRIX	GetProjectionMatrix();
+	void		SetInputManager(InputManager* Input);
 };
 
 #endif

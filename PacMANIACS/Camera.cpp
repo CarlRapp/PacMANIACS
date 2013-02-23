@@ -19,6 +19,11 @@ Camera::Camera(float FoV, float AspectRatio, float Near, float Far)
 	D3DXVec3Cross(&(gRight), &gUp, &(gForward));
 }
 
+void Camera::SetInputManager(InputManager* Input)
+{
+	gInput	=	Input;
+}
+
 void Camera::Update(float deltaTime)
 {
 	if(gState == CameraState::Follow)
@@ -48,12 +53,15 @@ void Camera::UpdateFollow(float deltaTime)
 
 void Camera::UpdateFree(float deltaTime)
 {
+	if(gInput != NULL)
+		return;
+
 	float	speed	=	24.0f * deltaTime;
 	float	sens	=	0.0016f;
 
-	if (GetAsyncKeyState(VK_LSHIFT))
+	if (gInput->IsKeyDown(VK_LSHIFT))
 		speed *= 2;
-	if (GetAsyncKeyState(VK_SPACE))
+	if (gInput->IsKeyDown(VK_SPACE))
 		speed *= 2;
 
 	LPPOINT mouseCoords = new POINT();
@@ -65,19 +73,19 @@ void Camera::UpdateFree(float deltaTime)
 	
 	float	rotUp		=	mouseMovement.x * sens;
 	float	rotRight	=	mouseMovement.y * sens;
-	
-	if (GetAsyncKeyState('W'))
+
+	if (gInput->IsKeyDown('W'))
 		gPosition += speed * gForward;
-	if (GetAsyncKeyState('S'))
+	if (gInput->IsKeyDown('S'))
 		gPosition -= speed * gForward;
-	if (GetAsyncKeyState('D'))
+	if (gInput->IsKeyDown('D'))
 		gPosition += speed * gRight;
-	if (GetAsyncKeyState('A'))
+	if (gInput->IsKeyDown('A'))
 		gPosition -= speed * gRight;
 
-	if (GetAsyncKeyState('E'))
+	if (gInput->IsKeyDown('E'))
 		gPosition += speed * gUp;
-	if (GetAsyncKeyState('Q'))
+	if (gInput->IsKeyDown('Q'))
 		gPosition -= speed * gUp;
 
 	D3DXMATRIX rotation;
