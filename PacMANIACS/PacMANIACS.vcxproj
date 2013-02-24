@@ -71,18 +71,28 @@
   <ItemGroup>
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="GameObject.h" />
+<<<<<<< HEAD
     <ClInclude Include="MapManager.h" />
+=======
+    <ClInclude Include="InputManager.h" />
+>>>>>>> fa151ec8d7e80163739e77309db54611f7de7ebc
     <ClInclude Include="ObjLoader.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="World.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="GameObject.cpp" />
+<<<<<<< HEAD
     <ClCompile Include="MapManager.cpp" />
+=======
+    <ClCompile Include="InputManager.cpp" />
+>>>>>>> fa151ec8d7e80163739e77309db54611f7de7ebc
     <ClCompile Include="ObjLoader.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Window.cpp" />
+    <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Shader.fx" />
