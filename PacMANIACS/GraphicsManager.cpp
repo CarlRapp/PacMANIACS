@@ -15,37 +15,43 @@ GraphicsManager::~GraphicsManager(void)
 void GraphicsManager::LoadModels()
 {
 	//Vertex *vertecies;
+	
+	vector<ModelInfo> modelInfos;
+
+	//För varje modell
+		//Ladda modell
+		//ModelInfo mInfo;
+		//mInfo.name = "ModelName";
+		//mInfo.verticies = ObjLoader.GetVertices();
+		//modelInfos.push_back(mInfo);
+
+
+
+	//Addera antal vertexpunkter till totalVertexCount för varje modell
 
 	int totalVertexCount = 0;
-	vector<vector<Vertex>> models;
-	//Ladda modeller
-	//Addera antal vertexpunkter till totalVertexCount för varje modell
-	//vertexVectors.push_back(ObjLoader.GetVertices());
-
-
-	for each (vector<Vertex> model in models)
+	for each (ModelInfo modelInfo in modelInfos)
 	{
-		totalVertexCount += model.size();
+		totalVertexCount += modelInfo.verticies.size();
 	}
-
 	
 	vector<Vertex> vertices(totalVertexCount);
 
 	int start = 0;
-	for each (vector<Vertex> model in models)
+	for each (ModelInfo modelInfo in modelInfos)
 	{
-		for each (Vertex vertex in model)
+		for each (Vertex vertex in modelInfo.verticies)
 		{
 			vertices.push_back(vertex);
 		}
 
 		IndexInfo indexInfo;
 		indexInfo.start = start;
-		indexInfo.count = model.size();
+		indexInfo.count = modelInfo.verticies.size();
 
-		gIndexMap.insert(pair<string,IndexInfo>("modelname", indexInfo));
+		gIndexMap.insert(pair<string, IndexInfo>(modelInfo.name, indexInfo));
 
-		start += model.size();
+		start += modelInfo.verticies.size();
 	}
 
 	BUFFER_INIT_DESC bufferDesc;
