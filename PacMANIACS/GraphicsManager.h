@@ -8,6 +8,12 @@
 
 class GraphicsManager
 {
+	struct ModelInfo
+	{
+		vector<Vertex> verticies;
+		string name;
+	};
+
 	struct IndexInfo
 	{
 		int start;
