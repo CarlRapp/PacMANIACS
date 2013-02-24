@@ -12,29 +12,29 @@ GraphicsManager::~GraphicsManager(void)
 }
 
 
-void GraphicsManager::LoadModels()
+void GraphicsManager::LoadModels(vector<GameObject> *gameObjects)
 {
 	//Vertex *vertecies;
 	
 	vector<ModelInfo> modelInfos;
-
-	//För varje modell
-		//Ladda modell
-		//ModelInfo mInfo;
-		//mInfo.name = "ModelName";
-		//mInfo.verticies = ObjLoader.GetVertices();
-		//modelInfos.push_back(mInfo);
-
-
-
-	//Addera antal vertexpunkter till totalVertexCount för varje modell
-
 	int totalVertexCount = 0;
-	for each (ModelInfo modelInfo in modelInfos)
+	
+	//Laddar modeller.
+	ObjLoader *objLoader;	
+	for each (GameObject gameObject in *gameObjects)
 	{
-		totalVertexCount += modelInfo.verticies.size();
+		objLoader = new ObjLoader(modelPath + gameObject.GetName());
+
+		ModelInfo mInfo;
+		mInfo.name = gameObject.GetName();
+		mInfo.verticies = *objLoader->GetVertices();
+		totalVertexCount += mInfo.verticies.size();
+		modelInfos.push_back(mInfo);
+		//delete objLoader;
 	}
 	
+	//Lägger in vertexdatan för alla modellerna i en och samma vector.
+	//Sparar startindex och antar vertexpunkter för varje model.
 	vector<Vertex> vertices(totalVertexCount);
 
 	int start = 0;
@@ -50,10 +50,11 @@ void GraphicsManager::LoadModels()
 		indexInfo.count = modelInfo.verticies.size();
 
 		gIndexMap.insert(pair<string, IndexInfo>(modelInfo.name, indexInfo));
-
 		start += modelInfo.verticies.size();
 	}
 
+
+	//Skapar vertexbuffer innehållande all vertexdata.
 	BUFFER_INIT_DESC bufferDesc;
 	bufferDesc.ElementSize = sizeof(Vertex);
 	bufferDesc.InitData = &vertices;

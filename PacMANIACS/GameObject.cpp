@@ -98,3 +98,8 @@ D3DXMATRIX GameObject::GetWorldInverseTranspose(void)
 {
 	return gWorldInverseTranspose;
 }
+
+string GameObject::GetName()
+{
+	return "";
+}

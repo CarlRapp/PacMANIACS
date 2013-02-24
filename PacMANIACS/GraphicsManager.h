@@ -5,6 +5,7 @@
 #include "Buffer.h"
 #include "Shader.h"
 #include "ObjLoader.h"
+#include "GameObject.h"
 
 class GraphicsManager
 {
@@ -26,12 +27,13 @@ class GraphicsManager
 	Buffer				*gVertexBuffer;
 
 	map<string, IndexInfo> gIndexMap;
+	string modelPath;
 
 public:
 	GraphicsManager(void);
 	~GraphicsManager(void);
 
-	void LoadModels();
+	void LoadModels(vector<GameObject> *gameObjects);
 	void Render();
 
 };
