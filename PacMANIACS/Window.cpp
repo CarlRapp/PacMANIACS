@@ -2,7 +2,6 @@
 #include "Shader.h"
 #include "Buffer.h"
 #include "ObjLoader.h"
-#include "Camera.h"
 #include "GameObject.h"
 
 #include <stdio.h>
@@ -27,8 +26,6 @@ ID3D11DepthStencilView* g_DepthStencilView		= NULL;
 ID3D11Device*			g_Device				= NULL;
 ID3D11DeviceContext*	g_DeviceContext			= NULL;
 
-Camera*					camera					= new Camera(D3DXVECTOR3(0, 0, -150), 
-															D3DXVECTOR3(0, 0, 1), 5);
 
 char*					g_Title					= "Pacman::Reloaded";
 ObjLoader*				objLoader				= NULL;
@@ -78,8 +75,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, 
 	int centerY = (Rect->top + Rect->bottom) * 0.5f;
 	SetCursorPos(centerX, centerY);
 	ShowCursor(false);	
-
-	camera->Update(0, D3DXVECTOR2(0, 0));
 
 	return Run();
 }
@@ -339,7 +334,6 @@ HRESULT Update(float deltaTime)
 	D3DXVECTOR2 mouseMovement = D3DXVECTOR2(mousePos->x - centerX, centerY - mousePos->y);
 
 	SetCursorPos(centerX, centerY);
-	camera->Update(deltaTime, mouseMovement);
 
 	char title[255];
 	sprintf_s(title, sizeof(title), "Pacman::Reloaded | FPS: %d",
