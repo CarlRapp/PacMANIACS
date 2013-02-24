@@ -51,6 +51,9 @@
     <ClInclude Include="InputManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GraphicsManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ObjLoader.cpp">
@@ -76,6 +79,9 @@
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsManager.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
