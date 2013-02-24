@@ -55,6 +55,9 @@
 >>>>>>> fa151ec8d7e80163739e77309db54611f7de7ebc
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GraphicsManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ObjLoader.cpp">
@@ -86,7 +89,13 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Main</Filter>
     </ClCompile>
+<<<<<<< HEAD
 >>>>>>> fa151ec8d7e80163739e77309db54611f7de7ebc
+=======
+    <ClCompile Include="GraphicsManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+>>>>>>> 5f2391368f9f242b155332d5f3625c88fdc8c39c
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Shader.fx">

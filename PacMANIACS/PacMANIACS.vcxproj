@@ -72,8 +72,12 @@
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="GameObject.h" />
 <<<<<<< HEAD
+<<<<<<< HEAD
     <ClInclude Include="MapManager.h" />
 =======
+=======
+    <ClInclude Include="GraphicsManager.h" />
+>>>>>>> 5f2391368f9f242b155332d5f3625c88fdc8c39c
     <ClInclude Include="InputManager.h" />
 >>>>>>> fa151ec8d7e80163739e77309db54611f7de7ebc
     <ClInclude Include="ObjLoader.h" />
@@ -85,8 +89,12 @@
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="GameObject.cpp" />
 <<<<<<< HEAD
+<<<<<<< HEAD
     <ClCompile Include="MapManager.cpp" />
 =======
+=======
+    <ClCompile Include="GraphicsManager.cpp" />
+>>>>>>> 5f2391368f9f242b155332d5f3625c88fdc8c39c
     <ClCompile Include="InputManager.cpp" />
 >>>>>>> fa151ec8d7e80163739e77309db54611f7de7ebc
     <ClCompile Include="ObjLoader.cpp" />
