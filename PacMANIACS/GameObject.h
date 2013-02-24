@@ -4,6 +4,8 @@
 #include "stdafx.h"
 #include <string>
 
+using namespace std;
+
 enum GameObjectState
 {
 	Alive,
@@ -35,9 +37,10 @@ public:
 	void Update(float deltaTime);
 
 	//	Get methods
-	D3DXMATRIX	GetWorldMatrix(void);
-	D3DXMATRIX	GetWorldInverseTranspose(void);
-	D3DXMATRIX	GetRotationMatrix(void);
+	D3DXMATRIX		GetWorldMatrix(void);
+	D3DXMATRIX		GetWorldInverseTranspose(void);
+	D3DXMATRIX		GetRotationMatrix(void);
+	virtual string	GetName();
 
 	bool	IsAlive();
 
