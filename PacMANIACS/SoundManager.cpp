@@ -8,12 +8,13 @@ SoundManager::SoundManager(Camera* camera, HWND hwnd)
 	gListener		 = 0;
 	gSecondary3DBuffers.clear();
 	gSecondaryBuffers.clear();
+	gSoundPositions.clear();
 
 	gCamera = camera;
 
 	InitializeDirectSound(hwnd);
 
-	LoadSoundFile("../PacMANIACS/Sounds/sound01.wav");
+	LoadSoundFile("../PacMANIACS/Sounds/Cherry.wav");
 }
 
 
@@ -24,6 +25,7 @@ SoundManager::~SoundManager(void)
 	gListener		 = 0;
 	gSecondary3DBuffers.clear();
 	gSecondaryBuffers.clear();
+	gSoundPositions.clear();
 }
 
 bool SoundManager::InitializeDirectSound(HWND hwnd)
@@ -181,6 +183,7 @@ bool SoundManager::LoadSoundFile(char* filename)
 	
 	gSecondaryBuffers.push_back(*tempSecondaryBuffer);
 	gSecondary3DBuffers.push_back(*tempSecondary3DBuffer);
+	gSoundPositions.push_back(D3DXVECTOR3(0, 0, 0));
 
 
 	return true;
@@ -189,8 +192,36 @@ bool SoundManager::LoadSoundFile(char* filename)
 void SoundManager::Update()
 {
 	D3DXVECTOR3 cameraPosition = gCamera->GetPosition();
+	D3DXMATRIX translation, rotation, worldToCamera;
 
-	gListener->SetPosition(cameraPosition.x, cameraPosition.y, cameraPosition.z, DS3D_IMMEDIATE);
+	D3DXMatrixTranslation(&translation, -cameraPosition.x, -cameraPosition.y, -cameraPosition.z);
+	D3DXVECTOR3 cameraDirection;
+	D3DXVECTOR3 startDirection(0,0,1);
+
+	float dot = D3DXVec3Dot(&startDirection, &cameraDirection);
+
+	if (dot != 0)
+	{
+		float angle = acos(dot);
+		if (angle != 0)
+		{
+			D3DXVECTOR3 cross;
+			D3DXVec3Cross(&cross, &startDirection, &cameraDirection);
+    
+			D3DXMatrixRotationAxis(&rotation, &cross, angle);
+			float determinant = D3DXMatrixDeterminant(&rotation);
+			D3DXMatrixInverse(&rotation, &determinant, &rotation);
+		}
+	}
+
+	worldToCamera = translation * rotation;
+	
+	D3DXVECTOR3 newPosition;
+	for(int i = 0; i < gSecondary3DBuffers.size(); i++)
+	{
+		D3DXVec3TransformCoord(&newPosition, &gSoundPositions[i], &worldToCamera);
+		gSecondary3DBuffers[i]->SetPosition(newPosition.x, newPosition.y, newPosition.z, DS3D_IMMEDIATE);
+	}
 }
 
 void SoundManager::PlaySound(string soundName, D3DXVECTOR3 position)
@@ -206,10 +237,13 @@ void SoundManager::PlaySound(string soundName, D3DXVECTOR3 position)
 	result = gSecondaryBuffers[index]->SetVolume(DSBVOLUME_MAX);
 	if(FAILED(result))
 		return;
+	
+	gSoundPositions[index] = position;
 
-	result = gSecondary3DBuffers[index]->SetPosition(position.x, position.y, position.z, DS3D_IMMEDIATE);
-	if(FAILED(result))
-		return;
+	//result = gSecondary3DBuffers[index]->SetPosition(position.x, position.y, position.z, DS3D_IMMEDIATE);
+	//if(FAILED(result))
+		//return;
+	Update();
 
 	result = gSecondaryBuffers[index]->Play(0, 0, 0);
 	if(FAILED(result))

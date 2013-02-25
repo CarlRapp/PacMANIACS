@@ -39,6 +39,7 @@ private :
 
 	vector<IDirectSound3DBuffer8*>	gSecondary3DBuffers;
 	vector<IDirectSoundBuffer8*>	gSecondaryBuffers;
+	vector<D3DXVECTOR3>				gSoundPositions;
 
 private :
 	bool InitializeDirectSound(HWND hwnd);
