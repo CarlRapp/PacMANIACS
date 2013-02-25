@@ -1,14 +1,15 @@
 #include "World.h"
 
 
-World::World(ID3D11DeviceContext* deviceContext, D3DXVECTOR2 Resolution)
+World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, D3DXVECTOR2 Resolution)
 {
-	gState			=	(WorldState)Paused;
-	gDeviceContext	=	deviceContext;
-	gResolution.x	=	(int)Resolution.x;
-	gResolution.y	=	(int)Resolution.y;
+	gState				=	(WorldState)Paused;
+	gDeviceContext		=	deviceContext;
+	gResolution.x		=	(int)Resolution.x;
+	gResolution.y		=	(int)Resolution.y;
 	
-	gInput			=	new InputManager();
+	gInput				=	new InputManager();
+
 
 
 
@@ -20,6 +21,15 @@ World::World(ID3D11DeviceContext* deviceContext, D3DXVECTOR2 Resolution)
 									500.0f
 									);
 	gCamera->SetInputManager(gInput);
+
+
+	//Create the GraphicsManager
+	gGraphicsManager	=	new GraphicsManager(device, deviceContext);
+	gGraphicsManager->SetCamera(gCamera);
+	//GameObjectManager->GetGameObjects() istället för 0.
+	gGraphicsManager->SetGameObjects(0);
+
+	gGraphicsManager->LoadModels();
 }
 
 
@@ -42,5 +52,5 @@ void World::Update(float deltaTime)
 
 void World::Render()
 {
-
+	gGraphicsManager->Render();
 }

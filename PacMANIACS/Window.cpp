@@ -36,7 +36,7 @@ ID3D11DeviceContext*	g_DeviceContext			=	NULL;
 char*					g_Title					=	"Pacman::Reloaded";
 >>>>>>> fa151ec8d7e80163739e77309db54611f7de7ebc
 
-World*					gWorld					=	new World(g_DeviceContext, D3DXVECTOR2(WINDOW_WIDTH, WINDOW_Height));
+World*					gWorld					=	NULL;
 
 //--------------------------------------------------------------------------------------
 // Forward declarations
@@ -86,6 +86,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, 
 =======
 	ShowCursor(false);
 >>>>>>> fa151ec8d7e80163739e77309db54611f7de7ebc
+
+	gWorld					=	new World(g_Device, g_DeviceContext, D3DXVECTOR2(WINDOW_WIDTH, WINDOW_Height));
 
 	return Run();
 }

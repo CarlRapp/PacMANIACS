@@ -1,8 +1,10 @@
 #include "GraphicsManager.h"
 
 
-GraphicsManager::GraphicsManager(void)
+GraphicsManager::GraphicsManager(ID3D11Device *device, ID3D11DeviceContext *deviceContext)
 {
+	gDevice = device;
+	gDeviceContext = gDeviceContext;
 }
 
 
@@ -11,17 +13,28 @@ GraphicsManager::~GraphicsManager(void)
 	
 }
 
-
-void GraphicsManager::LoadModels(vector<GameObject> *gameObjects)
+void GraphicsManager::SetCamera(Camera *camera)
 {
-	//Vertex *vertecies;
-	
+	gCamera = camera;
+}
+
+void GraphicsManager::SetGameObjects(vector<GameObject> *gameObjects)
+{
+	gGameObjects = gameObjects;
+}
+
+
+void GraphicsManager::LoadModels()
+{
+	if (!gGameObjects)
+		return;
+
 	vector<ModelInfo> modelInfos;
 	int totalVertexCount = 0;
 	
-	//Laddar modeller.
+	//Laddar modeller.	
 	ObjLoader *objLoader;	
-	for each (GameObject gameObject in *gameObjects)
+	for each (GameObject gameObject in *gGameObjects)
 	{
 		objLoader = new ObjLoader(modelPath + gameObject.GetName());
 
@@ -32,6 +45,7 @@ void GraphicsManager::LoadModels(vector<GameObject> *gameObjects)
 		modelInfos.push_back(mInfo);
 		//delete objLoader;
 	}
+	
 	
 	//Lägger in vertexdatan för alla modellerna i en och samma vector.
 	//Sparar startindex och antar vertexpunkter för varje model.
@@ -57,7 +71,7 @@ void GraphicsManager::LoadModels(vector<GameObject> *gameObjects)
 	//Skapar vertexbuffer innehållande all vertexdata.
 	BUFFER_INIT_DESC bufferDesc;
 	bufferDesc.ElementSize = sizeof(Vertex);
-	bufferDesc.InitData = &vertices;
+	bufferDesc.InitData = &vertices[0];
 	bufferDesc.NumElements = totalVertexCount;
 	bufferDesc.Type = VERTEX_BUFFER;
 	bufferDesc.Usage = BUFFER_DEFAULT;
@@ -71,6 +85,27 @@ void GraphicsManager::LoadModels(vector<GameObject> *gameObjects)
 
 void GraphicsManager::Render()
 {
-	//IndexInfo indexInfo = gIndexMap["modelname"];
-	//gDeviceContext->Draw(indexInfo.count, indexInfo.start);
+	if (!gGameObjects)
+		return;
+
+	D3DXMATRIX world, view, projection;
+
+	//View och projection matriserna
+	view		= gCamera->GetViewMatrix();
+	projection	= gCamera->GetProjectionMatrix();
+	
+	for each (GameObject gameObject in *gGameObjects)
+	{
+		//world matrisen
+		world	= gameObject.GetWorldMatrix();
+
+		//WVP-matrisen
+		D3DXMATRIX WVP = world * view * projection;
+		
+
+		//Index för vertexpunkterna
+		IndexInfo indexInfo = gIndexMap[gameObject.GetName()];
+		gDeviceContext->Draw(indexInfo.count, indexInfo.start);
+	}
+	
 }
