@@ -1,7 +1,7 @@
 #include "SoundManager.h"
 
 
-SoundManager::SoundManager(void)
+SoundManager::SoundManager(Camera* camera, HWND hwnd)
 {
 	gDirectSound	 = 0;
 	gPrimaryBuffer	 = 0;
@@ -9,12 +9,21 @@ SoundManager::SoundManager(void)
 	gSecondary3DBuffers.clear();
 	gSecondaryBuffers.clear();
 
+	gCamera = camera;
 
+	InitializeDirectSound(hwnd);
+
+	LoadSoundFile("../PacMANIACS/Sounds/sound01.wav");
 }
 
 
 SoundManager::~SoundManager(void)
 {
+	gDirectSound	 = 0;
+	gPrimaryBuffer	 = 0;
+	gListener		 = 0;
+	gSecondary3DBuffers.clear();
+	gSecondaryBuffers.clear();
 }
 
 bool SoundManager::InitializeDirectSound(HWND hwnd)
@@ -175,4 +184,44 @@ bool SoundManager::LoadSoundFile(char* filename)
 
 
 	return true;
+}
+
+void SoundManager::Update()
+{
+	D3DXVECTOR3 cameraPosition = gCamera->GetPosition();
+
+	gListener->SetPosition(cameraPosition.x, cameraPosition.y, cameraPosition.z, DS3D_IMMEDIATE);
+}
+
+void SoundManager::PlaySound(string soundName, D3DXVECTOR3 position)
+{
+	HRESULT result;
+
+	int index = ConvertToIndex(soundName);
+
+	result = gSecondaryBuffers[index]->SetCurrentPosition(0);
+	if(FAILED(result))
+		return;
+
+	result = gSecondaryBuffers[index]->SetVolume(DSBVOLUME_MAX);
+	if(FAILED(result))
+		return;
+
+	result = gSecondary3DBuffers[index]->SetPosition(position.x, position.y, position.z, DS3D_IMMEDIATE);
+	if(FAILED(result))
+		return;
+
+	result = gSecondaryBuffers[index]->Play(0, 0, 0);
+	if(FAILED(result))
+		return;
+
+
+}
+
+int SoundManager::ConvertToIndex(string soundName)
+{
+	if(soundName == "Ghost")
+		return 0;
+
+	return 0;
 }

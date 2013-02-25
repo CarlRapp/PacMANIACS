@@ -32,6 +32,7 @@ public:
 	void	ChangeState(CameraState State);
 
 	void	SetTarget(GameObject Target);
+	D3DXVECTOR3 GetPosition();
 
 	D3DXMATRIX	GetViewMatrix();
 	D3DXMATRIX	GetProjectionMatrix();

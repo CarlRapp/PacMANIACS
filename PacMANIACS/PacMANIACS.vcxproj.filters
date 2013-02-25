@@ -25,6 +25,9 @@
     <Filter Include="Header Files\GameObjects">
       <UniqueIdentifier>{0bb5b05d-4f09-478b-8867-c2066ef1fd76}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sounds">
+      <UniqueIdentifier>{4cfd837c-db8c-4c52-bd5d-fc3d4c45ef63}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -75,6 +78,9 @@
   <ItemGroup>
     <None Include="Shaders\Shader.fx">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Sounds\sound01.wav">
+      <Filter>Sounds</Filter>
     </None>
   </ItemGroup>
 </Project>

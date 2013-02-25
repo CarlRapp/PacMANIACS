@@ -88,6 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Shader.fx" />
+    <None Include="Sounds\sound01.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

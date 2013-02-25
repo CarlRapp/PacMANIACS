@@ -73,3 +73,8 @@ D3DXMATRIX Camera::GetProjectionMatrix()
 
 	return projcetion;
 }
+
+D3DXVECTOR3 Camera::GetPosition()
+{
+	return gPosition;
+}

@@ -32,22 +32,23 @@ private :
 	};
 
 
-	Camera* gCamera;
-	IDirectSound8* gDirectSound;
-	IDirectSoundBuffer* gPrimaryBuffer;
-	IDirectSound3DListener8* gListener;
+	Camera*						gCamera;
+	IDirectSound8*				gDirectSound;
+	IDirectSoundBuffer*			gPrimaryBuffer;
+	IDirectSound3DListener8*	gListener;
 
-	vector<IDirectSound3DBuffer8*> gSecondary3DBuffers;
-	vector<IDirectSoundBuffer8*> gSecondaryBuffers;
+	vector<IDirectSound3DBuffer8*>	gSecondary3DBuffers;
+	vector<IDirectSoundBuffer8*>	gSecondaryBuffers;
 
 private :
 	bool InitializeDirectSound(HWND hwnd);
 	bool LoadSoundFile(char* filename);
+	int ConvertToIndex(string soundName);
 public:
-	SoundManager(void);
+	SoundManager(Camera* camera, HWND hwnd);
 	~SoundManager(void);
 
-	void PlaySound(string SoundName, D3DXVECTOR3 Position);
-	void  Update();
+	void PlaySound(string soundName, D3DXVECTOR3 position);
+	void Update();
 };
 
