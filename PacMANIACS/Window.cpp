@@ -28,7 +28,7 @@ ID3D11DeviceContext*	g_DeviceContext			=	NULL;
 
 char*					g_Title					=	"Pacman::Reloaded";
 
-World*					gWorld					=	new World(g_DeviceContext, D3DXVECTOR2(WINDOW_WIDTH, WINDOW_Height));
+World*					gWorld					=	NULL;
 
 //--------------------------------------------------------------------------------------
 // Forward declarations
@@ -74,6 +74,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, 
 	int centerY = (int)((Rect->top + Rect->bottom) * 0.5f);
 	SetCursorPos(centerX, centerY);
 	ShowCursor(false);
+
+	gWorld					=	new World(g_Device, g_DeviceContext, D3DXVECTOR2(WINDOW_WIDTH, WINDOW_Height));
 
 	return Run();
 }
