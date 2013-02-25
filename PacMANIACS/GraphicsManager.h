@@ -6,6 +6,7 @@
 #include "Shader.h"
 #include "ObjLoader.h"
 #include "GameObject.h"
+#include "Camera.h"
 
 class GraphicsManager
 {
@@ -21,19 +22,25 @@ class GraphicsManager
 		int count;
 	};
 
-	ID3D11DeviceContext *gDeviceContext;
-	ID3D11Device		*gDevice;
+	ID3D11DeviceContext		*gDeviceContext;
+	ID3D11Device			*gDevice;
 
-	Buffer				*gVertexBuffer;
+	Buffer					*gVertexBuffer;
 
-	map<string, IndexInfo> gIndexMap;
+	map<string, IndexInfo>	gIndexMap;
 	string modelPath;
 
+	Camera					*gCamera;
+	vector<GameObject>		*gGameObjects;
+
 public:
-	GraphicsManager(void);
+	GraphicsManager(ID3D11Device *device, ID3D11DeviceContext *deviceContext);
 	~GraphicsManager(void);
 
-	void LoadModels(vector<GameObject> *gameObjects);
+	void SetCamera(Camera *camera);
+	void SetGameObjects(vector<GameObject> *gameObjects);
+
+	void LoadModels();
 	void Render();
 
 };
