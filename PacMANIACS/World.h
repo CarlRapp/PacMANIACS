@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "InputManager.h"
 #include "Camera.h"
+#include "GraphicsManager.h"
 
 #include <string>
 
@@ -20,12 +21,13 @@ private:
 
 	ID3D11DeviceContext*	gDeviceContext;
 
-	InputManager*	gInput;
-	Camera*			gCamera;
+	InputManager*		gInput;
+	GraphicsManager*	gGraphicsManager;
+	Camera*				gCamera;
 
 	D3DXVECTOR2		gResolution;
 public:
-	World(ID3D11DeviceContext* deviceContext, D3DXVECTOR2 Resolution);
+	World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, D3DXVECTOR2 Resolution);
 
 
 	void Update(float deltaTime);
