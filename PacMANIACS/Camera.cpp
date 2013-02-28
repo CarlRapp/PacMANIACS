@@ -1,77 +1,139 @@
 #include "Camera.h"
+#include <stdio.h>
+#include <io.h>
+#include <fcntl.h>
+#include <iostream>
+using namespace std;
 
-Camera::Camera(D3DXVECTOR3 Position, D3DXVECTOR3 Forward, float Offset)
-{	
-	offset = Offset;
+Camera::Camera(float FoV, float AspectRatio, float Near, float Far)
+{
+	gFoV			=	FoV;
+	gAspectRatio	=	AspectRatio;
+	gNear			=	Near;
+	gFar			=	Far;
+	gState			=	CameraState::Free;
+	gPosition		=	D3DXVECTOR3(0, 0, 0);
 
-	Camera::Position = Position;
-	state = CameraState::WalkMode;
-	D3DXVec3Normalize(&(Camera::Forward), &D3DXVECTOR3(Forward.x, 0 , Forward.z));
-
-	Up = D3DXVECTOR3(0, 1, 0);
-
-	D3DXVec3Cross(&(Camera::Right), &Up, &(Camera::Forward));
+	D3DXVec3Normalize(&(gForward), &D3DXVECTOR3(gForward.x, 0 , gForward.z));
+	gUp	=	D3DXVECTOR3(0, 1, 0);
+	D3DXVec3Cross(&(gRight), &gUp, &(gForward));
 }
 
-float sens = 0.0016;
-void Camera::Update(float deltaTime,  D3DXVECTOR2 mouseMovement)
+void Camera::SetInputManager(InputManager* Input)
 {
-	float rotUp = 0, rotRight = 0;
+	gInput	=	Input;
+}
 
-	rotRight	+= sens * mouseMovement.x;
-	rotUp		-= sens * mouseMovement.y;
+void Camera::Update(float deltaTime)
+{
+	if(gState == CameraState::Follow)
+		UpdateFollow(deltaTime);
+	else if(gState == CameraState::Free)
+		UpdateFree(deltaTime);
+}
 
-	float speed = 24.0f * deltaTime;
-	if (GetAsyncKeyState(VK_LSHIFT))
+void Camera::UpdateFollow(float deltaTime)
+{
+	if(gTarget == NULL)
+		return;
+
+	D3DXMATRIX rotation	=	gTarget->GetRotationMatrix();
+
+	D3DXVec3TransformCoord(&gRight, &gRight, &rotation);
+	D3DXVec3TransformCoord(&gForward, &gForward, &rotation);
+
+	D3DXVec3TransformCoord(&gForward, &gForward, &rotation);
+
+	D3DXVec3Cross(&gUp, &gForward, &gRight);
+
+	gPosition.x	=	gTarget->GetWorldMatrix()._41;
+	gPosition.y	=	gTarget->GetWorldMatrix()._42;
+	gPosition.z	=	gTarget->GetWorldMatrix()._43;
+}
+
+void Camera::UpdateFree(float deltaTime)
+{
+	if(gInput != NULL)
+		return;
+
+	float	speed	=	24.0f * deltaTime;
+	float	sens	=	0.0016f;
+
+	if (gInput->IsKeyDown(VK_LSHIFT))
 		speed *= 2;
-	if (GetAsyncKeyState(VK_SPACE))
+	if (gInput->IsKeyDown(VK_SPACE))
 		speed *= 2;
+
+	LPPOINT mouseCoords = new POINT();
+	GetCursorPos(mouseCoords);
+
+	D3DXVECTOR2	mousePos		=	D3DXVECTOR2(mouseCoords->x, mouseCoords->y);
+	D3DXVECTOR2	mouseMovement	=	D3DXVECTOR2(mousePos.x - oldMousePos.x, oldMousePos.y - mousePos.y);
+
 	
-	if (GetAsyncKeyState('W'))
-		Position += speed * Forward;
-	if (GetAsyncKeyState('S'))
-		Position -= speed * Forward;
-	if (GetAsyncKeyState('D'))
-		Position += speed * Right;
-	if (GetAsyncKeyState('A'))
-		Position -= speed * Right;
+	float	rotUp		=	mouseMovement.x * sens;
+	float	rotRight	=	mouseMovement.y * sens;
 
-	if (GetAsyncKeyState('E'))
-		Position += speed * Up;
-	if (GetAsyncKeyState('Q'))
-		Position -= speed * Up;
+	if (gInput->IsKeyDown('W'))
+		gPosition += speed * gForward;
+	if (gInput->IsKeyDown('S'))
+		gPosition -= speed * gForward;
+	if (gInput->IsKeyDown('D'))
+		gPosition += speed * gRight;
+	if (gInput->IsKeyDown('A'))
+		gPosition -= speed * gRight;
+
+	if (gInput->IsKeyDown('E'))
+		gPosition += speed * gUp;
+	if (gInput->IsKeyDown('Q'))
+		gPosition -= speed * gUp;
 
 	D3DXMATRIX rotation;
 	D3DXMatrixRotationY(&rotation, rotRight);
-	D3DXVec3TransformCoord(&Right, &Right, &rotation);
-	D3DXVec3TransformCoord(&Forward, &Forward, &rotation);
-	
-	D3DXMatrixRotationAxis(&rotation, &Right, rotUp);
-	D3DXVec3TransformCoord(&Forward, &Forward, &rotation);
+	D3DXVec3TransformCoord(&gRight, &gRight, &rotation);
+	D3DXVec3TransformCoord(&gForward, &gForward, &rotation);
 
-	D3DXVec3Cross(&Up, &Forward, &Right);
+	D3DXMatrixRotationAxis(&rotation, &gRight, rotUp);
+	D3DXVec3TransformCoord(&gForward, &gForward, &rotation);
+
+	D3DXVec3Cross(&gUp, &gForward, &gRight);
+
+	oldMousePos	=	mousePos;
 }
 
 D3DXMATRIX Camera::GetViewMatrix()
 {
-	float pr = Position.x * Right.x		+ Position.y * Right.y		+ Position.z * Right.z;
-	float pu = Position.x * Up.x		+ Position.y * Up.y			+ Position.z * Up.z;
-	float pf = Position.x * Forward.x	+ Position.y * Forward.y	+ Position.z * Forward.z;
+	float	pr	=	gPosition.x * gRight.x		+ gPosition.y * gRight.y	+ gPosition.z * gRight.z;
+	float	pu	=	gPosition.x * gUp.x			+ gPosition.y * gUp.y		+ gPosition.z * gUp.z;
+	float	pf	=	gPosition.x * gForward.x	+ gPosition.y * gForward.y	+ gPosition.z * gForward.z;
 	
-	return D3DXMATRIX(	Right.x			, Up.x				, Forward.x			, 0,
-						Right.y			, Up.y				, Forward.y			, 0,
-						Right.z			, Up.z				, Forward.z			, 0,
-						-pr				, -pu				, -pf				, 1);						
+
+	return D3DXMATRIX(	gRight.x	,	gUp.x	, gForward.x	, 0,
+						gRight.y	,	gUp.y	, gForward.y	, 0,
+						gRight.z	,	gUp.z	, gForward.z	, 0,
+						-pr			,	-pu		, -pf			, 1);
 }
 
-D3DXMATRIX Camera::GetProjectionMatrix(float FovY, float aspectRatio, float nearLimit, float farLimit)
+D3DXMATRIX Camera::GetProjectionMatrix()
 {
 	D3DXMATRIX projcetion;
-	D3DXMatrixPerspectiveFovLH(&projcetion, FovY, aspectRatio, nearLimit, farLimit);
+	D3DXMatrixPerspectiveFovLH(&projcetion, gFoV, gAspectRatio, gNear, gFar);
+
 	return projcetion;
 }
 
-float Camera::GetOffset()
+void Camera::SetTarget(GameObject* Target)
 {
-	return offset;
+	gTarget	=	Target;
+	gState	=	CameraState::Follow;
+}
+
+D3DXVECTOR3 Camera::GetPosition()
+{
+	return gPosition;
+}
+
+D3DXVECTOR3 Camera::GetForward()
+{
+	return gForward;
 }

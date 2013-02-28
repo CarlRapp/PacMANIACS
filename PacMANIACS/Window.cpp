@@ -2,9 +2,9 @@
 #include "Shader.h"
 #include "Buffer.h"
 #include "ObjLoader.h"
-#include "Camera.h"
-#include "Model.h"
 #include "GameObject.h"
+
+#include "World.h"
 
 #include <stdio.h>
 #include <io.h>
@@ -19,23 +19,19 @@ using namespace std;
 //--------------------------------------------------------------------------------------
 // Global Variables
 //--------------------------------------------------------------------------------------
-HWND					g_hWndMain				= NULL;
+HWND					g_hWndMain				=	NULL;
 
-IDXGISwapChain*         g_SwapChain				= NULL;
-ID3D11RenderTargetView* g_RenderTargetView		= NULL;
-ID3D11Texture2D*        g_DepthStencil			= NULL;
-ID3D11DepthStencilView* g_DepthStencilView		= NULL;
-ID3D11Device*			g_Device				= NULL;
-ID3D11DeviceContext*	g_DeviceContext			= NULL;
+IDXGISwapChain*         g_SwapChain				=	NULL;
+ID3D11RenderTargetView* g_RenderTargetView		=	NULL;
+ID3D11Texture2D*        g_DepthStencil			=	NULL;
+ID3D11DepthStencilView* g_DepthStencilView		=	NULL;
+ID3D11Device*			g_Device				=	NULL;
+ID3D11DeviceContext*	g_DeviceContext			=	NULL;
 
-Camera*					camera					= new Camera(D3DXVECTOR3(0, 0, -150), 
-															D3DXVECTOR3(0, 0, 1), 5);
 
-char*					g_Title					= "Pacman::Reloaded";
-ObjLoader*				objLoader				= NULL;
-GameObject*				gameObject				=	new GameObject();
+char*					g_Title					=	"Pacman::Reloaded";
 
-Model*					modelExample			=	new Model();
+World*					gWorld					=	NULL;
 
 //--------------------------------------------------------------------------------------
 // Forward declarations
@@ -77,15 +73,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, 
 	}
 	LPRECT Rect = new RECT();
 	GetWindowRect(g_hWndMain, Rect);
-	int centerX = (Rect->left + Rect->right) * 0.5f;
-	int centerY = (Rect->top + Rect->bottom) * 0.5f;
+	int centerX = (int)((Rect->left + Rect->right) * 0.5f);
+	int centerY = (int)((Rect->top + Rect->bottom) * 0.5f);
 	SetCursorPos(centerX, centerY);
 	ShowCursor(false);	
+	ShowCursor(false);
 
-	objLoader	=	new ObjLoader("Models/bth.obj");
-	modelExample->Initialize(g_Device, g_DeviceContext, objLoader->GetVertices(), "Models/bthcolor.dds");
-
-	camera->Update(0, D3DXVECTOR2(0, 0));
+	gWorld	=	new World(g_Device, g_DeviceContext, D3DXVECTOR2(WINDOW_WIDTH, WINDOW_Height));
 
 	return Run();
 }
@@ -301,7 +295,6 @@ int Run()
 
 void CloseApplication(HWND hWnd)
 {
-	//model->~Model();
 
 	::DestroyWindow(hWnd);
 }
@@ -324,44 +317,35 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	
 	return ::DefWindowProc(hWnd, msg, wParam, lParam);
 }
-float angle = 0.0f;
-HRESULT Update(float deltaTime)
+
+void CenterMouse()
 {
-	float speed = deltaTime / 3;
-	D3DXMATRIX rot;
-	D3DXMatrixRotationZ(&rot, speed);
-
-	speed *= 3;
-
-	D3DXMatrixRotationY(&rot, speed);
-
 	LPRECT Rect = new RECT();
 	GetWindowRect(g_hWndMain, Rect);
-	LPPOINT mousePos = new POINT();
-	GetCursorPos(mousePos);
 
-
-	int centerX = (Rect->left + Rect->right) * 0.5f;
-	int centerY = (Rect->top + Rect->bottom) * 0.5f;
-	D3DXVECTOR2 mouseMovement = D3DXVECTOR2(mousePos->x - centerX, centerY - mousePos->y);
+	int	centerX	=	(int)((Rect->left + Rect->right) * 0.5f);
+	int	centerY	=	(int)((Rect->top + Rect->bottom) * 0.5f);
 
 	SetCursorPos(centerX, centerY);
-	camera->Update(deltaTime, mouseMovement);
-	modelExample->Frame(deltaTime);
+}
 
+HRESULT Update(float deltaTime)
+{
+	gWorld->Update(deltaTime);
 
 	char title[255];
 	sprintf_s(title, sizeof(title), "Pacman::Reloaded | FPS: %d",
 		(int)(1.0f / deltaTime));
 
 	SetWindowText(g_hWndMain, title);
+	//CenterMouse();
 
 	return S_OK;
 }
 
+
 HRESULT Render(float deltaTime)
 {
-
 	//	Clear the render target
 	float ClearColor[4] = {0.05f,  0.05f, 0.05f, 1.0f};
 	g_DeviceContext->ClearRenderTargetView( g_RenderTargetView, ClearColor );
@@ -372,10 +356,10 @@ HRESULT Render(float deltaTime)
 	LPRECT Rect = new RECT();
 	GetWindowRect(g_hWndMain, Rect);
 
-	float width = Rect->right - Rect->left;
-	float height = Rect->bottom - Rect->top;
+	float width = (float)(Rect->right - Rect->left);
+	float height = (float)(Rect->bottom - Rect->top);
 
-	modelExample->Render(g_DeviceContext, *camera, &camera->GetProjectionMatrix((float)D3DX_PI * (80 / 180), width / height, 0.5f, 500.0f));
+	gWorld->Render();
 
 	if(FAILED(g_SwapChain->Present( 0, 0 )))
 		return E_FAIL;

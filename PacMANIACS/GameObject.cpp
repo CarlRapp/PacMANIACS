@@ -9,7 +9,12 @@ GameObject::GameObject()
 	D3DXMatrixScaling(&gScale, 0, 0, 0);
 	D3DXMatrixRotationYawPitchRoll(&gRotation, 0, 0, 0);
 
-	gState	=	GameObjectState::Alive;
+	Move(22, 23, 24);
+	SetRotation(2, 1, 3);
+	SetScale(1, 1, 1);
+	
+
+	gState	=	Alive;
 }
 
 GameObject::~GameObject()
@@ -19,22 +24,23 @@ GameObject::~GameObject()
 
 void GameObject::Update(float deltaTime)
 {
-	
+	Move(1*deltaTime, 1*deltaTime, 1*deltaTime);
 }
 
 bool GameObject::IsAlive()
 {
-	return (gState != GameObjectState::Dead);
+	return (gState != Dead);
 }
 
 
 void GameObject::SetRotation(float x, float y, float z)
 {
 	D3DXMatrixRotationYawPitchRoll(&gRotation, x, y, z);
+
 	UpdateWorldMatrix(true);
 }
 
-void GameObject::SetScaleMatrix(float x, float y, float z)
+void GameObject::SetScale(float x, float y, float z)
 {
 	D3DXMatrixScaling(&gScale, x, y, z);
 	UpdateWorldMatrix(true);
@@ -76,4 +82,24 @@ void GameObject::UpdateWorldMatrix(bool UpdateInvTrans)
 	
 	D3DXMatrixInverse(&gWorldInverseTranspose, &DET, &gWorldInverseTranspose);
 	D3DXMatrixTranspose(&gWorldInverseTranspose, &gWorldInverseTranspose);
+}
+
+D3DXMATRIX GameObject::GetRotationMatrix(void)
+{
+	return gRotation;
+}
+
+D3DXMATRIX GameObject::GetWorldMatrix(void)
+{
+	return gWorld;
+}
+
+D3DXMATRIX GameObject::GetWorldInverseTranspose(void)
+{
+	return gWorldInverseTranspose;
+}
+
+string GameObject::GetName()
+{
+	return "";
 }

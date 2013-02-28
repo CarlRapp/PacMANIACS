@@ -4,6 +4,8 @@
 #include "stdafx.h"
 #include <string>
 
+using namespace std;
+
 enum GameObjectState
 {
 	Alive,
@@ -16,7 +18,6 @@ class GameObject
 private:
 	//	Fields
 	GameObjectState	gState;
-
 
 	//	Matrices
 	D3DXMATRIX	gRotation;
@@ -36,14 +37,16 @@ public:
 	void Update(float deltaTime);
 
 	//	Get methods
-	D3DXMATRIX	GetWorldMatrix(void);
-	D3DXMATRIX	GetWorldInverseTranspose(void);
+	D3DXMATRIX		GetWorldMatrix(void);
+	D3DXMATRIX		GetWorldInverseTranspose(void);
+	D3DXMATRIX		GetRotationMatrix(void);
+	virtual string	GetName();
 
 	bool	IsAlive();
 
 	//	Set methods
 	void	SetRotation(float x, float y, float z);
-	void	SetScaleMatrix(float x, float y, float z);
+	void	SetScale(float x, float y, float z);
 	void	Move(float dX, float dY, float dZ);
 	void	MoveTo(float x, float y, float z);
 };
