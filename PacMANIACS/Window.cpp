@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Shader.h"
 #include "Buffer.h"
+#include "ObjLoader.h"
+#include "GameObject.h"
 
 #include "World.h"
 
@@ -25,6 +27,7 @@ ID3D11Texture2D*        g_DepthStencil			=	NULL;
 ID3D11DepthStencilView* g_DepthStencilView		=	NULL;
 ID3D11Device*			g_Device				=	NULL;
 ID3D11DeviceContext*	g_DeviceContext			=	NULL;
+
 
 char*					g_Title					=	"Pacman::Reloaded";
 
@@ -73,9 +76,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, 
 	int centerX = (int)((Rect->left + Rect->right) * 0.5f);
 	int centerY = (int)((Rect->top + Rect->bottom) * 0.5f);
 	SetCursorPos(centerX, centerY);
+	ShowCursor(false);	
 	ShowCursor(false);
 
-	gWorld					=	new World(g_Device, g_DeviceContext, D3DXVECTOR2(WINDOW_WIDTH, WINDOW_Height));
+	gWorld	=	new World(g_Device, g_DeviceContext, D3DXVECTOR2(WINDOW_WIDTH, WINDOW_Height));
 
 	return Run();
 }
@@ -329,7 +333,6 @@ HRESULT Update(float deltaTime)
 {
 	gWorld->Update(deltaTime);
 
-
 	char title[255];
 	sprintf_s(title, sizeof(title), "Pacman::Reloaded | FPS: %d",
 		(int)(1.0f / deltaTime));
@@ -339,7 +342,6 @@ HRESULT Update(float deltaTime)
 
 	return S_OK;
 }
-
 
 
 HRESULT Render(float deltaTime)
