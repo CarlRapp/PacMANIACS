@@ -1,27 +1,52 @@
 #ifndef CAMERA_H
 #define CAMERA_H	
 #include "stdafx.h"
+#include "GameObject.h"
+#include "InputManager.h"
+
+enum CameraState
+{
+	Follow,
+	Free
+};
+
 class Camera
 {
+private:
+	CameraState	gState;
 
+	D3DXVECTOR3	gPosition;
+	D3DXVECTOR3	gForward, gUp, gRight;
+	float		gOffset;
+
+	GameObject*	gTarget;
+
+	float		gFoV;
+	float		gAspectRatio;
+	float		gNear, gFar;
+
+
+	void	UpdateFollow(float deltaTime);
+
+
+	void	UpdateFree(float deltaTime);
+	InputManager*	gInput;
+	D3DXVECTOR2		oldMousePos;
 
 public:
-	D3DXVECTOR3 Position;
-	D3DXVECTOR3 Forward;
-	D3DXVECTOR3 Up;
-	D3DXVECTOR3 Right;
-	float offset;
+	Camera(float FoV, float AspectRatio, float Near, float Far);
+	~Camera(void);
 
-	float VelocityY;
+	void	Update(float deltaTime);
+	void	ChangeState(CameraState State);
 
-	enum CameraState { WalkMode, FreeLookMode };
-	CameraState state;
+	void	SetTarget(GameObject* Target);
+	D3DXVECTOR3 GetPosition();
+	D3DXVECTOR3 GetForward();
 
-	Camera(D3DXVECTOR3 Position, D3DXVECTOR3 Forward, float Offset);
-	void Update(float deltaTime, D3DXVECTOR2 ViewProjection);
-	D3DXMATRIX GetViewMatrix();
-	D3DXMATRIX GetProjectionMatrix(float FovY, float aspectRatio, float nearLimit, float farLimit);	
-	float GetOffset();
-
+	D3DXMATRIX	GetViewMatrix();
+	D3DXMATRIX	GetProjectionMatrix();
+	void		SetInputManager(InputManager* Input);
 };
+
 #endif
