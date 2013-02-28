@@ -31,10 +31,13 @@ private:
 
 	void LoadMap();
 	Token GetToken(std::string);
+
 public:
 	MapManager();
 	~MapManager();
 
 	char** GetMap();
 	map<char, string> GetGameObjectList();
+	int GetWidth();
+	int GetHeight();
 };

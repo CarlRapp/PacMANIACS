@@ -8,6 +8,7 @@
 #include "GameObject.h"
 #include "Camera.h"
 
+
 class GraphicsManager
 {
 	struct ModelInfo

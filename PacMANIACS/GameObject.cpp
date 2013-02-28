@@ -103,3 +103,8 @@ string GameObject::GetName()
 {
 	return "";
 }
+
+bool GameObject::IsStationary()
+{
+	return false;
+}

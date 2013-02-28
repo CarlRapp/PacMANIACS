@@ -197,3 +197,5 @@ _ReSharper*/
 *.vssscc
 $tf*/
 >>>>>>> 2bf2dadd4249fbe03f7fdaa50319864749121866
+PacMANIACS/PacMANIACS.vcxproj.filters
+PacMANIACS/PacMANIACS.vcxproj

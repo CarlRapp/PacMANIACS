@@ -10,6 +10,7 @@ World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, D3DXVECTO
 	
 	gInput				=	new InputManager();
 
+	gGOManager	=	new GameObjectManager(new MapManager());
 
 
 

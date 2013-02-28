@@ -40,7 +40,9 @@ public:
 	D3DXMATRIX		GetWorldMatrix(void);
 	D3DXMATRIX		GetWorldInverseTranspose(void);
 	D3DXMATRIX		GetRotationMatrix(void);
+
 	virtual string	GetName();
+	virtual bool	IsStationary();
 
 	bool	IsAlive();
 
