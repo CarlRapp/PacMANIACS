@@ -42,9 +42,6 @@
     <ClInclude Include="GameObject.h">
       <Filter>Header Files\GameObjects</Filter>
     </ClInclude>
-<<<<<<< HEAD
-    <ClInclude Include="MapManager.h">
-=======
     <ClInclude Include="World.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -52,7 +49,6 @@
       <Filter>Header Files\Main</Filter>
     </ClInclude>
     <ClInclude Include="InputManager.h">
->>>>>>> fa151ec8d7e80163739e77309db54611f7de7ebc
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsManager.h">
@@ -75,11 +71,6 @@
     <ClCompile Include="GameObject.cpp">
       <Filter>Source Files\GameObjects</Filter>
     </ClCompile>
-<<<<<<< HEAD
-    <ClCompile Include="MapManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-=======
     <ClCompile Include="World.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -89,13 +80,9 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Main</Filter>
     </ClCompile>
-<<<<<<< HEAD
->>>>>>> fa151ec8d7e80163739e77309db54611f7de7ebc
-=======
     <ClCompile Include="GraphicsManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
->>>>>>> 5f2391368f9f242b155332d5f3625c88fdc8c39c
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Shader.fx">
