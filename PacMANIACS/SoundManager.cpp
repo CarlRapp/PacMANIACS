@@ -195,7 +195,7 @@ void SoundManager::Update()
 	D3DXMATRIX translation, rotation, worldToCamera;
 
 	D3DXMatrixTranslation(&translation, -cameraPosition.x, -cameraPosition.y, -cameraPosition.z);
-	D3DXVECTOR3 cameraDirection;
+	D3DXVECTOR3 cameraDirection = gCamera->GetForward();
 	D3DXVECTOR3 startDirection(0,0,1);
 
 	float dot = D3DXVec3Dot(&startDirection, &cameraDirection);
@@ -254,7 +254,7 @@ void SoundManager::PlaySound(string soundName, D3DXVECTOR3 position)
 
 int SoundManager::ConvertToIndex(string soundName)
 {
-	if(soundName == "Ghost")
+	if(soundName == "Cherry")
 		return 0;
 
 	return 0;

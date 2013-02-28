@@ -78,3 +78,8 @@ D3DXVECTOR3 Camera::GetPosition()
 {
 	return gPosition;
 }
+
+D3DXVECTOR3 Camera::GetForward()
+{
+	return gForward;
+}
