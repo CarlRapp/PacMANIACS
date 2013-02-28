@@ -1,13 +1,10 @@
 #include "stdafx.h"
 #include "Shader.h"
 #include "Buffer.h"
-<<<<<<< HEAD
 #include "ObjLoader.h"
 #include "GameObject.h"
-=======
 
 #include "World.h"
->>>>>>> fa151ec8d7e80163739e77309db54611f7de7ebc
 
 #include <stdio.h>
 #include <io.h>
@@ -31,10 +28,8 @@ ID3D11DepthStencilView* g_DepthStencilView		=	NULL;
 ID3D11Device*			g_Device				=	NULL;
 ID3D11DeviceContext*	g_DeviceContext			=	NULL;
 
-<<<<<<< HEAD
-=======
+
 char*					g_Title					=	"Pacman::Reloaded";
->>>>>>> fa151ec8d7e80163739e77309db54611f7de7ebc
 
 World*					gWorld					=	NULL;
 
@@ -81,13 +76,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, 
 	int centerX = (int)((Rect->left + Rect->right) * 0.5f);
 	int centerY = (int)((Rect->top + Rect->bottom) * 0.5f);
 	SetCursorPos(centerX, centerY);
-<<<<<<< HEAD
 	ShowCursor(false);	
-=======
 	ShowCursor(false);
->>>>>>> fa151ec8d7e80163739e77309db54611f7de7ebc
 
-	gWorld					=	new World(g_Device, g_DeviceContext, D3DXVECTOR2(WINDOW_WIDTH, WINDOW_Height));
+	gWorld	=	new World(g_Device, g_DeviceContext, D3DXVECTOR2(WINDOW_WIDTH, WINDOW_Height));
 
 	return Run();
 }
@@ -335,15 +327,11 @@ void CenterMouse()
 	int	centerY	=	(int)((Rect->top + Rect->bottom) * 0.5f);
 
 	SetCursorPos(centerX, centerY);
-<<<<<<< HEAD
-=======
 }
 
 HRESULT Update(float deltaTime)
 {
 	gWorld->Update(deltaTime);
-
->>>>>>> fa151ec8d7e80163739e77309db54611f7de7ebc
 
 	char title[255];
 	sprintf_s(title, sizeof(title), "Pacman::Reloaded | FPS: %d",
@@ -354,7 +342,6 @@ HRESULT Update(float deltaTime)
 
 	return S_OK;
 }
-
 
 
 HRESULT Render(float deltaTime)
