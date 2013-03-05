@@ -103,3 +103,29 @@ string GameObject::GetTextureName()
 {
 	return "";
 }
+
+bool GameObject::IsStationary()
+{
+	return false;
+}
+
+float GameObject::GetHitRadius()
+{
+	return 3.0f;
+}
+
+bool GameObject::IsColliding(GameObject* GO)
+{
+	D3DXVECTOR3*		p1	=	&GetPosition();
+	D3DXVECTOR3*		p2	=	&GO->GetPosition();
+	D3DXVECTOR3*		p3	=	&(*p2 - *p1);
+
+	float	LengthBetween	=	D3DXVec3Length(p3);
+
+	return (LengthBetween < (GetHitRadius() + GO->GetHitRadius()));
+}
+
+D3DXVECTOR3 GameObject::GetPosition()
+{
+	return D3DXVECTOR3(gTranslation._41, gTranslation._42, gTranslation._43);
+}
