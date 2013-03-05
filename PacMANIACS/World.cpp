@@ -10,7 +10,7 @@ World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, D3DXVECTO
 	
 	gInput				=	new InputManager();
 
-	gGOManager	=	new GameObjectManager(new MapManager());
+	gGOManager			=	new GameObjectManager(new MapManager());
 
 
 
@@ -39,10 +39,9 @@ void World::Update(float deltaTime)
 	//	Let the input update first so we know
 	//	what has been pressed this update.
 	gInput->Update();
-	
-	
 
-
+	//	Update all the entites
+	gGOManager->Update(deltaTime);
 
 
 	//	Update the camera last so it has the

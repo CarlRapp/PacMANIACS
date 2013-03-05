@@ -15,6 +15,7 @@ using namespace std;
 class GameObjectManager
 {
 private:
+	vector<GameObject*>*	allGameObjects;
 	vector<GameObject*>*	moveableObjects;
 	vector<GameObject*>*	stationaryObjects;
 	char**	gMap;
@@ -22,12 +23,16 @@ private:
 	void		StartConvert(MapManager* MapData);
 	GameObject*	ConvertStringToGameObject(string GameObjectName);
 
+	void		HandleCollision(GameObject* GoA, GameObject* GoB);
+
 public:
 	GameObjectManager(MapManager* MapData);
 	~GameObjectManager();
 
 
 	void Update(float deltaTime);
+
+	vector<GameObject*>*	GetGameObjects();
 };
 
 #endif
