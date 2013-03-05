@@ -168,7 +168,6 @@ pip-log.txt
 .DS_Store
 =======
 Thumbs.db
-*.obj
 *.exe
 *.pdb
 *.user
@@ -196,5 +195,4 @@ _ReSharper*/
 [Tt]est[Rr]esult*
 *.vssscc
 $tf*/
-PacMANIACS/PacMANIACS.vcxproj.filters
-PacMANIACS/PacMANIACS.vcxproj
+>>>>>>> 2bf2dadd4249fbe03f7fdaa50319864749121866
