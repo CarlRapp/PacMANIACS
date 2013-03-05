@@ -10,6 +10,7 @@
 #include "GameObject.h"
 #include "MapManager.h"
 #include "Ghost.h"
+#include "Candy.h"
 
 using namespace std;
 
