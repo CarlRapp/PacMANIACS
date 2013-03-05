@@ -111,7 +111,7 @@ bool GameObject::IsStationary()
 
 float GameObject::GetHitRadius()
 {
-	return 3.0f;
+	return 0.0f;
 }
 
 bool GameObject::IsColliding(GameObject* GO)

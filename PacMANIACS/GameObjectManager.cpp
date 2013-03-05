@@ -43,9 +43,7 @@ void GameObjectManager::StartConvert(MapManager* MapData)
 					allGameObjects->push_back(GO);
 
 
-					cout << "ADD CANDY A(UNDER THE CREATED GAMEOBJECT)" << endl;
-					GameObject*	GO2	=	NULL;
-					GO2	=	new GameObject(); //	<---- Change to Candy when implemented!!!!!!!!!
+					GameObject*	GO2	=	new Candy();
 					GO2->MoveTo(X, 2, Y);
 
 					//	Add candy to both lists
@@ -55,9 +53,7 @@ void GameObjectManager::StartConvert(MapManager* MapData)
 			}
 			else if (currentChar == '0')
 			{
-				cout << "ADD CANDY B (USUAL CANDY)" << endl;
-				GameObject*	GO2	=	NULL;
-				GO2	=	new GameObject(); //	<---- Change to Candy when implemented!!!!!!!!!
+				GameObject*	GO2	=	new Candy();
 				GO2->MoveTo(X, 2, Y);
 
 				//	Add candy to both lists

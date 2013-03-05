@@ -20,7 +20,8 @@ public:
 
 	string	GetName();
 	string	GetTextureName();
-	
+	float	GetHitRadius();
+
 	void	SetAIState(GhostAIState* AIState);
 };
 
