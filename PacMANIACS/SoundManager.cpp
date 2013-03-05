@@ -145,7 +145,7 @@ bool SoundManager::LoadSoundFile(char* filename)
 	if(FAILED(result))
 		return false;
 
-	result = tempBuffer->QueryInterface(IID_IDirectSoundBuffer8, (void**)&tempSecondaryBuffer);
+	result = tempBuffer->QueryInterface(IID_IDirectSoundBuffer8, (void**)&*tempSecondaryBuffer);
 	if(FAILED(result))
 		return false;
 
