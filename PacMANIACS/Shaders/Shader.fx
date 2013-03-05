@@ -1,3 +1,5 @@
+#include "LightHelper.fx"
+
 cbuffer PerFrame
 {
 	matrix View;
@@ -31,6 +33,7 @@ struct VSIn
 struct PSSceneIn
 {
 	float4 Pos			: SV_POSITION;
+	float3 PosW			: POSITION;
 	float3 NormalW		: NORMAL;
 	float2 TexCoord		: TEXTURECOORD;
 };
@@ -52,7 +55,7 @@ PSSceneIn VSScene(VSIn input)
 	PSSceneIn output = (PSSceneIn)0;
 	
 	output.Pos				= mul(float4(input.Pos,1)	, WVP);
-	//output.Pos				= mul(float4(input.Pos,1)	, World);
+	output.PosW				= mul(input.Pos				, (float3x3)World);
 	//output.Pos				= mul(output.Pos			, View);
 	//output.Pos				= mul(output.Pos			, Projection);
 	
@@ -70,7 +73,32 @@ float4 PSScene(PSSceneIn input) : SV_Target
 {	
 	input.NormalW = normalize(input.NormalW);
 	float4 texColor			= Color.Sample(g_Sampler, input.TexCoord);
-	return texColor;
+	
+	//Object material:
+	float Shininess			= 500;
+	float SpecularIntensity	= 1;
+	
+	//Totala ljusstyrkan
+	float4 AmbientDiffuse	= float4(0,0,0,0);
+	float4 Specular			= float4(0,0,0,0);
+	
+	//AD och S är ljusstyrkan för ljuset vi räknar på.
+	float4 AD;
+	float4 S;	
+		
+	//Skapar ett DirectionalLight.
+	DirectionalLight light;
+	light.Color 			= float4(1,1,1,1);
+	light.AmbientIntensity	= 0.2f;
+	light.DiffuseIntensity	= 0.8f;
+	light.SpecularIntensity	= 1.0f;
+	light.Direction			= float3(0,0,1);
+	
+	ComputeDirectionalLight(input.PosW, input.NormalW, CameraPos, light, Shininess, SpecularIntensity, AD, S);
+	AmbientDiffuse 	+= AD;
+	Specular		+= S;
+	
+	return saturate(texColor * AmbientDiffuse + Specular);
 }
 
 DepthStencilState DepthStencil
