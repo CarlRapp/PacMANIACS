@@ -41,6 +41,7 @@ public:
 	D3DXMATRIX		GetWorldInverseTranspose(void);
 	D3DXMATRIX		GetRotationMatrix(void);
 	virtual string	GetName();
+	virtual string	GetTextureName();
 
 	bool	IsAlive();
 

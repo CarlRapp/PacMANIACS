@@ -168,7 +168,6 @@ pip-log.txt
 .DS_Store
 =======
 Thumbs.db
-*.obj
 *.exe
 *.pdb
 *.user

@@ -1,7 +1,7 @@
 #include "World.h"
 
 
-World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, D3DXVECTOR2 Resolution)
+World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, ID3D11RenderTargetView* renderTargetView, D3DXVECTOR2 Resolution)
 {
 	gState				=	(WorldState)Paused;
 	gDeviceContext		=	deviceContext;
@@ -24,10 +24,12 @@ World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, D3DXVECTO
 
 
 	//Create the GraphicsManager
-	gGraphicsManager	=	new GraphicsManager(device, deviceContext);
+	gGraphicsManager	=	new GraphicsManager(device, deviceContext, renderTargetView, Resolution);
 	gGraphicsManager->SetCamera(gCamera);
-	//GameObjectManager->GetGameObjects() istället för 0.
-	gGraphicsManager->SetGameObjects(0);
+	gGraphicsManager->SetModelPath("Models");
+	gGraphicsManager->SetTexturePath("Models\\Textures");
+	//GameObjectManager->GetGameObjects() istället för new vector<GameObject*>().
+	gGraphicsManager->SetGameObjects(new vector<GameObject*>());
 
 	gGraphicsManager->LoadModels();
 }

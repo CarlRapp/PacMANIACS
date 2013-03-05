@@ -5,14 +5,9 @@
 
 GameObject::GameObject()
 {
-	D3DXMatrixTranslation(&gTranslation, 0, 0, 0);
-	D3DXMatrixScaling(&gScale, 0, 0, 0);
-	D3DXMatrixRotationYawPitchRoll(&gRotation, 0, 0, 0);
-
-	Move(22, 23, 24);
-	SetRotation(2, 1, 3);
+	MoveTo(0, 0, 0);
+	SetRotation(0, 0, 0);
 	SetScale(1, 1, 1);
-	
 
 	gState	=	Alive;
 }
@@ -100,6 +95,11 @@ D3DXMATRIX GameObject::GetWorldInverseTranspose(void)
 }
 
 string GameObject::GetName()
+{
+	return "";
+}
+
+string GameObject::GetTextureName()
 {
 	return "";
 }
