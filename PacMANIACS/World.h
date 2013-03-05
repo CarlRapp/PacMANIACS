@@ -5,6 +5,8 @@
 #include "InputManager.h"
 #include "Camera.h"
 #include "GraphicsManager.h"
+#include "MapManager.h"
+#include "GameObjectManager.h"
 
 #include <string>
 
@@ -23,7 +25,9 @@ private:
 
 	InputManager*		gInput;
 	GraphicsManager*	gGraphicsManager;
+	GameObjectManager*	gGOManager;
 	Camera*				gCamera;
+
 
 	D3DXVECTOR2		gResolution;
 public:
