@@ -102,3 +102,13 @@ map<char, string> MapManager::GetGameObjectList()
 {
 	return m_gameObjectList;
 }
+
+
+int MapManager::GetWidth()
+{
+	return m_mapWidth;
+}
+int MapManager::GetHeight()
+{
+	return m_mapHeight;
+}
