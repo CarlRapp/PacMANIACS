@@ -2,22 +2,18 @@
 #define GAMEOBJECT_H	
 
 #include "stdafx.h"
+#include "GameObjectState.h"
+
 #include <string>
 
 using namespace std;
 
-enum GameObjectState
-{
-	Alive,
-	Idle,
-	Dead
-};
 
 class GameObject
 {
 private:
 	//	Fields
-	GameObjectState	gState;
+	GameObjectState* gState;
 
 	//	Matrices
 	D3DXMATRIX	gRotation;
