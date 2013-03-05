@@ -77,9 +77,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, 
 	int centerY = (int)((Rect->top + Rect->bottom) * 0.5f);
 	SetCursorPos(centerX, centerY);
 	ShowCursor(false);	
-	ShowCursor(false);
 
-	gWorld	=	new World(g_Device, g_DeviceContext, D3DXVECTOR2(WINDOW_WIDTH, WINDOW_Height));
+	gWorld	=	new World(g_Device, g_DeviceContext, g_RenderTargetView, D3DXVECTOR2(WINDOW_WIDTH, WINDOW_Height));
 
 	return Run();
 }
