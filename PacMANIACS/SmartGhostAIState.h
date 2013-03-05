@@ -7,8 +7,6 @@
 class SmartGhostAIState : public GhostAIState
 {
 public:
-	SmartGhostAIState(void);
-	~SmartGhostAIState(void);
 	string GetTextureName();
 };
 

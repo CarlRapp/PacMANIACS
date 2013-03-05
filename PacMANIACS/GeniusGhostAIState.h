@@ -7,8 +7,6 @@
 class GeniusGhostAIState : public GhostAIState
 {
 public:
-	GeniusGhostAIState(void);
-	~GeniusGhostAIState(void);
 	string GetTextureName();
 };
 
