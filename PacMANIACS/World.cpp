@@ -10,7 +10,7 @@ World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, ID3D11Ren
 	
 	gInput				=	new InputManager();
 
-
+	gGOManager			=	new GameObjectManager(new MapManager());
 
 
 
@@ -40,7 +40,9 @@ void World::Update(float deltaTime)
 	//	Let the input update first so we know
 	//	what has been pressed this update.
 	gInput->Update();
-	
+
+	//	Update all the Game Objects
+	gGOManager->Update(deltaTime);
 	
 
 
