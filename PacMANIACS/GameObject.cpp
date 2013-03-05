@@ -5,14 +5,9 @@
 
 GameObject::GameObject()
 {
-	D3DXMatrixTranslation(&gTranslation, 0, 0, 0);
-	D3DXMatrixScaling(&gScale, 0, 0, 0);
-	D3DXMatrixRotationYawPitchRoll(&gRotation, 0, 0, 0);
-
-	Move(22, 23, 24);
-	SetRotation(2, 1, 3);
+	MoveTo(0, 0, 0);
+	SetRotation(0, 0, 0);
 	SetScale(1, 1, 1);
-	
 
 	gState	=	Alive;
 }
@@ -102,4 +97,35 @@ D3DXMATRIX GameObject::GetWorldInverseTranspose(void)
 string GameObject::GetName()
 {
 	return "";
+}
+
+string GameObject::GetTextureName()
+{
+	return "";
+}
+
+bool GameObject::IsStationary()
+{
+	return false;
+}
+
+float GameObject::GetHitRadius()
+{
+	return 3.0f;
+}
+
+bool GameObject::IsColliding(GameObject* GO)
+{
+	D3DXVECTOR3*		p1	=	&GetPosition();
+	D3DXVECTOR3*		p2	=	&GO->GetPosition();
+	D3DXVECTOR3*		p3	=	&(*p2 - *p1);
+
+	float	LengthBetween	=	D3DXVec3Length(p3);
+
+	return (LengthBetween < (GetHitRadius() + GO->GetHitRadius()));
+}
+
+D3DXVECTOR3 GameObject::GetPosition()
+{
+	return D3DXVECTOR3(gTranslation._41, gTranslation._42, gTranslation._43);
 }

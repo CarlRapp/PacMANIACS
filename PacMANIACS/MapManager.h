@@ -37,4 +37,6 @@ public:
 
 	char** GetMap();
 	map<char, string> GetGameObjectList();
+	int GetWidth();
+	int GetHeight();
 };

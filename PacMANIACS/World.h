@@ -5,6 +5,8 @@
 #include "InputManager.h"
 #include "Camera.h"
 #include "GraphicsManager.h"
+#include "MapManager.h"
+#include "GameObjectManager.h"
 
 #include <string>
 
@@ -23,11 +25,13 @@ private:
 
 	InputManager*		gInput;
 	GraphicsManager*	gGraphicsManager;
+	GameObjectManager*	gGOManager;
 	Camera*				gCamera;
+
 
 	D3DXVECTOR2		gResolution;
 public:
-	World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, D3DXVECTOR2 Resolution);
+	World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, ID3D11RenderTargetView* renderTargetView, D3DXVECTOR2 Resolution);
 
 
 	void Update(float deltaTime);

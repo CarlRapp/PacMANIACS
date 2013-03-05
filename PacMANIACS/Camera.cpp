@@ -13,10 +13,13 @@ Camera::Camera(float FoV, float AspectRatio, float Near, float Far)
 	gFar			=	Far;
 	gState			=	CameraState::Free;
 	gPosition		=	D3DXVECTOR3(0, 0, 0);
+	gForward		=	D3DXVECTOR3(0, 0, 1);
+	oldMousePos		=	D3DXVECTOR2(-1, -1);
 
 	D3DXVec3Normalize(&(gForward), &D3DXVECTOR3(gForward.x, 0 , gForward.z));
 	gUp	=	D3DXVECTOR3(0, 1, 0);
 	D3DXVec3Cross(&(gRight), &gUp, &(gForward));
+
 }
 
 void Camera::SetInputManager(InputManager* Input)
@@ -53,8 +56,15 @@ void Camera::UpdateFollow(float deltaTime)
 
 void Camera::UpdateFree(float deltaTime)
 {
-	if(gInput != NULL)
+	if(gInput == NULL)
 		return;
+
+	if (oldMousePos == D3DXVECTOR2(-1, -1))
+	{
+		LPPOINT mouseCoords = new POINT();
+		GetCursorPos(mouseCoords);
+		oldMousePos		=	D3DXVECTOR2(mouseCoords->x, mouseCoords->y);
+	}
 
 	float	speed	=	24.0f * deltaTime;
 	float	sens	=	0.0016f;
@@ -68,11 +78,11 @@ void Camera::UpdateFree(float deltaTime)
 	GetCursorPos(mouseCoords);
 
 	D3DXVECTOR2	mousePos		=	D3DXVECTOR2(mouseCoords->x, mouseCoords->y);
-	D3DXVECTOR2	mouseMovement	=	D3DXVECTOR2(mousePos.x - oldMousePos.x, oldMousePos.y - mousePos.y);
+	D3DXVECTOR2	mouseMovement	=	D3DXVECTOR2(mousePos.x - oldMousePos.x, mousePos.y - oldMousePos.y);
 
 	
-	float	rotUp		=	mouseMovement.x * sens;
-	float	rotRight	=	mouseMovement.y * sens;
+	float	rotRight	=	mouseMovement.x * sens;
+	float	rotUp		=	mouseMovement.y * sens;
 
 	if (gInput->IsKeyDown('W'))
 		gPosition += speed * gForward;
