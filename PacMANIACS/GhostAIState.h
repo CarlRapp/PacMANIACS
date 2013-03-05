@@ -8,11 +8,32 @@ using namespace std;
 
 class GhostAIState
 {
-
 public:
-	GhostAIState(void);
-	virtual ~GhostAIState(void);
 	virtual string GetTextureName() = 0;
+};
+
+class StupidGhostAIState : public GhostAIState
+{
+public:
+	string GetTextureName();
+};
+
+class NormalGhostAIState : public GhostAIState
+{
+public:
+	string GetTextureName();
+};
+
+class SmartGhostAIState : public GhostAIState
+{
+public:
+	string GetTextureName();
+};
+
+class GeniusGhostAIState : public GhostAIState
+{
+public:
+	string GetTextureName();
 };
 
 #endif
