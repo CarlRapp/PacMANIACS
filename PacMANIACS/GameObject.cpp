@@ -9,7 +9,7 @@ GameObject::GameObject()
 	SetRotation(0, 0, 0);
 	SetScale(1, 1, 1);
 
-	gState	=	Alive;
+	gState	=	new AliveGameObjectState();
 }
 
 GameObject::~GameObject()
@@ -19,12 +19,12 @@ GameObject::~GameObject()
 
 void GameObject::Update(float deltaTime)
 {
-	Move(1*deltaTime, 1*deltaTime, 1*deltaTime);
+	//Move(1*deltaTime, 0*deltaTime, 1*deltaTime);
 }
 
 bool GameObject::IsAlive()
 {
-	return (gState != Dead);
+	return gState->IsAlive();
 }
 
 
@@ -111,7 +111,7 @@ bool GameObject::IsStationary()
 
 float GameObject::GetHitRadius()
 {
-	return 3.0f;
+	return 0.0f;
 }
 
 bool GameObject::IsColliding(GameObject* GO)

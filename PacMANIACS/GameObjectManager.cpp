@@ -28,7 +28,9 @@ void GameObjectManager::StartConvert(MapManager* MapData)
 				string	ObjectName	=	MapData->GetGameObjectList().at(currentChar);
 				GameObject*	GO	=	NULL;
 				GO	=	ConvertStringToGameObject(ObjectName);
-				GO->MoveTo(X, 2, Y);
+				GO->SetScale(0.5f, 0.5f, 0.5f);
+				GO->MoveTo(Y, 1, X);
+				GO->SetRotation((X+1)*(Y-1), 0, 0);
 				
 				if(GO->IsStationary())
 				{
@@ -43,29 +45,40 @@ void GameObjectManager::StartConvert(MapManager* MapData)
 					allGameObjects->push_back(GO);
 
 
-					cout << "ADD CANDY A(UNDER THE CREATED GAMEOBJECT)" << endl;
-					GameObject*	GO2	=	NULL;
-					GO2	=	new GameObject(); //	<---- Change to Candy when implemented!!!!!!!!!
-					GO2->MoveTo(X, 2, Y);
+					GameObject*	GO2	=	new Candy();
+					GO2->SetScale(0.5f, 0.5f, 0.5f);
+					GO2->MoveTo(Y, 1, X);
 
 					//	Add candy to both lists
-					stationaryObjects->push_back(GO2);
-					allGameObjects->push_back(GO2);
+				//	stationaryObjects->push_back(GO2);
+				//	allGameObjects->push_back(GO2);
 				}
 			}
 			else if (currentChar == '0')
 			{
-				cout << "ADD CANDY B (USUAL CANDY)" << endl;
-				GameObject*	GO2	=	NULL;
-				GO2	=	new GameObject(); //	<---- Change to Candy when implemented!!!!!!!!!
-				GO2->MoveTo(X, 2, Y);
+				GameObject*	GO2	=	new Candy();
+				GO2->SetScale(0.5f, 0.5f, 0.5f);
+				GO2->MoveTo(Y, 1, X);
 
 				//	Add candy to both lists
 				stationaryObjects->push_back(GO2);
 				allGameObjects->push_back(GO2);
 			}
 
+			if(currentChar == '1')
+			{
+				GameObject*	WALL	=	new Wall();
+				WALL->MoveTo(Y, 0, X);
 
+				allGameObjects->push_back(WALL); 
+			}
+			else
+			{
+				GameObject* FLOOR = new Floor();
+				FLOOR->MoveTo(Y, 0, X);
+
+				allGameObjects->push_back(FLOOR);
+			}
 		}
 	}
 }
@@ -80,6 +93,21 @@ GameObject* GameObjectManager::ConvertStringToGameObject(string GOName)
 	{
 		GO	=	new Ghost();
 		((Ghost*)(GO))->SetAIState(new StupidGhostAIState());
+	}
+	else if(GOName == "Ghost2")
+	{
+		GO	=	new Ghost();
+		((Ghost*)(GO))->SetAIState(new NormalGhostAIState());
+	}
+	else if(GOName == "Ghost3")
+	{
+		GO	=	new Ghost();
+		((Ghost*)(GO))->SetAIState(new SmartGhostAIState());
+	}
+	else if(GOName == "Ghost4")
+	{
+		GO	=	new Ghost();
+		((Ghost*)(GO))->SetAIState(new GeniusGhostAIState());
 	}
 
 	return GO;
@@ -115,4 +143,9 @@ void GameObjectManager::Update(float deltaTime)
 void GameObjectManager::HandleCollision(GameObject* GoA, GameObject* GoB)
 {
 
+}
+
+vector<GameObject*>* GameObjectManager::GetGameObjects()
+{
+	return allGameObjects;
 }
