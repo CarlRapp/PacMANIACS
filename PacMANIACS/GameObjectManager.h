@@ -11,6 +11,8 @@
 #include "MapManager.h"
 #include "Ghost.h"
 #include "Candy.h"
+#include "Wall.h"
+#include "Floor.h"
 
 using namespace std;
 
@@ -20,6 +22,7 @@ private:
 	vector<GameObject*>*	allGameObjects;
 	vector<GameObject*>*	moveableObjects;
 	vector<GameObject*>*	stationaryObjects;
+
 	char**	gMap;
 
 	void		StartConvert(MapManager* MapData);
