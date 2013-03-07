@@ -332,11 +332,7 @@ HRESULT Update(float deltaTime)
 {
 	gWorld->Update(deltaTime);
 
-	char title[255];
-	sprintf_s(title, sizeof(title), "Pacman::Reloaded | FPS: %d",
-		(int)(1.0f / deltaTime));
-
-	SetWindowText(g_hWndMain, title);
+	
 	//CenterMouse();
 
 	return S_OK;
@@ -358,10 +354,17 @@ HRESULT Render(float deltaTime)
 	float width = (float)(Rect->right - Rect->left);
 	float height = (float)(Rect->bottom - Rect->top);
 
+	
+
 	gWorld->Render();
 
 	if(FAILED(g_SwapChain->Present( 0, 0 )))
 		return E_FAIL;
+
+	char title[255];
+	sprintf_s(title, sizeof(title), "Pacman::Reloaded | FPS: %d",
+		(int)(1.0f / deltaTime));
+	SetWindowText(g_hWndMain, title);
 
 	return S_OK;
 }
