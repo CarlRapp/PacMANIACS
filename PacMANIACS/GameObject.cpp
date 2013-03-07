@@ -9,7 +9,7 @@ GameObject::GameObject()
 	SetRotation(0, 0, 0);
 	SetScale(1, 1, 1);
 
-	gState	=	Alive;
+	gState	=	new AliveGameObjectState();
 }
 
 GameObject::~GameObject()
@@ -24,7 +24,7 @@ void GameObject::Update(float deltaTime)
 
 bool GameObject::IsAlive()
 {
-	return (gState != Dead);
+	return gState->IsAlive();
 }
 
 
