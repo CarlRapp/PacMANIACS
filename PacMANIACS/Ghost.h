@@ -52,7 +52,7 @@ public:
 	float	GetHitRadius();
 
 	void	SetAIState(GhostAIState* AIState);
-	void	CalculateMove(GameObject* target);
+	void	CalculateMove(GameObject* target, vector<D3DXVECTOR3> availableMoves);
 };
 
 #endif
