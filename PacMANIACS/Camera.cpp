@@ -42,16 +42,14 @@ void Camera::UpdateFollow(float deltaTime)
 
 	D3DXMATRIX rotation	=	gTarget->GetRotationMatrix();
 
-	D3DXVec3TransformCoord(&gRight, &gRight, &rotation);
-	D3DXVec3TransformCoord(&gForward, &gForward, &rotation);
+	D3DXVec3TransformCoord(&gRight, &D3DXVECTOR3(-1,0,0), &rotation);
+	D3DXVec3TransformCoord(&gForward, &D3DXVECTOR3(0, 0, -1), &rotation);
 
-	D3DXVec3TransformCoord(&gForward, &gForward, &rotation);
+	D3DXVec3Cross(&D3DXVECTOR3(0, 1, 0), &gForward, &gRight);
 
-	D3DXVec3Cross(&gUp, &gForward, &gRight);
-
-	gPosition.x	=	gTarget->GetWorldMatrix()._41;
-	gPosition.y	=	gTarget->GetWorldMatrix()._42;
-	gPosition.z	=	gTarget->GetWorldMatrix()._43;
+	gPosition.x	=	gTarget->GetWorldMatrix()._41 - gForward.x * 5;
+	gPosition.y	=	gTarget->GetWorldMatrix()._42 + 4;
+	gPosition.z	=	gTarget->GetWorldMatrix()._43 - gForward.z * 5;
 }
 
 void Camera::UpdateFree(float deltaTime)
@@ -135,7 +133,28 @@ D3DXMATRIX Camera::GetProjectionMatrix()
 void Camera::SetTarget(GameObject* Target)
 {
 	gTarget	=	Target;
-	gState	=	CameraState::Follow;
+
+	if(gTarget == NULL)
+	{
+		gState			=	CameraState::Free;
+		gForward		=	D3DXVECTOR3(0, 0, 1);
+
+		D3DXVec3Normalize(&(gForward), &D3DXVECTOR3(gForward.x, 0 , gForward.z));
+		gUp	=	D3DXVECTOR3(0, 1, 0);
+		D3DXVec3Cross(&(gRight), &gUp, &(gForward));
+	}
+	else
+	{
+		D3DXVec3TransformCoord(&gRight, &D3DXVECTOR3(1,0,0), &Target->GetRotationMatrix());
+		D3DXVec3TransformCoord(&gForward, &D3DXVECTOR3(0,0,-1), &Target->GetRotationMatrix());
+		gUp	=	D3DXVECTOR3(0, 1, 0);
+
+		gPosition.x	=	gTarget->GetWorldMatrix()._41 - gForward.x * 5;
+		gPosition.y	=	gTarget->GetWorldMatrix()._42 + 4;
+		gPosition.z	=	gTarget->GetWorldMatrix()._43 - gForward.z * 5;
+	
+		gState	=	CameraState::Follow;
+	}
 }
 
 D3DXVECTOR3 Camera::GetPosition()
