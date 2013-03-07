@@ -37,10 +37,13 @@ private:
 	IDirectSoundBuffer*			gPrimaryBuffer;
 	IDirectSound3DListener8*	gListener;
 
+	typedef map<string, IDirectSoundBuffer8*>	MAP_SOUNDBUFFER;
+	typedef map<string, IDirectSound3DBuffer8*> MAP_SOUND3DBUFFER;
+	typedef map<string, D3DXVECTOR3>			MAP_POSITION;
 
-	vector<IDirectSoundBuffer8*>	gSecondaryBuffers;
-	vector<IDirectSound3DBuffer8*>	gSecondary3DBuffers;
-	vector<D3DXVECTOR3>				gSoundPositions;
+	MAP_SOUNDBUFFER		gSecondaryBufferMap;
+	MAP_SOUND3DBUFFER	gSecondary3DBufferMap;
+	MAP_POSITION		gSoundPositionMap;
 public:
 	SoundManager(Camera* camera, HWND hwnd);
 	~SoundManager(void);

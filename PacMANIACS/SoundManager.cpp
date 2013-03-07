@@ -8,9 +8,9 @@ SoundManager::SoundManager(Camera* camera, HWND hwnd)
 	gPrimaryBuffer = 0;
 	gListener = 0;
 
-	gSecondaryBuffers.clear();
-	gSecondary3DBuffers.clear();
-	gSoundPositions.clear();
+	gSecondaryBufferMap		= MAP_SOUNDBUFFER();
+	gSecondary3DBufferMap	= MAP_SOUND3DBUFFER();
+	gSoundPositionMap		= MAP_POSITION();
 
 	bool result;
 
@@ -18,7 +18,7 @@ SoundManager::SoundManager(Camera* camera, HWND hwnd)
 	if(!result)
 		return;
 
-	result = LoadSoundFile("Sounds/Cherry.wav");
+	result = LoadSoundFile("Sounds/LoginScreenIntro4.wav");
 	if(!result)
 		return;
 }
@@ -30,9 +30,9 @@ SoundManager::~SoundManager(void)
 	gPrimaryBuffer = 0;
 	gListener = 0;
 
-	gSecondaryBuffers.clear();
-	gSecondary3DBuffers.clear();
-	gSoundPositions.clear();
+	gSecondaryBufferMap.clear();
+	gSecondary3DBufferMap.clear();
+	gSoundPositionMap.clear();
 }
 
 bool SoundManager::Initialize(HWND hwnd)
@@ -200,30 +200,30 @@ bool SoundManager::LoadSoundFile(char* filename)
 	if(FAILED(result))
 		return false;
 
-	gSecondaryBuffers.push_back(*tempSecondaryBuffer);
-	gSecondary3DBuffers.push_back(*tempSecondary3DBuffer);
-	gSoundPositions.push_back(D3DXVECTOR3(0, 0, 0));
+	gSecondaryBufferMap.insert(pair<string, IDirectSoundBuffer8*>(filename, *tempSecondaryBuffer));
+	gSecondary3DBufferMap.insert(pair<string, IDirectSound3DBuffer8*>(filename, *tempSecondary3DBuffer));
+	gSoundPositionMap.insert(pair<string, D3DXVECTOR3>(filename, D3DXVECTOR3(0, 0, 0)));
+
 }
 
 bool SoundManager::PlaySound(string name, D3DXVECTOR3 position)
 {
 	HRESULT result;
-	int index = ConvertToIndex(name);
-	if(index != -1)
+	if(gSoundPositionMap.count(name) != 0)
 	{
-		gSoundPositions[index] = position;
+		gSoundPositionMap[name] = position;
 
-		result = gSecondaryBuffers[index]->SetCurrentPosition(0);
+		result = gSecondaryBufferMap[name]->SetCurrentPosition(0);
 		if(FAILED(result))
 			return false;
 
-		result = gSecondaryBuffers[index]->SetVolume(DSBVOLUME_MAX);
+		result = gSecondaryBufferMap[name]->SetVolume(DSBVOLUME_MAX);
 		if(FAILED(result))
 			return false;
 
 		Update();
 
-		result = gSecondaryBuffers[index]->Play(0, 0, 0);
+		result = gSecondaryBufferMap[name]->Play(0, 0, 0);
 		if(FAILED(result))
 			return false;
 
@@ -261,10 +261,10 @@ void SoundManager::Update()
 	worldToCamera = translation * rotation;
 	
 	D3DXVECTOR3 newPosition;
-	for(int i = 0; i < gSecondary3DBuffers.size(); i++)
+	for(MAP_SOUND3DBUFFER::iterator iterator = gSecondary3DBufferMap.begin(); iterator != gSecondary3DBufferMap.end(); iterator++) 
 	{
-		D3DXVec3TransformCoord(&newPosition, &gSoundPositions[i], &worldToCamera);
-		gSecondary3DBuffers[i]->SetPosition(newPosition.x, newPosition.y, newPosition.z, DS3D_IMMEDIATE);
+		D3DXVec3TransformCoord(&newPosition, &gSoundPositionMap[iterator->first], &worldToCamera);
+		iterator->second->SetPosition(newPosition.x, newPosition.y, newPosition.z, DS3D_IMMEDIATE);
 	}
 }
 
