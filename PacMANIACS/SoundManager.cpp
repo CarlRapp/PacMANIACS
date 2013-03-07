@@ -16,11 +16,11 @@ SoundManager::SoundManager(Camera* camera, HWND hwnd)
 
 	result = Initialize(hwnd);
 	if(!result)
-		return;
+		::MessageBox(0, "Initializing of the SoundManager failed!", "Error", MB_OK);
 
-	result = LoadSoundFile("Sounds/Cherry.wav");
+	result = LoadSoundFile("Sounds/LoginScreenIntro4.wav");
 	if(!result)
-		return;
+		::MessageBox(0, "Loading of file 'Cherry' failed!", "Error", MB_OK);
 }
 
 
@@ -203,6 +203,11 @@ bool SoundManager::LoadSoundFile(char* filename)
 	gSecondaryBuffers.push_back(*tempSecondaryBuffer);
 	gSecondary3DBuffers.push_back(*tempSecondary3DBuffer);
 	gSoundPositions.push_back(D3DXVECTOR3(0, 0, 0));
+
+	filePtr = 0;
+	tempBuffer = 0;
+	bufferPtr = 0;
+	bufferSize = 0;
 }
 
 bool SoundManager::PlaySound(string name, D3DXVECTOR3 position)

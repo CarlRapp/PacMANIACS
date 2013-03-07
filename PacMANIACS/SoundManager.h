@@ -1,7 +1,6 @@
 #pragma once
 #include "stdafx.h"
 #include "Camera.h"
-#include <Windows.h>
 #include <MMSystem.h>
 #include <dsound.h>
 #include <stdio.h>
