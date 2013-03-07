@@ -50,6 +50,11 @@ void GameObject::Move(float dx, float dy, float dz)
 	UpdateWorldMatrix(false);
 }
 
+void GameObject::MoveTo(D3DXVECTOR3 pos)
+{
+	MoveTo(pos.x, pos.y, pos.z);
+}
+
 void GameObject::MoveTo(float x, float y, float z)
 {
 	D3DXMatrixTranslation(&gTranslation, x, y, z);
