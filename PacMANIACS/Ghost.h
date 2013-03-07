@@ -5,10 +5,6 @@
 #include "GameObject.h"
 
 #include "GhostAIState.h"
-#include "StupidGhostAIState.h"
-#include "NormalGhostAIState.h"
-#include "SmartGhostAIState.h"
-#include "GeniusGhostAIState.h"
 
 class Ghost : public GameObject
 {
@@ -20,7 +16,8 @@ public:
 
 	string	GetName();
 	string	GetTextureName();
-	
+	float	GetHitRadius();
+
 	void	SetAIState(GhostAIState* AIState);
 };
 

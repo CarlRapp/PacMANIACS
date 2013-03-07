@@ -108,31 +108,6 @@ ID3D11ShaderResourceView* GraphicsManager::LoadShaderResourceView(string path)
 
 void GraphicsManager::LoadModels()
 {
-	Ghost *ghost = new Ghost();
-	ghost->MoveTo(-3, 0, 5);
-	ghost->SetRotation(PI,0,0);
-	ghost->SetAIState(new StupidGhostAIState());
-
-	Ghost *ghost2 = new Ghost();
-	ghost2->MoveTo(-1, 0, 5);
-	ghost2->SetRotation(PI,0,0);
-	ghost2->SetAIState(new NormalGhostAIState());
-
-	Ghost *ghost3 = new Ghost();
-	ghost3->MoveTo(1, 0, 5);
-	ghost3->SetRotation(PI,0,0);
-	ghost3->SetAIState(new SmartGhostAIState());
-
-	Ghost *ghost4 = new Ghost();
-	ghost4->MoveTo(3, 0, 5);
-	ghost4->SetRotation(PI,0,0);
-	ghost4->SetAIState(new GeniusGhostAIState());
-
-	gGameObjects->push_back(ghost);
-	gGameObjects->push_back(ghost2);
-	gGameObjects->push_back(ghost3);
-	gGameObjects->push_back(ghost4);
-
 	if (!gGameObjects)
 		return;
 
@@ -149,7 +124,6 @@ void GraphicsManager::LoadModels()
 	for each (GameObject* gameObject in *gGameObjects)
 	{
 		//Om typen av objektet inte redan är laddad
-		
 		if (vertexMap.count(gameObject->GetName()) == 0)
 		{
 			//Ladda in modellen
@@ -170,7 +144,7 @@ void GraphicsManager::LoadModels()
 		
 		
 		//Om texturen inte redan är inladdad
-		if (gTextureMap.count("") == 0) //gameObject.GetTextureName()
+		if (gTextureMap.count(gameObject->GetTextureName()) == 0) //gameObject.GetTextureName()
 		{
 			//Ladda texturen
 			string path = texturePath + "\\" + gameObject->GetTextureName();
@@ -179,7 +153,6 @@ void GraphicsManager::LoadModels()
 			//Sparar texturen i gTextureMap
 			gTextureMap.insert(pair<string, ID3D11ShaderResourceView*>(gameObject->GetTextureName(), texture)); //gameObject.GetTextureName()
 		}
-		
 	}
 	
 	//Lägger in vertexdatan för alla modellerna i en och samma vector.
@@ -258,6 +231,7 @@ void GraphicsManager::Render()
 
 	for each (GameObject* gameObject in *gGameObjects)
 	{
+
 		//world matrisen
 		world					= gameObject->GetWorldMatrix();
 
@@ -275,6 +249,7 @@ void GraphicsManager::Render()
 		
 		//Set texture.
 		gShader->SetResource("Color", gTextureMap[gameObject->GetTextureName()]);
+		
 
 		gShader->Apply(0);
 
@@ -282,5 +257,4 @@ void GraphicsManager::Render()
 		IndexInfo indexInfo = gIndexMap[gameObject->GetName()];
 		gDeviceContext->Draw(indexInfo.count, indexInfo.start);
 	}
-	
 }

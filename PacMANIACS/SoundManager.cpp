@@ -3,32 +3,39 @@
 
 SoundManager::SoundManager(Camera* camera, HWND hwnd)
 {
-	gDirectSound	 = 0;
-	gPrimaryBuffer	 = 0;
-	gListener		 = 0;
-	gSecondary3DBuffers.clear();
-	gSecondaryBuffers.clear();
-	gSoundPositions.clear();
-
 	gCamera = camera;
+	gDirectSound = 0;
+	gPrimaryBuffer = 0;
+	gListener = 0;
 
-	InitializeDirectSound(hwnd);
+	gSecondaryBufferMap		= MAP_SOUNDBUFFER();
+	gSecondary3DBufferMap	= MAP_SOUND3DBUFFER();
+	gSoundPositionMap		= MAP_POSITION();
 
-	LoadSoundFile("../PacMANIACS/Sounds/Cherry.wav");
+	bool result;
+
+	result = Initialize(hwnd);
+	if(!result)
+		return;
+
+	result = LoadSoundFile("Sounds/LoginScreenIntro4.wav");
+	if(!result)
+		return;
 }
 
 
 SoundManager::~SoundManager(void)
 {
-	gDirectSound	 = 0;
-	gPrimaryBuffer	 = 0;
-	gListener		 = 0;
-	gSecondary3DBuffers.clear();
-	gSecondaryBuffers.clear();
-	gSoundPositions.clear();
+	gDirectSound = 0;
+	gPrimaryBuffer = 0;
+	gListener = 0;
+
+	gSecondaryBufferMap.clear();
+	gSecondary3DBufferMap.clear();
+	gSoundPositionMap.clear();
 }
 
-bool SoundManager::InitializeDirectSound(HWND hwnd)
+bool SoundManager::Initialize(HWND hwnd)
 {
 	HRESULT result;
 
@@ -37,27 +44,29 @@ bool SoundManager::InitializeDirectSound(HWND hwnd)
 		return false;
 
 	result = gDirectSound->SetCooperativeLevel(hwnd, DSSCL_PRIORITY);
+	if(FAILED(result))
+		return false;
 
 	DSBUFFERDESC bufferDesc;
-	bufferDesc.dwSize			= sizeof(DSBUFFERDESC);
-	bufferDesc.dwFlags			= DSBCAPS_PRIMARYBUFFER | DSBCAPS_CTRLVOLUME | DSBCAPS_CTRL3D;
-	bufferDesc.dwBufferBytes	= 0;
-	bufferDesc.dwReserved		= 0;
-	bufferDesc.lpwfxFormat		= NULL;
-	bufferDesc.guid3DAlgorithm	= GUID_NULL;
+	bufferDesc.dwSize = sizeof(DSBUFFERDESC);
+	bufferDesc.dwFlags = DSBCAPS_PRIMARYBUFFER | DSBCAPS_CTRLVOLUME | DSBCAPS_CTRL3D;
+	bufferDesc.dwBufferBytes = 0;
+	bufferDesc.dwReserved = 0;
+	bufferDesc.lpwfxFormat = NULL;
+	bufferDesc.guid3DAlgorithm = GUID_NULL;
 
 	result = gDirectSound->CreateSoundBuffer(&bufferDesc, &gPrimaryBuffer, NULL);
 	if(FAILED(result))
 		return false;
 
-
 	WAVEFORMATEX waveFormat;
-	waveFormat.nSamplesPerSec	= 44100;
-	waveFormat.wBitsPerSample	= 16;
-	waveFormat.nChannels		= 2;
-	waveFormat.nBlockAlign		= (waveFormat.wBitsPerSample / 8) * waveFormat.nChannels;
-	waveFormat.nAvgBytesPerSec	= waveFormat.nSamplesPerSec * waveFormat.nBlockAlign;
-	waveFormat.cbSize			= 0;
+	waveFormat.wFormatTag = WAVE_FORMAT_PCM;
+	waveFormat.nSamplesPerSec = 44100;
+	waveFormat.wBitsPerSample = 16;
+	waveFormat.nChannels = 2;
+	waveFormat.nBlockAlign = (waveFormat.wBitsPerSample / 8) * waveFormat.nChannels;
+	waveFormat.nAvgBytesPerSec = waveFormat.nSamplesPerSec * waveFormat.nBlockAlign;
+	waveFormat.cbSize = 0;
 
 	result = gPrimaryBuffer->SetFormat(&waveFormat);
 	if(FAILED(result))
@@ -69,14 +78,16 @@ bool SoundManager::InitializeDirectSound(HWND hwnd)
 
 	gListener->SetPosition(0.0f, 0.0f, 0.0f, DS3D_IMMEDIATE);
 
+
 	return true;
+	
 }
 
 bool SoundManager::LoadSoundFile(char* filename)
 {
 	int error;
 	FILE* filePtr;
-	UINT count;
+	unsigned int count;
 	WaveHeaderType waveFileHeader;
 	HRESULT result;
 	IDirectSoundBuffer* tempBuffer;
@@ -84,8 +95,12 @@ bool SoundManager::LoadSoundFile(char* filename)
 	unsigned char* bufferPtr;
 	unsigned long bufferSize;
 
-	IDirectSoundBuffer8** tempSecondaryBuffer;
-	IDirectSound3DBuffer8** tempSecondary3DBuffer;
+
+	IDirectSoundBuffer8* tempSecBuffer = 0;
+	IDirectSound3DBuffer8* tempSec3DBuffer = 0;
+	IDirectSoundBuffer8** tempSecondaryBuffer = &tempSecBuffer;
+	IDirectSound3DBuffer8** tempSecondary3DBuffer = &tempSec3DBuffer;
+	
 
 	error = fopen_s(&filePtr, filename, "rb");
 	if(error != 0)
@@ -110,6 +125,8 @@ bool SoundManager::LoadSoundFile(char* filename)
 	if(waveFileHeader.audioFormat != WAVE_FORMAT_PCM)
 		return false;
 
+
+
 	if(waveFileHeader.numChannels != 1)
 		return false;
 
@@ -123,23 +140,23 @@ bool SoundManager::LoadSoundFile(char* filename)
 		(waveFileHeader.dataChunkId[2] != 't') || (waveFileHeader.dataChunkId[3] != 'a'))
 		return false;
 
-
 	WAVEFORMATEX waveFormat;
-	waveFormat.wFormatTag		= WAVE_FORMAT_PCM;
-	waveFormat.nSamplesPerSec	= 44100;
-	waveFormat.wBitsPerSample	= 16;
-	waveFormat.nChannels		= 1;
-	waveFormat.nBlockAlign		= (waveFormat.wBitsPerSample / 8) * waveFormat.nChannels;
-	waveFormat.nAvgBytesPerSec	= waveFormat.nSamplesPerSec * waveFormat.nBlockAlign;
+	waveFormat.wFormatTag = WAVE_FORMAT_PCM;
+	waveFormat.nSamplesPerSec = 44100;
+	waveFormat.wBitsPerSample = 16;
+	waveFormat.nChannels = 1;
+	waveFormat.nBlockAlign = (waveFormat.wBitsPerSample / 8) * waveFormat.nChannels;
+	waveFormat.nAvgBytesPerSec = waveFormat.nSamplesPerSec * waveFormat.nBlockAlign;
 
 
 	DSBUFFERDESC bufferDesc;
-	bufferDesc.dwSize			= sizeof(DSBUFFERDESC);
-	bufferDesc.dwFlags			= DSBCAPS_CTRLVOLUME | DSBCAPS_CTRL3D;
-	bufferDesc.dwBufferBytes	= waveFileHeader.dataSize;
-	bufferDesc.dwReserved		= 0;
-	bufferDesc.lpwfxFormat		= &waveFormat;
-	bufferDesc.guid3DAlgorithm	= GUID_NULL;
+	bufferDesc.dwSize = sizeof(DSBUFFERDESC);
+	bufferDesc.dwFlags = DSBCAPS_CTRLVOLUME | DSBCAPS_CTRL3D;
+	bufferDesc.dwBufferBytes = waveFileHeader.dataSize;
+	bufferDesc.dwReserved = 0;
+	bufferDesc.lpwfxFormat = &waveFormat;
+	bufferDesc.guid3DAlgorithm = GUID_NULL;
+
 
 	result = gDirectSound->CreateSoundBuffer(&bufferDesc, &tempBuffer, NULL);
 	if(FAILED(result))
@@ -156,6 +173,10 @@ bool SoundManager::LoadSoundFile(char* filename)
 
 	waveData = new unsigned char[waveFileHeader.dataSize];
 	if(!waveData)
+		return false;
+
+	count = fread(waveData, 1, waveFileHeader.dataSize, filePtr);
+	if(count != waveFileHeader.dataSize)
 		return false;
 
 	error = fclose(filePtr);
@@ -179,14 +200,37 @@ bool SoundManager::LoadSoundFile(char* filename)
 	if(FAILED(result))
 		return false;
 
-	
-	
-	gSecondaryBuffers.push_back(*tempSecondaryBuffer);
-	gSecondary3DBuffers.push_back(*tempSecondary3DBuffer);
-	gSoundPositions.push_back(D3DXVECTOR3(0, 0, 0));
+	gSecondaryBufferMap.insert(pair<string, IDirectSoundBuffer8*>(filename, *tempSecondaryBuffer));
+	gSecondary3DBufferMap.insert(pair<string, IDirectSound3DBuffer8*>(filename, *tempSecondary3DBuffer));
+	gSoundPositionMap.insert(pair<string, D3DXVECTOR3>(filename, D3DXVECTOR3(0, 0, 0)));
 
+}
 
-	return true;
+bool SoundManager::PlaySound(string name, D3DXVECTOR3 position)
+{
+	HRESULT result;
+	if(gSoundPositionMap.count(name) != 0)
+	{
+		gSoundPositionMap[name] = position;
+
+		result = gSecondaryBufferMap[name]->SetCurrentPosition(0);
+		if(FAILED(result))
+			return false;
+
+		result = gSecondaryBufferMap[name]->SetVolume(DSBVOLUME_MAX);
+		if(FAILED(result))
+			return false;
+
+		Update();
+
+		result = gSecondaryBufferMap[name]->Play(0, 0, 0);
+		if(FAILED(result))
+			return false;
+
+		return true;
+	}
+
+	return false;
 }
 
 void SoundManager::Update()
@@ -217,39 +261,11 @@ void SoundManager::Update()
 	worldToCamera = translation * rotation;
 	
 	D3DXVECTOR3 newPosition;
-	for(int i = 0; i < gSecondary3DBuffers.size(); i++)
+	for(MAP_SOUND3DBUFFER::iterator iterator = gSecondary3DBufferMap.begin(); iterator != gSecondary3DBufferMap.end(); iterator++) 
 	{
-		D3DXVec3TransformCoord(&newPosition, &gSoundPositions[i], &worldToCamera);
-		gSecondary3DBuffers[i]->SetPosition(newPosition.x, newPosition.y, newPosition.z, DS3D_IMMEDIATE);
+		D3DXVec3TransformCoord(&newPosition, &gSoundPositionMap[iterator->first], &worldToCamera);
+		iterator->second->SetPosition(newPosition.x, newPosition.y, newPosition.z, DS3D_IMMEDIATE);
 	}
-}
-
-void SoundManager::PlaySound(string soundName, D3DXVECTOR3 position)
-{
-	HRESULT result;
-
-	int index = ConvertToIndex(soundName);
-
-	result = gSecondaryBuffers[index]->SetCurrentPosition(0);
-	if(FAILED(result))
-		return;
-
-	result = gSecondaryBuffers[index]->SetVolume(DSBVOLUME_MAX);
-	if(FAILED(result))
-		return;
-	
-	gSoundPositions[index] = position;
-
-	//result = gSecondary3DBuffers[index]->SetPosition(position.x, position.y, position.z, DS3D_IMMEDIATE);
-	//if(FAILED(result))
-		//return;
-	Update();
-
-	result = gSecondaryBuffers[index]->Play(0, 0, 0);
-	if(FAILED(result))
-		return;
-
-
 }
 
 int SoundManager::ConvertToIndex(string soundName)
@@ -257,5 +273,5 @@ int SoundManager::ConvertToIndex(string soundName)
 	if(soundName == "Cherry")
 		return 0;
 
-	return 0;
+	return -1;
 }
