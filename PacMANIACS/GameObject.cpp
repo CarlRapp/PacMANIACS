@@ -19,7 +19,7 @@ GameObject::~GameObject()
 
 void GameObject::Update(float deltaTime)
 {
-	Move(1*deltaTime, 1*deltaTime, 1*deltaTime);
+	//Move(1*deltaTime, 0*deltaTime, 1*deltaTime);
 }
 
 bool GameObject::IsAlive()
