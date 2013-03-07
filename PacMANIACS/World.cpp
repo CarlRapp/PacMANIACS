@@ -34,6 +34,9 @@ World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, ID3D11Ren
 	gGraphicsManager->SetGameObjects(gGOManager->GetGameObjects());
 
 	gGraphicsManager->LoadModels();
+
+	gCamera->SetTarget(gGOManager->GetGameObjects()->at(0));
+	gGOManager->GetGameObjects()->at(0)->SetScale(0.05f, 0.05f, 0.05f);
 }
 
 
@@ -42,6 +45,45 @@ void World::Update(float deltaTime)
 	//	Let the input update first so we know
 	//	what has been pressed this update.
 	gInput->Update();
+
+	GameObject* GO = gGOManager->GetGameObjects()->at(0);
+	if(gInput->IsKeyDown('W'))
+	{
+		D3DXVECTOR3	S;
+		D3DXVec3TransformCoord(&S, &D3DXVECTOR3(0,0,-1), &GO->GetRotationMatrix());
+		
+		
+		if(gInput->IsKeyDown(VK_SHIFT))
+			S = 9*S;
+		else
+			S = 3*S;
+
+		GO->Move(S.x * deltaTime, 0, S.z * deltaTime);
+	}
+
+	if(gInput->IsKeyDown('S'))
+	{
+		D3DXVECTOR3	S;
+		D3DXVec3TransformCoord(&S, &D3DXVECTOR3(0,0,-1), &GO->GetRotationMatrix());
+		
+		
+		if(gInput->IsKeyDown(VK_SHIFT))
+			S = 9*S;
+		else
+			S = 3*S;
+
+		GO->Move(-S.x * deltaTime, 0, -S.z * deltaTime);
+	}
+
+	if(gInput->IsKeyDown('A'))
+		GO->SetRotation(0, -deltaTime, 0);
+	else if(gInput->IsKeyDown('D'))
+		GO->SetRotation(0, deltaTime, 0);
+
+	if(gInput->IsKeyPressed('H'))
+		gCamera->SetTarget(NULL);
+	if(gInput->IsKeyPressed('G'))
+		gCamera->SetTarget(gGOManager->GetGameObjects()->at(20));
 
 	//	Update all the Game Objects
 	gGOManager->Update(deltaTime);
