@@ -59,8 +59,8 @@ struct Vertex
 	Vertex() {};
 	Vertex(Position pos, Position tex, Position normal)
 	{
-		vPosition	=	D3DXVECTOR3(pos.x, pos.y, pos.z);
-		vNormal		=	D3DXVECTOR3(normal.x, normal.y, normal.z);
+		vPosition	=	D3DXVECTOR3(pos.x, pos.y, -pos.z);
+		vNormal		=	D3DXVECTOR3(normal.x, normal.y, -normal.z);
 		vTexCoord	=	D3DXVECTOR2(tex.x, 1 - tex.y);
 	}
 

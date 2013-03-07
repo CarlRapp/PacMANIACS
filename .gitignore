@@ -18,8 +18,8 @@ local.properties
 .classpath
 .settings/
 .loadpath
-.vcxproj.filters
-.vcxproj
+*.vcxproj.filters
+*.vcxproj
 
 # External tool builders
 .externalToolBuilders/
@@ -168,7 +168,6 @@ pip-log.txt
 .DS_Store
 =======
 Thumbs.db
-*.obj
 *.exe
 *.pdb
 *.user
