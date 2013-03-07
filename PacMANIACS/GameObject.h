@@ -21,6 +21,7 @@ private:
 	D3DXMATRIX	gTranslation;
 	D3DXMATRIX	gWorld;
 	D3DXMATRIX	gWorldInverseTranspose;
+	D3DXVECTOR3	gRotationFloat;
 
 
 	//	Private methods

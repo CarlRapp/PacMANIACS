@@ -5,6 +5,7 @@
 
 GameObject::GameObject()
 {
+	gRotationFloat	=	D3DXVECTOR3(0, 0, 0);
 	MoveTo(0, 0, 0);
 	SetRotation(0, 0, 0);
 	SetScale(1, 1, 1);
@@ -30,7 +31,11 @@ bool GameObject::IsAlive()
 
 void GameObject::SetRotation(float x, float y, float z)
 {
-	D3DXMatrixRotationYawPitchRoll(&gRotation, x, y, z);
+	gRotationFloat.x	+=	x;
+	gRotationFloat.y	+=	y;
+	gRotationFloat.z	+=	z;
+
+	D3DXMatrixRotationYawPitchRoll(&gRotation, gRotationFloat.y, gRotationFloat.x, gRotationFloat.z);
 
 	UpdateWorldMatrix(true);
 }
@@ -122,7 +127,7 @@ bool GameObject::IsColliding(GameObject* GO)
 
 	float	LengthBetween	=	D3DXVec3Length(p3);
 
-	return (LengthBetween < (GetHitRadius() + GO->GetHitRadius()));
+	return (LengthBetween < GetHitRadius() + GO->GetHitRadius());
 }
 
 D3DXVECTOR3 GameObject::GetPosition()
