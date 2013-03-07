@@ -23,12 +23,19 @@ private:
 	vector<GameObject*>*	moveableObjects;
 	vector<GameObject*>*	stationaryObjects;
 
+	float	mapScale;
+	int		mapWidth;
+	int		mapHeight;
 	char**	gMap;
 
 	void		StartConvert(MapManager* MapData);
 	GameObject*	ConvertStringToGameObject(string GameObjectName);
 
 	void		HandleCollision(GameObject* GoA, GameObject* GoB);
+
+	bool		TileIsCrossing(D3DXVECTOR3 Pos);
+
+	bool		IsFloor(int X, int Y);
 
 public:
 	GameObjectManager(MapManager* MapData);
