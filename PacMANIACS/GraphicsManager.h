@@ -7,6 +7,7 @@
 #include "ObjLoader.h"
 #include "GameObject.h"
 #include "Camera.h"
+#include "MapManager.h"
 
 //for testing
 #include "Ghost.h"
@@ -51,6 +52,8 @@ class GraphicsManager
 
 	ID3D11ShaderResourceView* LoadShaderResourceView(string path);
 
+	void RenderLevel();
+
 public:
 	GraphicsManager(ID3D11Device *device, ID3D11DeviceContext *deviceContext, ID3D11RenderTargetView* renderTargetView, D3DXVECTOR2 resolution);
 	~GraphicsManager(void);
@@ -64,5 +67,6 @@ public:
 	void LoadModels();
 	void Render();
 
+	void CreateLevelBuffer(MapManager* Map);
 };
 #endif
