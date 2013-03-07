@@ -10,7 +10,9 @@ World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, ID3D11Ren
 	
 	gInput				=	new InputManager();
 
-	gGOManager			=	new GameObjectManager(new MapManager());
+	
+	MapManager*	MM		=	new MapManager();
+	gGOManager			=	new GameObjectManager(MM);
 
 
 
@@ -29,7 +31,7 @@ World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, ID3D11Ren
 	gGraphicsManager->SetModelPath("Models");
 	gGraphicsManager->SetTexturePath("Models\\Textures");
 	//GameObjectManager->GetGameObjects() istället för new vector<GameObject*>().
-	gGraphicsManager->SetGameObjects(new vector<GameObject*>());
+	gGraphicsManager->SetGameObjects(gGOManager->GetGameObjects());
 
 	gGraphicsManager->LoadModels();
 }
