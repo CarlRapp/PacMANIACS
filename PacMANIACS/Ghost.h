@@ -3,6 +3,8 @@
 #define GHOST_H	
 
 #include "GameObject.h"
+#include <iostream>
+using namespace std;
 
 class GhostTargetState
 {
@@ -10,9 +12,21 @@ protected:
 	string	gTextureName;
 
 public:
-	void	SetTextureName(string TextureName);
-
+	void SetTextureName(string TextureName);
+	virtual	void Update(float deltaTime);
 	virtual	string GetTextureName();
+};
+
+class FleeState : public GhostTargetState
+{
+private:
+	float	gTimeTicked;
+	string	gFleeTexture;
+
+public:
+	void Update(float deltaTime);
+	void SetFleeTexture(string TextureName);
+	string GetTextureName();
 };
 
 class GhostAIState
@@ -24,6 +38,8 @@ public:
 	virtual string GetTextureName() = 0;
 	virtual void CalculateMove(GameObject* ghost, vector<D3DXVECTOR3> availableMoves) = 0;
 	void	SetTargetState(GhostTargetState* State);
+
+	void	Update(float deltaTime);
 };
 
 class StupidGhostAIState : public GhostAIState
