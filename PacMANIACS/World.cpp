@@ -36,7 +36,16 @@ World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, ID3D11Ren
 	gGraphicsManager->LoadModels();
 
 	gSoundManager = new SoundManager(gCamera, hwnd);
-	gSoundManager->PlaySoundA("Sounds/LoginScreenIntro4.wav", D3DXVECTOR3(0, 0, 0));
+	gSoundManager->SetSoundPath("Sounds");
+
+	gSoundManager->LoadSoundFile("LoginScreenIntro4");
+	gSoundManager->LoadSoundFile("Cherry");
+
+	string key1 = gSoundManager->PlaySound("Cherry", D3DXVECTOR3(-10, 0, 0));
+	string key2 = gSoundManager->PlaySound("LoginScreenIntro4", D3DXVECTOR3(10, 0, 0));
+
+	//gSoundManager->StopSound(key1);
+
 }
 
 

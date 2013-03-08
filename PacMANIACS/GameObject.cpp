@@ -41,6 +41,11 @@ void GameObject::SetScale(float x, float y, float z)
 	UpdateWorldMatrix(true);
 }
 
+void GameObject::Move(D3DXVECTOR3 pos)
+{
+	Move(pos.x, pos.y, pos.z);
+}
+
 void GameObject::Move(float dx, float dy, float dz)
 {
 	gTranslation._41	+=	dx;
@@ -48,6 +53,11 @@ void GameObject::Move(float dx, float dy, float dz)
 	gTranslation._43	+=	dz;
 
 	UpdateWorldMatrix(false);
+}
+
+void GameObject::MoveTo(D3DXVECTOR3 pos)
+{
+	MoveTo(pos.x, pos.y, pos.z);
 }
 
 void GameObject::MoveTo(float x, float y, float z)

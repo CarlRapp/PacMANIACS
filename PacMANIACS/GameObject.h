@@ -49,7 +49,9 @@ public:
 	//	Set methods
 	void	SetRotation(float x, float y, float z);
 	void	SetScale(float x, float y, float z);
+	void	Move(D3DXVECTOR3 pos);
 	void	Move(float dX, float dY, float dZ);
+	void	MoveTo(D3DXVECTOR3 pos);
 	void	MoveTo(float x, float y, float z);
 
 	bool	IsColliding(GameObject* GO);

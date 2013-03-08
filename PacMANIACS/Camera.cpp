@@ -147,3 +147,8 @@ D3DXVECTOR3 Camera::GetForward()
 {
 	return gForward;
 }
+
+D3DXVECTOR3 Camera::GetUp()
+{
+	return gUp;
+}
