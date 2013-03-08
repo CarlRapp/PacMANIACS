@@ -43,6 +43,7 @@ public:
 	void	SetTarget(GameObject* Target);
 	D3DXVECTOR3 GetPosition();
 	D3DXVECTOR3 GetForward();
+	D3DXVECTOR3 GetUp();
 
 	D3DXMATRIX	GetViewMatrix();
 	D3DXMATRIX	GetProjectionMatrix();
