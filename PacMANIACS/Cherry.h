@@ -7,6 +7,7 @@
 class Cherry : public GameObject
 {
 	float		gTimeLived;
+	D3DXVECTOR3	gStartPosition;
 
 public:
 	Cherry(void);
@@ -15,6 +16,7 @@ public:
 	string	GetName();
 	string	GetTextureName();
 	float	GetHitRadius();
+	bool	IsStationary();
 
 	void	Update(float deltaTime);
 };

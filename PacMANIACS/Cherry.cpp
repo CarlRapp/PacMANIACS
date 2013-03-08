@@ -19,24 +19,32 @@ string Cherry::GetName()
 
 string Cherry::GetTextureName()
 {
-	return "Ghost_Purpel_Texture.png";
+	return "Cherry_Texture.png";
 }
 
 float Cherry::GetHitRadius()
 {
-	return 0.4f;
+	return 14.4f;
+}
+
+bool Cherry::IsStationary()
+{
+	return true;
 }
 
 void Cherry::Update(float deltaTime)
 {
 	if(gTimeLived == 0)
 	{
+		gStartPosition	=	GetPosition();
 		gTimeLived		+=	rand();
 	}
 
 	GameObject::Update(deltaTime);
 
 	SetRotation(0, gTimeLived, 0);
+
+	SetPosition(gStartPosition.x, gStartPosition.y + sin(8 * gTimeLived) * 0.3f, gStartPosition.z);
 
 	gTimeLived	+=	deltaTime;
 }

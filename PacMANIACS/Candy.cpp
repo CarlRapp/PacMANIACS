@@ -27,6 +27,11 @@ float Candy::GetHitRadius()
 	return 0.4f;
 }
 
+bool Candy::IsStationary()
+{
+	return true;
+}
+
 void Candy::Update(float deltaTime)
 {
 	if(gTimeLived == 0)
