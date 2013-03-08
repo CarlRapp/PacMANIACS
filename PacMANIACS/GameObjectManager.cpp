@@ -15,12 +15,14 @@ void GameObjectManager::StartConvert(MapManager* MapData)
 	moveableObjects		=	new vector<GameObject*>();
 	stationaryObjects	=	new vector<GameObject*>();
 
-	int		mWidth	=	MapData->GetWidth();
-	int		mHeight	=	MapData->GetHeight();
+	mapWidth	=	MapData->GetWidth();
+	mapHeight	=	MapData->GetHeight();
 
-	for(int X = 0; X < mWidth; ++X)
+	GameObject*	tPacman	=	NULL;
+
+	for(int X = 0; X < mapWidth; ++X)
 	{
-		for(int Y = 0; Y < mHeight; ++Y)
+		for(int Y = 0; Y < mapHeight; ++Y)
 		{
 			char	currentChar	=	gMap[X][Y];
 			int	xPos	=	mapScale * X;
@@ -33,6 +35,9 @@ void GameObjectManager::StartConvert(MapManager* MapData)
 				GO	=	ConvertStringToGameObject(ObjectName);
 				GO->SetScale(0.5f, 0.5f, 0.5f);
 				GO->MoveTo(xPos, 1, yPos);
+
+				if(ObjectName == "Pacman")
+					tPacman	=	GO;
 				
 				if(GO->IsStationary())
 				{
@@ -85,8 +90,15 @@ void GameObjectManager::StartConvert(MapManager* MapData)
 		}
 	}
 
-	mapWidth	=	mWidth;
-	mapHeight	=	mHeight;
+	if(tPacman != NULL)
+		for(int i = 0; i < moveableObjects->size(); i++)
+			if(moveableObjects->at(i)->GetName() == "Ghost")
+			{
+				Ghost* GO		=	(Ghost*)moveableObjects->at(i);
+				D3DXVECTOR2	POS	=	GetTilePosition(GO->GetPosition());
+				GO->SetTarget(tPacman);
+				GO->CalculateMove(GetAvailableMoves(POS.x, POS.y));
+			}
 }
 
 GameObject* GameObjectManager::ConvertStringToGameObject(string GOName)
@@ -126,6 +138,31 @@ void GameObjectManager::Update(float deltaTime)
 	for each (GameObject *A in *moveableObjects)
 	{
 		A->Update(deltaTime);
+
+		if(A->AtDestination())
+		{
+			if(A->GetName() == "Ghost")
+			{
+				Ghost*	GO	=	((Ghost*)(A));
+				D3DXVECTOR2	Pos	=	GetTilePosition(A->GetPosition());
+
+				if(IsTileCrossing(Pos.x, Pos.y) || IsTileCorner(Pos.x, Pos.y))
+				{
+					GO->CalculateMove(GetAvailableMoves(Pos.x, Pos.y));
+				}
+				else
+				{
+					D3DXVECTOR3 Vel;
+					D3DXVec3Normalize(&Vel, &GO->GetVelocity());
+
+					Vel	*=	mapScale;
+					D3DXVECTOR3	newD	=	GO->GetPosition() + Vel;
+
+					GO->SetDestination(newD);
+				}
+
+			}
+		}
 
 		if(A->GetName() == "Pacman")
 			tPacman	=	A; 
@@ -227,4 +264,20 @@ bool GameObjectManager::IsTileCorner(int X, int Z)
 	}
 
 	return false;
+}
+
+vector<D3DXVECTOR3> GameObjectManager::GetAvailableMoves(int X, int Z)
+{
+	vector<D3DXVECTOR3> moves = vector<D3DXVECTOR3>();
+
+	if(IsFloor(X - 1, Z))
+		moves.push_back(GetWorldPosition(X - 1, 0, Z));
+	if(IsFloor(X + 1, Z))
+		moves.push_back(GetWorldPosition(X + 1, 0, Z));
+	if(IsFloor(X, Z - 1))
+		moves.push_back(GetWorldPosition(X, 0, Z - 1));
+	if(IsFloor(X, Z + 1))
+		moves.push_back(GetWorldPosition(X, 0, Z + 1));
+
+	return moves;
 }
