@@ -49,7 +49,7 @@ World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, ID3D11Ren
 	D3DXVECTOR3	DEST	=	gGOManager->GetWorldPosition(1, 0, 1);
 	gGOManager->GetGameObjects()->at(14)->SetDestination(DEST.x, 0, DEST.z);
 
-	string key1 = gSoundManager->LoopSound("Cherry", D3DXVECTOR3(-10, 0, 0));
+	//string key1 = gSoundManager->LoopSound("Cherry", D3DXVECTOR3(-10, 0, 0));
 	//string key2 = gSoundManager->PlaySound("LoginScreenIntro4", D3DXVECTOR3(10, 0, 0));
 
 	//gSoundManager->StopSound(key1);
