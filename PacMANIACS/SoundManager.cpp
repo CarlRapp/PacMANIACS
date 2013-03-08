@@ -201,7 +201,16 @@ string SoundManager::LoopSound(string name, D3DXVECTOR3 position)
 string SoundManager::PlaySound(string name, D3DXVECTOR3 position, DWORD dwFlags)
 {
 	HRESULT result;
-	if(gSoundBufferMap.count(name) != 0)
+
+	if (gSoundBufferMap.count(name) == 0)
+	{
+		char *cstr = new char[name.length() + 1];
+		strcpy(cstr, name.c_str());
+		LoadSoundFile(cstr);
+		delete [] cstr;
+	}
+
+	if (gSoundBufferMap.count(name) != 0)
 	{
 		IDirectSoundBuffer* tempBuffer = 0;
 		IDirectSoundBuffer8* tempBuffer8 = 0;
@@ -228,7 +237,7 @@ string SoundManager::PlaySound(string name, D3DXVECTOR3 position, DWORD dwFlags)
 		if(FAILED(result))
 			return "";
 
-		result = temp3DBuffer8->SetPosition(position.x, position.y, position.z, DS3D_IMMEDIATE);
+		result = temp3DBuffer8->SetPosition(position.x, position.y, position.z, DS3D_DEFERRED);
 		if(FAILED(result))
 			return "";
 
@@ -264,6 +273,13 @@ void SoundManager::RemoveSound(string key)
 	gSound3DBuffer8Map.erase(key);
 }
 
+void SoundManager::SetSoundPosition(string key, D3DXVECTOR3 postion)
+{
+	if(gSound3DBuffer8Map.count(key) != 0)
+	{
+		gSound3DBuffer8Map[key]->SetPosition(postion.x, postion.y, postion.z, DS3D_DEFERRED);
+	}
+}
 
 void SoundManager::Update()
 {

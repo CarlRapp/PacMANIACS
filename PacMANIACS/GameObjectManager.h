@@ -9,6 +9,7 @@
 #include <map>
 #include "GameObject.h"
 #include "MapManager.h"
+#include "SoundManager.h"
 #include "Ghost.h"
 #include "Candy.h"
 #include "Wall.h"
@@ -25,10 +26,11 @@ private:
 	vector<GameObject*>*	moveableObjects;
 	vector<GameObject*>*	stationaryObjects;
 
-	float	mapScale;
-	int		mapWidth;
-	int		mapHeight;
-	char**	gMap;
+	SoundManager*	gSoundManager;
+	float			mapScale;
+	int				mapWidth;
+	int				mapHeight;
+	char**			gMap;
 
 	void		StartConvert(MapManager* MapData);
 	GameObject*	ConvertStringToGameObject(string GameObjectName);
@@ -40,9 +42,8 @@ private:
 	bool		IsFloor(int X, int Z);
 
 public:
-	GameObjectManager(MapManager* MapData);
+	GameObjectManager(MapManager* MapData, SoundManager* soundManager);
 	~GameObjectManager();
-
 
 	void Update(float deltaTime);
 
