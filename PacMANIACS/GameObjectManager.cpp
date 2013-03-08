@@ -121,14 +121,14 @@ GameObject* GameObjectManager::ConvertStringToGameObject(string GOName)
 
 void GameObjectManager::Update(float deltaTime)
 {
-	GameObject*	tPacman	=	allGameObjects->at(0);
+	GameObject*	tPacman	=	NULL;
 
 	for each (GameObject *A in *moveableObjects)
 	{
 		A->Update(deltaTime);
 
 		if(A->GetName() == "Pacman")
-			tPacman	=	A;
+			tPacman	=	A; 
 
 		for each (GameObject *B in *moveableObjects)
 			if(A != B)
