@@ -24,5 +24,5 @@ string Candy::GetTextureName()
 
 float Candy::GetHitRadius()
 {
-	return 5.0f;
+	return 0.4f;
 }

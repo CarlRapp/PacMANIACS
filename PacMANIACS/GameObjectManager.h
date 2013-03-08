@@ -23,12 +23,19 @@ private:
 	vector<GameObject*>*	moveableObjects;
 	vector<GameObject*>*	stationaryObjects;
 
+	float	mapScale;
+	int		mapWidth;
+	int		mapHeight;
 	char**	gMap;
 
 	void		StartConvert(MapManager* MapData);
 	GameObject*	ConvertStringToGameObject(string GameObjectName);
 
 	void		HandleCollision(GameObject* GoA, GameObject* GoB);
+
+	bool		IsTileCrossing(int X, int Z);
+	bool		IsTileCorner(int X, int Z);
+	bool		IsFloor(int X, int Z);
 
 public:
 	GameObjectManager(MapManager* MapData);
@@ -38,6 +45,9 @@ public:
 	void Update(float deltaTime);
 
 	vector<GameObject*>*	GetGameObjects();
+
+	D3DXVECTOR2	GetTilePosition(D3DXVECTOR3 Pos);
+	D3DXVECTOR3	GetWorldPosition(int X, int Y, int Z);
 };
 
 #endif
