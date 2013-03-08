@@ -1,3 +1,4 @@
+/*
 #include "GhostAIState.h"
 
 string StupidGhostAIState::GetTextureName()
@@ -20,3 +21,4 @@ string GeniusGhostAIState::GetTextureName()
 {
 	return "Ghost_Red_Texture.png";
 }
+*/

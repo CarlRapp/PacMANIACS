@@ -55,7 +55,7 @@ PSSceneIn VSScene(VSIn input)
 	PSSceneIn output = (PSSceneIn)0;
 	
 	output.Pos				= mul(float4(input.Pos,1)	, WVP);
-	output.PosW				= mul(input.Pos				, (float3x3)World);
+	output.PosW				= mul(float4(input.Pos, 1)	, World).xyz;
 	//output.Pos				= mul(output.Pos			, View);
 	//output.Pos				= mul(output.Pos			, Projection);
 	
