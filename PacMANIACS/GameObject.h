@@ -40,7 +40,7 @@ public:
 	GameObject(void);
 	~GameObject(void);
 
-	void Update(float deltaTime);
+	virtual void Update(float deltaTime);
 
 	//	Get methods
 	D3DXMATRIX		GetWorldMatrix(void);
@@ -58,6 +58,8 @@ public:
 
 	//	Set methods
 	void	SetRotation(float x, float y, float z);
+	void	AddRotation(float dX, float dY, float dZ);
+
 	void	SetScale(float x, float y, float z);
 
 	void	Move(D3DXVECTOR3 pos);
@@ -74,6 +76,9 @@ public:
 
 	bool	AtDestination(void);
 	void	SetDestination(float x, float y, float z);
+	void	SetDestination(D3DXVECTOR3 Pos);
+
+	D3DXVECTOR3 GetVelocity(void);
 };
 
 #endif

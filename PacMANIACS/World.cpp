@@ -14,6 +14,10 @@ World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, ID3D11Ren
 	MapManager*	MM		=	new MapManager();
 	gGOManager			=	new GameObjectManager(MM);
 
+	for(int i = 0; i < gGOManager->GetGameObjects()->size(); i++)
+		if(gGOManager->GetGameObjects()->at(i)->GetName() == "Pacman")
+			gPlayerObject	=	gGOManager->GetGameObjects()->at(i);
+
 
 
 	//	Create the camera, with all its settings
@@ -23,6 +27,7 @@ World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, ID3D11Ren
 									500.0f
 									);
 	gCamera->SetInputManager(gInput);
+	gCamera->SetTarget(gPlayerObject);
 
 
 	//Create the GraphicsManager
@@ -48,10 +53,6 @@ World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, ID3D11Ren
 	//string key2 = gSoundManager->PlaySound("LoginScreenIntro4", D3DXVECTOR3(10, 0, 0));
 
 	//gSoundManager->StopSound(key1);
-
-	for(int i = 0; i < gGOManager->GetGameObjects()->size(); i++)
-		if(gGOManager->GetGameObjects()->at(i)->GetName() == "Pacman")
-			gCamera->SetTarget(gGOManager->GetGameObjects()->at(i));
 }
 
 
@@ -61,56 +62,13 @@ void World::Update(float deltaTime)
 	//	what has been pressed this update.
 	gInput->Update();
 
-	GameObject* GO = NULL;
-
-
-	for(int i = 0; i < gGOManager->GetGameObjects()->size(); i++)
-		if(gGOManager->GetGameObjects()->at(i)->GetName() == "Pacman")
-			GO = gGOManager->GetGameObjects()->at(i);
-
-	if(gInput->IsKeyDown('W'))
-	{
-		D3DXVECTOR3	S;
-		D3DXVec3TransformCoord(&S, &D3DXVECTOR3(0,0,-1), &GO->GetRotationMatrix());
-		
-		
-		if(gInput->IsKeyDown(VK_SHIFT))
-			S = 9*S;
-		else
-			S = 3*S;
-
-		GO->Move(S.x * deltaTime, 0, S.z * deltaTime);
-	}
-
-	if(gInput->IsKeyDown('S'))
-	{
-		D3DXVECTOR3	S;
-		D3DXVec3TransformCoord(&S, &D3DXVECTOR3(0,0,-1), &GO->GetRotationMatrix());
-		
-		
-		if(gInput->IsKeyDown(VK_SHIFT))
-			S = 9*S;
-		else
-			S = 3*S;
-
-		GO->Move(-S.x * deltaTime, 0, -S.z * deltaTime);
-	}
-
-	if(gInput->IsKeyDown('A'))
-		GO->SetRotation(0, -deltaTime * 1.5f, 0);
-	else if(gInput->IsKeyDown('D'))
-		GO->SetRotation(0, deltaTime * 1.5f, 0);
-
 	if(gInput->IsKeyPressed('H'))
 		gCamera->SetTarget(NULL);
 	if(gInput->IsKeyPressed('G'))
-		gCamera->SetTarget(GO);
+		gCamera->SetTarget(gPlayerObject);
 
 	//	Update all the Game Objects
 	gGOManager->Update(deltaTime);
-
-
-
 
 	//	Update the camera last so it has the
 	//	updated scene ready to adjust to.

@@ -9,9 +9,9 @@ string StupidGhostAIState::GetTextureName()
 void StupidGhostAIState::CalculateMove(GameObject* ghost, vector<D3DXVECTOR3> availableMoves)
 {
 	if (availableMoves.size() >= 4)
-		ghost->Move(availableMoves[0]);
+		ghost->SetDestination(availableMoves[3]);
 	else
-		ghost->Move(availableMoves[availableMoves.size() - 1]);
+		ghost->SetDestination(availableMoves[availableMoves.size() - 1]);
 }
 
 string NormalGhostAIState::GetTextureName()
@@ -22,9 +22,9 @@ string NormalGhostAIState::GetTextureName()
 void NormalGhostAIState::CalculateMove(GameObject* ghost, vector<D3DXVECTOR3> availableMoves)
 {
 	if (availableMoves.size() >= 3)
-		ghost->Move(availableMoves[0]);
+		ghost->SetDestination(availableMoves[2]);
 	else
-		ghost->Move(availableMoves[availableMoves.size() - 1]);
+		ghost->SetDestination(availableMoves[availableMoves.size() - 1]);
 }
 
 string SmartGhostAIState::GetTextureName()
@@ -35,9 +35,9 @@ string SmartGhostAIState::GetTextureName()
 void SmartGhostAIState::CalculateMove(GameObject* ghost, vector<D3DXVECTOR3> availableMoves)
 {
 	if (availableMoves.size() >= 2)
-		ghost->Move(availableMoves[0]);
+		ghost->SetDestination(availableMoves[1]);
 	else
-		ghost->Move(availableMoves[availableMoves.size() - 1]);
+		ghost->SetDestination(availableMoves[availableMoves.size() - 1]);
 }
 
 string GeniusGhostAIState::GetTextureName()
@@ -48,7 +48,7 @@ string GeniusGhostAIState::GetTextureName()
 void GeniusGhostAIState::CalculateMove(GameObject* ghost, vector<D3DXVECTOR3> availableMoves)
 {
 	if (availableMoves.size() >= 1)
-		ghost->Move(availableMoves[0]);
+		ghost->SetDestination(availableMoves[0]);
 }
 
 Ghost::Ghost(void) : GameObject()
@@ -81,9 +81,17 @@ void Ghost::SetAIState(GhostAIState* AIState)
 	gAIState = AIState;
 }
 
-void Ghost::CalculateMove(GameObject* target, vector<D3DXVECTOR3> availableMoves)
+void Ghost::SetTarget(GameObject* Target)
 {
-	D3DXVECTOR3 targetDirection = target->GetPosition() - GetPosition();
+	gTarget	=	Target;
+}
+
+void Ghost::CalculateMove(vector<D3DXVECTOR3> availableMoves)
+{
+	if(availableMoves.size() == 0 || gTarget == NULL)
+		return;
+
+	D3DXVECTOR3 targetDirection = gTarget->GetPosition() - GetPosition();
 	
 	for (int i = 1; i < availableMoves.size(); i++)
 	{
@@ -95,7 +103,7 @@ void Ghost::CalculateMove(GameObject* target, vector<D3DXVECTOR3> availableMoves
 			float A = D3DXVec3Dot(&moveDirectionA, &targetDirection);
 			float B = D3DXVec3Dot(&moveDirectionB, &targetDirection);
 
-			if (B > A)
+			if (B < A)
 			{
 				D3DXVECTOR3 temp	= availableMoves[j];
 				availableMoves[j]	= availableMoves[j-1];
@@ -107,4 +115,16 @@ void Ghost::CalculateMove(GameObject* target, vector<D3DXVECTOR3> availableMoves
 	}
 
 	gAIState->CalculateMove(this, availableMoves);
+}
+
+void Ghost::Update(float deltaTime)
+{
+	GameObject::Update(deltaTime);
+
+	float	dX	=	GetPosition().x - gTarget->GetPosition().x;
+	float	dZ	=	GetPosition().z - gTarget->GetPosition().z;
+
+	float dAngle	=	atan2(dX, dZ);
+
+	SetRotation(0, dAngle, 0);
 }
