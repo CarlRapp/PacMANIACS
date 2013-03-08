@@ -14,7 +14,6 @@ Camera::Camera(float FoV, float AspectRatio, float Near, float Far)
 	gState			=	CameraState::Free;
 	gPosition		=	D3DXVECTOR3(0, 0, 0);
 	gForward		=	D3DXVECTOR3(0, 0, -1);
-	oldMousePos		=	D3DXVECTOR2(-1, -1);
 
 	D3DXVec3Normalize(&(gForward), &D3DXVECTOR3(gForward.x, 0 , gForward.z));
 	gUp	=	D3DXVECTOR3(0, 1, 0);
@@ -58,13 +57,6 @@ void Camera::UpdateFree(float deltaTime)
 	if(gInput == NULL)
 		return;
 
-	if (oldMousePos == D3DXVECTOR2(-1, -1))
-	{
-		LPPOINT mouseCoords = new POINT();
-		GetCursorPos(mouseCoords);
-		oldMousePos		=	D3DXVECTOR2(mouseCoords->x, mouseCoords->y);
-	}
-
 	float	speed	=	24.0f * deltaTime;
 	float	sens	=	0.0016f;
 
@@ -72,16 +64,6 @@ void Camera::UpdateFree(float deltaTime)
 		speed *= 2;
 	if (gInput->IsKeyDown(VK_SPACE))
 		speed *= 2;
-
-	LPPOINT mouseCoords = new POINT();
-	GetCursorPos(mouseCoords);
-
-	D3DXVECTOR2	mousePos		=	D3DXVECTOR2(mouseCoords->x, mouseCoords->y);
-	D3DXVECTOR2	mouseMovement	=	D3DXVECTOR2(mousePos.x - oldMousePos.x, mousePos.y - oldMousePos.y);
-
-	
-	float	rotRight	=	mouseMovement.x * sens;
-	float	rotUp		=	mouseMovement.y * sens;
 
 	if (gInput->IsKeyDown('W'))
 		gPosition += speed * gForward;
@@ -97,17 +79,22 @@ void Camera::UpdateFree(float deltaTime)
 	if (gInput->IsKeyDown('Q'))
 		gPosition -= speed * gUp;
 
+	D3DXVECTOR2	mouseMovement	=	gInput->GetMouseMovement();
+
+	float	rotRight	=	0;
+	float	rotUp		=	0;
+	rotRight	+=	mouseMovement.x * sens;
+	rotUp		-=	mouseMovement.y * sens;
+
 	D3DXMATRIX rotation;
 	D3DXMatrixRotationY(&rotation, rotRight);
 	D3DXVec3TransformCoord(&gRight, &gRight, &rotation);
 	D3DXVec3TransformCoord(&gForward, &gForward, &rotation);
-
+	
 	D3DXMatrixRotationAxis(&rotation, &gRight, rotUp);
 	D3DXVec3TransformCoord(&gForward, &gForward, &rotation);
 
 	D3DXVec3Cross(&gUp, &gForward, &gRight);
-
-	oldMousePos	=	mousePos;
 }
 
 D3DXMATRIX Camera::GetViewMatrix()
