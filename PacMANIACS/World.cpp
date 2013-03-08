@@ -37,6 +37,9 @@ World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, ID3D11Ren
 
 	gCamera->SetTarget(gGOManager->GetGameObjects()->at(0));
 	gGOManager->GetGameObjects()->at(0)->SetScale(0.05f, 0.05f, 0.05f);
+
+	D3DXVECTOR3	DEST	=	gGOManager->GetWorldPosition(1, 0, 1);
+	gGOManager->GetGameObjects()->at(14)->SetDestination(DEST.x, 0, DEST.z);
 }
 
 
@@ -45,6 +48,14 @@ void World::Update(float deltaTime)
 	//	Let the input update first so we know
 	//	what has been pressed this update.
 	gInput->Update();
+
+	GameObject* GO1 = gGOManager->GetGameObjects()->at(14);
+
+	system("cls");
+	cout << GO1->GetPosition().x << endl;
+	cout << GO1->GetPosition().z << endl;
+
+
 
 	GameObject* GO = gGOManager->GetGameObjects()->at(0);
 	if(gInput->IsKeyDown('W'))
