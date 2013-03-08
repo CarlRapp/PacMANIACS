@@ -83,7 +83,7 @@ void World::Update(float deltaTime)
 	if(gInput->IsKeyPressed('H'))
 		gCamera->SetTarget(NULL);
 	if(gInput->IsKeyPressed('G'))
-		gCamera->SetTarget(gGOManager->GetGameObjects()->at(20));
+		gCamera->SetTarget(gGOManager->GetGameObjects()->at(0));
 
 	//	Update all the Game Objects
 	gGOManager->Update(deltaTime);
