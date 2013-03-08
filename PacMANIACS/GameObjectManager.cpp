@@ -1,10 +1,10 @@
 #include "GameObjectManager.h"
 
-GameObjectManager::GameObjectManager(MapManager* MapData)
+GameObjectManager::GameObjectManager(MapManager* MapData, SoundManager* soundManager)
 {
-	mapScale	=	3.0f;
-	gMap		=	MapData->GetMap();
-
+	mapScale		=	3.0f;
+	gMap			=	MapData->GetMap();
+	gSoundManager	=	soundManager;
 
 	StartConvert(MapData);
 }
@@ -61,17 +61,6 @@ void GameObjectManager::StartConvert(MapManager* MapData)
 				//	allGameObjects->push_back(GO2);
 				}
 			}
-			else if (currentChar == '0')
-			{
-				GameObject*	GO2	=	new Candy();
-				GO2->SetScale(0.5f, 0.5f, 0.5f);
-				GO2->MoveTo(xPos, 1, yPos);
-
-				//	Add candy to both lists
-				stationaryObjects->push_back(GO2);
-				allGameObjects->push_back(GO2);
-			}
-
 
 			if(currentChar == '1')
 			{
@@ -86,6 +75,17 @@ void GameObjectManager::StartConvert(MapManager* MapData)
 				FLOOR->MoveTo(xPos, 0, yPos);
 				FLOOR->SetScale(3, 3, 3);
 				allGameObjects->push_back(FLOOR);
+
+				if (currentChar != 'A')
+				{
+					GameObject*	candy	=	new Candy();
+					candy->SetScale(0.5f, 0.5f, 0.5f);
+					candy->MoveTo(xPos, 1, yPos);
+
+					//	Add candy to both lists
+					stationaryObjects->push_back(candy);
+					allGameObjects->push_back(candy);
+				}
 			}
 		}
 	}
@@ -98,6 +98,8 @@ void GameObjectManager::StartConvert(MapManager* MapData)
 				D3DXVECTOR2	POS	=	GetTilePosition(GO->GetPosition());
 				GO->SetTarget(tPacman);
 				GO->CalculateMove(GetAvailableMoves(POS.x, POS.y));
+				if (gSoundManager != NULL)
+					GO->soundKey = gSoundManager->LoopSound("Cherry", GO->GetPosition());
 			}
 }
 
@@ -166,6 +168,12 @@ void GameObjectManager::Update(float deltaTime)
 
 		if(A->GetName() == "Pacman")
 			tPacman	=	A; 
+
+		else if (A->GetName() == "Ghost")
+		{
+			Ghost* ghost = (Ghost*)A;
+			gSoundManager->SetSoundPosition(ghost->soundKey, ghost->GetPosition());
+		}
 
 		for each (GameObject *B in *moveableObjects)
 			if(A != B)
