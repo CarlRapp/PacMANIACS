@@ -49,6 +49,8 @@ public:
 
 	D3DXVECTOR2	GetTilePosition(D3DXVECTOR3 Pos);
 	D3DXVECTOR3	GetWorldPosition(int X, int Y, int Z);
+
+	vector<D3DXVECTOR3>	GetAvailableMoves(int X, int Z);
 };
 
 #endif

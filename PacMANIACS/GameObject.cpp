@@ -71,11 +71,26 @@ void GameObject::SetDestination(float x, float y, float z)
 	gTargetPosition.z	=	z;
 }
 
+void GameObject::SetDestination(D3DXVECTOR3 Pos)
+{
+	SetDestination(Pos.x, Pos.y, Pos.z);
+}
+
 void GameObject::SetRotation(float x, float y, float z)
 {
-	gRotationFloat.x	+=	x;
-	gRotationFloat.y	+=	y;
-	gRotationFloat.z	+=	z;
+	D3DXMatrixRotationYawPitchRoll(&gRotation, y, x, z);
+	gRotationFloat.x	=	x;
+	gRotationFloat.y	=	y;
+	gRotationFloat.z	=	z;
+
+	UpdateWorldMatrix(true);
+}
+
+void GameObject::AddRotation(float dx, float dy, float dz)
+{
+	gRotationFloat.x	+=	dx;
+	gRotationFloat.y	+=	dy;
+	gRotationFloat.z	+=	dz;
 
 	D3DXMatrixRotationYawPitchRoll(&gRotation, gRotationFloat.y, gRotationFloat.x, gRotationFloat.z);
 
@@ -197,4 +212,9 @@ bool GameObject::IsColliding(GameObject* GO)
 D3DXVECTOR3 GameObject::GetPosition()
 {
 	return D3DXVECTOR3(gTranslation._41, gTranslation._42, gTranslation._43);
+}
+
+D3DXVECTOR3 GameObject::GetVelocity()
+{
+	return gVelocity;
 }
