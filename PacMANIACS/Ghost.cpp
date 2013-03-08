@@ -51,12 +51,21 @@ void GeniusGhostAIState::CalculateMove(GameObject* ghost, vector<D3DXVECTOR3> av
 		ghost->SetDestination(availableMoves[0]);
 }
 
-Ghost::Ghost(void) : GameObject()
+void GhostAIState::SetTargetState(GhostTargetState* State)
 {
-	gAIState = new NormalGhostAIState();
-	soundKey = "";
+	gActiveState	=	State;
 }
 
+Ghost::Ghost(void) : GameObject()
+{
+	soundKey = "";
+	gAIState	= new NormalGhostAIState();
+
+
+	gHuntState	=	new GhostTargetState();
+	gFleeState	=	new GhostTargetState();
+	gFleeState->SetTextureName("Flee_Texture.png");
+}
 
 Ghost::~Ghost(void)
 {
@@ -69,7 +78,12 @@ string Ghost::GetName()
 
 string Ghost::GetTextureName()
 {
-	return gAIState->GetTextureName();
+	return gAIState->GetActiveTextureName();
+}
+
+string GhostAIState::GetActiveTextureName()
+{
+	return gActiveState->GetTextureName();
 }
 
 float Ghost::GetHitRadius()
@@ -80,6 +94,9 @@ float Ghost::GetHitRadius()
 void Ghost::SetAIState(GhostAIState* AIState)
 {
 	gAIState = AIState;
+	gHuntState->SetTextureName(gAIState->GetTextureName());
+
+	gAIState->SetTargetState(gHuntState);
 }
 
 void Ghost::SetTarget(GameObject* Target)
@@ -132,5 +149,23 @@ void Ghost::Update(float deltaTime)
 	float dAngle	=	atan2(dX, dZ);
 
 	SetRotation(0, dAngle, 0);
-	*/
+}
+
+void Ghost::HuntTarget()
+{
+	gAIState->SetTargetState(gHuntState);
+}
+void Ghost::FleeTarget()
+{
+	gAIState->SetTargetState(gFleeState);
+}
+
+void GhostTargetState::SetTextureName(string TextureName)
+{
+	gTextureName	=	TextureName;
+}
+
+string GhostTargetState::GetTextureName()
+{
+	return gTextureName;
 }

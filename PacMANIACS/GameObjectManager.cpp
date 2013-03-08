@@ -33,7 +33,7 @@ void GameObjectManager::StartConvert(MapManager* MapData)
 				string	ObjectName	=	MapData->GetGameObjectList().at(currentChar);
 				GameObject*	GO	=	NULL;
 				GO	=	ConvertStringToGameObject(ObjectName);
-				GO->SetScale(0.5f, 0.5f, 0.5f);
+				GO->SetScale(1.0f, 1.0f, 1.0f);
 				GO->MoveTo(xPos, 1, yPos);
 
 				if(ObjectName == "Pacman")
@@ -51,33 +51,6 @@ void GameObjectManager::StartConvert(MapManager* MapData)
 					moveableObjects->push_back(GO);
 					allGameObjects->push_back(GO);
 
-
-					GameObject*	GO2	=	new Candy();
-					GO2->SetScale(0.5f, 0.5f, 0.5f);
-					GO2->MoveTo(xPos, 1, yPos);
-
-					//	Add candy to both lists
-				//	stationaryObjects->push_back(GO2);
-				//	allGameObjects->push_back(GO2);
-				}
-			}
-
-			if(currentChar == '1')
-			{
-				GameObject*	WALL	=	new Wall();
-				WALL->MoveTo(xPos, 0, yPos);
-				WALL->SetScale(3, 1, 3);
-				allGameObjects->push_back(WALL); 
-			}
-			else
-			{
-				GameObject* FLOOR = new Floor();
-				FLOOR->MoveTo(xPos, 0, yPos);
-				FLOOR->SetScale(3, 3, 3);
-				allGameObjects->push_back(FLOOR);
-
-				if (currentChar != 'A')
-				{
 					GameObject*	candy	=	new Candy();
 					candy->SetScale(0.5f, 0.5f, 0.5f);
 					candy->MoveTo(xPos, 1, yPos);
@@ -86,6 +59,31 @@ void GameObjectManager::StartConvert(MapManager* MapData)
 					stationaryObjects->push_back(candy);
 					allGameObjects->push_back(candy);
 				}
+			}
+			else if(currentChar != '1')
+			{
+				GameObject*	candy	=	new Candy();
+				candy->SetScale(0.5f, 0.5f, 0.5f);
+				candy->MoveTo(xPos, 1, yPos);
+
+				//	Add candy to both lists
+				stationaryObjects->push_back(candy);
+				allGameObjects->push_back(candy);
+			}
+
+			if(currentChar == '1')
+			{
+				GameObject*	WALL	=	new Wall();
+				WALL->MoveTo(xPos, 0, yPos);
+				WALL->SetScale(mapScale, 1, mapScale);
+				allGameObjects->push_back(WALL); 
+			}
+			else
+			{
+				GameObject* FLOOR = new Floor();
+				FLOOR->MoveTo(xPos, 0, yPos);
+				FLOOR->SetScale(mapScale, 3, mapScale);
+				allGameObjects->push_back(FLOOR);
 			}
 		}
 	}
@@ -101,6 +99,8 @@ void GameObjectManager::StartConvert(MapManager* MapData)
 				if (gSoundManager != NULL)
 					GO->soundKey = gSoundManager->LoopSound("Cherry", GO->GetPosition());
 			}
+
+	AlertGhosts();
 }
 
 GameObject* GameObjectManager::ConvertStringToGameObject(string GOName)
@@ -109,6 +109,8 @@ GameObject* GameObjectManager::ConvertStringToGameObject(string GOName)
 
 	if(GOName == "Pacman")
 		GO	=	new Pacman();
+	else if(GOName == "Cherry")
+		GO	=	new Cherry();
 	else if(GOName == "Ghost1")
 	{
 		GO	=	new Ghost();
@@ -174,13 +176,15 @@ void GameObjectManager::Update(float deltaTime)
 			Ghost* ghost = (Ghost*)A;
 			gSoundManager->SetSoundPosition(ghost->soundKey, ghost->GetPosition());
 		}
-
+		/*
 		for each (GameObject *B in *moveableObjects)
 			if(A != B)
 				if(A->IsColliding(B))
 					HandleCollision(A, B);
+					*/
 	}
 
+	bool	cherryEaten	=	false;
 	for(int i = stationaryObjects->size() - 1; i >= 0; --i)
 	{
 		GameObject*	A	=	stationaryObjects->at(i);
@@ -191,13 +195,18 @@ void GameObjectManager::Update(float deltaTime)
 		if(tPacman != NULL)
 			if(A->IsColliding(tPacman))
 			{
-				HandleCollision(tPacman, A);
 				for(int n = 0; n < allGameObjects->size(); ++n)
 					if(allGameObjects->at(n) == A)
 					{
 						allGameObjects->erase(allGameObjects->begin() + n);
 						break;
 					}
+
+				if(A->GetName() == "Cherry")
+				{
+					cout << "RUUUUUUUUNNNNNNN" << endl;
+				}
+
 				stationaryObjects->erase(stationaryObjects->begin() + i);
 			}
 	}
@@ -205,7 +214,16 @@ void GameObjectManager::Update(float deltaTime)
 
 void GameObjectManager::HandleCollision(GameObject* GoA, GameObject* GoB)
 {
+	AlertGhosts();
+}
 
+void GameObjectManager::AlertGhosts()
+{
+	for each (GameObject *A in *moveableObjects)
+	{
+		//if(A->GetName() == "Ghost")
+		//	((Ghost*)A)->FleeTarget();
+	}
 }
 
 vector<GameObject*>* GameObjectManager::GetGameObjects()

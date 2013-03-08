@@ -15,8 +15,6 @@ SoundManager::SoundManager(Camera* camera, HWND hwnd)
 	bool result;
 
 	result = Initialize(hwnd);
-	if(!result)
-		return;
 
 	if(!result)
 		return;

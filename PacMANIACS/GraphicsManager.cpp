@@ -142,17 +142,7 @@ void GraphicsManager::LoadModels()
 			//delete objLoader;
 		}
 		
-		
-		//Om texturen inte redan är inladdad
-		if (gTextureMap.count(gameObject->GetTextureName()) == 0) //gameObject.GetTextureName()
-		{
-			//Ladda texturen
-			string path = texturePath + "\\" + gameObject->GetTextureName();
-			ID3D11ShaderResourceView* texture = LoadShaderResourceView(path);	//ÄNDRA!
-
-			//Sparar texturen i gTextureMap
-			gTextureMap.insert(pair<string, ID3D11ShaderResourceView*>(gameObject->GetTextureName(), texture)); //gameObject.GetTextureName()
-		}
+		LoadTexture(gameObject->GetTextureName());
 	}
 	
 	//Lägger in vertexdatan för alla modellerna i en och samma vector.
@@ -198,6 +188,20 @@ void GraphicsManager::LoadModels()
 	if(FAILED(gVertexBuffer->Init(gDevice, gDeviceContext, bufferDesc)))
 	{
 		::MessageBox(0, "Failed to initalize VertexBuffer(GraphicsManager)", "Error", MB_OK);
+	}
+}
+
+void GraphicsManager::LoadTexture(string Texture)
+{
+	//Om texturen inte redan är inladdad
+	if (gTextureMap.count(Texture) == 0) //gameObject.GetTextureName()
+	{
+		//Ladda texturen
+		string path = texturePath + "\\" + Texture;
+		ID3D11ShaderResourceView* texture = LoadShaderResourceView(path);	//ÄNDRA!
+
+		//Sparar texturen i gTextureMap
+		gTextureMap.insert(pair<string, ID3D11ShaderResourceView*>(Texture, texture)); //gameObject.GetTextureName()
 	}
 }
 
