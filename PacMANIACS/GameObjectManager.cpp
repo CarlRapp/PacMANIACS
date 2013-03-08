@@ -33,7 +33,7 @@ void GameObjectManager::StartConvert(MapManager* MapData)
 				string	ObjectName	=	MapData->GetGameObjectList().at(currentChar);
 				GameObject*	GO	=	NULL;
 				GO	=	ConvertStringToGameObject(ObjectName);
-				GO->SetScale(0.5f, 0.5f, 0.5f);
+				GO->SetScale(1.0f, 1.0f, 1.0f);
 				GO->MoveTo(xPos, 1, yPos);
 
 				if(ObjectName == "Pacman")
@@ -77,14 +77,14 @@ void GameObjectManager::StartConvert(MapManager* MapData)
 			{
 				GameObject*	WALL	=	new Wall();
 				WALL->MoveTo(xPos, 0, yPos);
-				WALL->SetScale(3, 1, 3);
+				WALL->SetScale(mapScale, 1, mapScale);
 				allGameObjects->push_back(WALL); 
 			}
 			else
 			{
 				GameObject* FLOOR = new Floor();
 				FLOOR->MoveTo(xPos, 0, yPos);
-				FLOOR->SetScale(3, 3, 3);
+				FLOOR->SetScale(mapScale, 3, mapScale);
 				allGameObjects->push_back(FLOOR);
 			}
 		}
@@ -107,6 +107,8 @@ GameObject* GameObjectManager::ConvertStringToGameObject(string GOName)
 
 	if(GOName == "Pacman")
 		GO	=	new Pacman();
+	else if(GOName == "Cherry")
+		GO	=	new Cherry();
 	else if(GOName == "Ghost1")
 	{
 		GO	=	new Ghost();

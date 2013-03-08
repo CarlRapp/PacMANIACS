@@ -14,6 +14,7 @@
 #include "Wall.h"
 #include "Floor.h"
 #include "Pacman.h"
+#include "Cherry.h"
 
 using namespace std;
 
