@@ -128,7 +128,7 @@ void GameObjectManager::Update(float deltaTime)
 		A->Update(deltaTime);
 
 		if(A->GetName() == "Pacman")
-			tPacman	=	A;
+			tPacman	=	A; 
 
 		for each (GameObject *B in *moveableObjects)
 			if(A != B)
