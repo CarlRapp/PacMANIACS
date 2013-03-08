@@ -121,7 +121,7 @@ GameObject* GameObjectManager::ConvertStringToGameObject(string GOName)
 
 void GameObjectManager::Update(float deltaTime)
 {
-	GameObject*	tPacman	=	allGameObjects->at(0);
+	GameObject*	tPacman	=	NULL;
 
 	for each (GameObject *A in *moveableObjects)
 	{
