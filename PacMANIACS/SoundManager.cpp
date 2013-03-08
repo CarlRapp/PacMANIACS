@@ -8,9 +8,9 @@ SoundManager::SoundManager(Camera* camera, HWND hwnd)
 	gPrimaryBuffer = 0;
 	gListener = 0;
 
-	gSecondaryBufferMap		= MAP_SOUNDBUFFER();
-	gSecondary3DBufferMap	= MAP_SOUND3DBUFFER();
-	gSoundPositionMap		= MAP_POSITION();
+	gSoundBufferMap			= MAP_SOUNDBUFFER();
+	gSoundBuffer8Map		= MAP_SOUNDBUFFER8();
+	gSound3DBuffer8Map		= MAP_SOUND3DBUFFER8();
 
 	bool result;
 
@@ -18,7 +18,6 @@ SoundManager::SoundManager(Camera* camera, HWND hwnd)
 	if(!result)
 		return;
 
-	result = LoadSoundFile("Sounds/LoginScreenIntro4.wav");
 	if(!result)
 		return;
 }
@@ -30,9 +29,8 @@ SoundManager::~SoundManager(void)
 	gPrimaryBuffer = 0;
 	gListener = 0;
 
-	gSecondaryBufferMap.clear();
-	gSecondary3DBufferMap.clear();
-	gSoundPositionMap.clear();
+	gSoundBuffer8Map.clear();
+	gSound3DBuffer8Map.clear();
 }
 
 bool SoundManager::Initialize(HWND hwnd)
@@ -85,6 +83,11 @@ bool SoundManager::Initialize(HWND hwnd)
 
 bool SoundManager::LoadSoundFile(char* filename)
 {
+	if (gSoundBuffer8Map.count(filename) > 1)
+		return true;
+
+	string path = soundPath + "\\" + filename + ".wav";
+
 	int error;
 	FILE* filePtr;
 	unsigned int count;
@@ -95,14 +98,7 @@ bool SoundManager::LoadSoundFile(char* filename)
 	unsigned char* bufferPtr;
 	unsigned long bufferSize;
 
-
-	IDirectSoundBuffer8* tempSecBuffer = 0;
-	IDirectSound3DBuffer8* tempSec3DBuffer = 0;
-	IDirectSoundBuffer8** tempSecondaryBuffer = &tempSecBuffer;
-	IDirectSound3DBuffer8** tempSecondary3DBuffer = &tempSec3DBuffer;
-	
-
-	error = fopen_s(&filePtr, filename, "rb");
+	error = fopen_s(&filePtr, path.c_str(), "rb");
 	if(error != 0)
 		return false;
 
@@ -162,13 +158,6 @@ bool SoundManager::LoadSoundFile(char* filename)
 	if(FAILED(result))
 		return false;
 
-	result = tempBuffer->QueryInterface(IID_IDirectSoundBuffer8, (void**)&*tempSecondaryBuffer);
-	if(FAILED(result))
-		return false;
-
-	tempBuffer->Release();
-	tempBuffer = 0;
-
 	fseek(filePtr, sizeof(WaveHeaderType), SEEK_SET);
 
 	waveData = new unsigned char[waveFileHeader.dataSize];
@@ -183,95 +172,144 @@ bool SoundManager::LoadSoundFile(char* filename)
 	if(error != 0)
 		return false;
 
-	result = (*tempSecondaryBuffer)->Lock(0, waveFileHeader.dataSize, (void**)&bufferPtr, (DWORD*)&bufferSize, NULL, 0, 0);
+	result = tempBuffer->Lock(0, waveFileHeader.dataSize, (void**)&bufferPtr, (DWORD*)&bufferSize, NULL, 0, 0);
 	if(FAILED(result))
 		return false;
 
 	memcpy(bufferPtr, waveData, waveFileHeader.dataSize);
 
-	result = (*tempSecondaryBuffer)->Unlock((void*)bufferPtr, bufferSize, NULL, 0);
+	result = tempBuffer->Unlock((void*)bufferPtr, bufferSize, NULL, 0);
 	if(FAILED(result))
 		return false;
 
 	delete [] waveData;
 	waveData = 0;
 
-	result = (*tempSecondaryBuffer)->QueryInterface(IID_IDirectSound3DBuffer8, (void**)&*tempSecondary3DBuffer);
-	if(FAILED(result))
-		return false;
-
-	gSecondaryBufferMap.insert(pair<string, IDirectSoundBuffer8*>(filename, *tempSecondaryBuffer));
-	gSecondary3DBufferMap.insert(pair<string, IDirectSound3DBuffer8*>(filename, *tempSecondary3DBuffer));
-	gSoundPositionMap.insert(pair<string, D3DXVECTOR3>(filename, D3DXVECTOR3(0, 0, 0)));
-
+	gSoundBufferMap.insert(pair<string, IDirectSoundBuffer*>(filename, tempBuffer));
 }
 
-bool SoundManager::PlaySound(string name, D3DXVECTOR3 position)
+string SoundManager::PlaySound(string name, D3DXVECTOR3 position)
+{
+	return PlaySound(name, position, 0);
+}
+
+string SoundManager::LoopSound(string name, D3DXVECTOR3 position)
+{
+	return PlaySound(name, position, DSBPLAY_LOOPING);
+}
+
+string SoundManager::PlaySound(string name, D3DXVECTOR3 position, DWORD dwFlags)
 {
 	HRESULT result;
-	if(gSoundPositionMap.count(name) != 0)
+	if(gSoundBufferMap.count(name) != 0)
 	{
-		gSoundPositionMap[name] = position;
+		IDirectSoundBuffer* tempBuffer = 0;
+		IDirectSoundBuffer8* tempBuffer8 = 0;
+		IDirectSound3DBuffer8* temp3DBuffer8 = 0;
 
-		result = gSecondaryBufferMap[name]->SetCurrentPosition(0);
+		gDirectSound->DuplicateSoundBuffer(gSoundBufferMap[name], &tempBuffer);
+
+		result = tempBuffer->QueryInterface(IID_IDirectSoundBuffer8, (void**)&tempBuffer8);
 		if(FAILED(result))
-			return false;
+			return "";
 
-		result = gSecondaryBufferMap[name]->SetVolume(DSBVOLUME_MAX);
+		tempBuffer->Release();
+		tempBuffer = 0;
+
+		result = tempBuffer8->QueryInterface(IID_IDirectSound3DBuffer8, (void**)&temp3DBuffer8);
 		if(FAILED(result))
-			return false;
-
-		Update();
-
-		result = gSecondaryBufferMap[name]->Play(0, 0, 0);
+			return "";
+		
+		result = tempBuffer8->SetCurrentPosition(0);
 		if(FAILED(result))
-			return false;
+			return "";
 
-		return true;
+		result = tempBuffer8->SetVolume(DSBVOLUME_MAX);
+		if(FAILED(result))
+			return "";
+
+		result = temp3DBuffer8->SetPosition(position.x, position.y, position.z, DS3D_IMMEDIATE);
+		if(FAILED(result))
+			return "";
+
+		result = tempBuffer8->Play(0, 0, dwFlags);
+		if(FAILED(result))
+			return "";
+
+		string key = GenerateKey(name);
+
+		gSoundBuffer8Map.insert(pair<string, IDirectSoundBuffer8*>(key, tempBuffer8));
+		gSound3DBuffer8Map.insert(pair<string, IDirectSound3DBuffer8*>(key, temp3DBuffer8));
+
+		return key;
 	}
 
-	return false;
+	return "";
 }
+
+void SoundManager::StopSound(string key)
+{
+	if(gSoundBufferMap.count(key) != 0)
+	{
+		gSoundBuffer8Map[key]->Stop();
+		RemoveSound(key);
+	}
+}
+
+void SoundManager::RemoveSound(string key)
+{
+	gSoundBuffer8Map[key]->Release();
+	gSound3DBuffer8Map[key]->Release();
+	gSoundBuffer8Map.erase(key);
+	gSound3DBuffer8Map.erase(key);
+}
+
 
 void SoundManager::Update()
 {
-	D3DXVECTOR3 cameraPosition = gCamera->GetPosition();
-	D3DXMATRIX translation, rotation, worldToCamera;
+	D3DXVECTOR3 pos = gCamera->GetPosition();
+	D3DXVECTOR3 forward = gCamera->GetForward();
+	D3DXVECTOR3 up = gCamera->GetUp();
 
-	D3DXMatrixTranslation(&translation, -cameraPosition.x, -cameraPosition.y, -cameraPosition.z);
-	D3DXVECTOR3 cameraDirection = gCamera->GetForward();
-	D3DXVECTOR3 startDirection(0,0,1);
+	gListener->SetPosition(pos.x, pos.y, pos.z, DS3D_DEFERRED);
+	gListener->SetOrientation(forward.x, forward.y,forward.z, up.x, up.y,up.z, DS3D_DEFERRED);
 
-	float dot = D3DXVec3Dot(&startDirection, &cameraDirection);
+	gListener->CommitDeferredSettings();
 
-	if (dot != 0)
+
+	vector<string> keys = vector<string>();
+	for(MAP_SOUNDBUFFER8::iterator iterator = gSoundBuffer8Map.begin(); iterator != gSoundBuffer8Map.end(); iterator++) 
 	{
-		float angle = acos(dot);
-		if (angle != 0)
+		DWORD status = 0;
+		iterator->second->GetStatus(&status);
+		if (!(status & DSBSTATUS_PLAYING))
 		{
-			D3DXVECTOR3 cross;
-			D3DXVec3Cross(&cross, &startDirection, &cameraDirection);
-    
-			D3DXMatrixRotationAxis(&rotation, &cross, angle);
-			float determinant = D3DXMatrixDeterminant(&rotation);
-			D3DXMatrixInverse(&rotation, &determinant, &rotation);
+			keys.push_back(iterator->first);
 		}
 	}
 
-	worldToCamera = translation * rotation;
-	
-	D3DXVECTOR3 newPosition;
-	for(MAP_SOUND3DBUFFER::iterator iterator = gSecondary3DBufferMap.begin(); iterator != gSecondary3DBufferMap.end(); iterator++) 
+	for each (string key in keys)
 	{
-		D3DXVec3TransformCoord(&newPosition, &gSoundPositionMap[iterator->first], &worldToCamera);
-		iterator->second->SetPosition(newPosition.x, newPosition.y, newPosition.z, DS3D_IMMEDIATE);
+		RemoveSound(key);
 	}
 }
 
-int SoundManager::ConvertToIndex(string soundName)
+void SoundManager::SetSoundPath(string path)
 {
-	if(soundName == "Cherry")
-		return 0;
+	soundPath = path;
+}
 
-	return -1;
+string SoundManager::GenerateKey(string name)
+{
+	string key;
+	for (int i = 0; i < 1000; i++)
+	{
+		std::stringstream ss;
+		ss << i;
+		key = name + ss.str();
+
+		if(gSoundBuffer8Map.count(key) == 0 && gSound3DBuffer8Map.count(key) == 0)
+			return key;
+	}
+	return "";
 }
