@@ -54,6 +54,7 @@ void GeniusGhostAIState::CalculateMove(GameObject* ghost, vector<D3DXVECTOR3> av
 Ghost::Ghost(void) : GameObject()
 {
 	gAIState = new NormalGhostAIState();
+	soundKey = "";
 }
 
 

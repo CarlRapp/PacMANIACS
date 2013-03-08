@@ -48,6 +48,8 @@ public:
 	Ghost(void);
 	~Ghost(void);
 
+	string	soundKey;
+
 	string	GetName();
 	string	GetTextureName();
 	float	GetHitRadius();
