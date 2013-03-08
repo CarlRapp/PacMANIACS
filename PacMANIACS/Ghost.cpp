@@ -9,9 +9,9 @@ string StupidGhostAIState::GetTextureName()
 void StupidGhostAIState::CalculateMove(GameObject* ghost, vector<D3DXVECTOR3> availableMoves)
 {
 	if (availableMoves.size() >= 4)
-		ghost->MoveTo(availableMoves[0]);
+		ghost->Move(availableMoves[0]);
 	else
-		ghost->MoveTo(availableMoves[availableMoves.size() - 1]);
+		ghost->Move(availableMoves[availableMoves.size() - 1]);
 }
 
 string NormalGhostAIState::GetTextureName()
@@ -22,9 +22,9 @@ string NormalGhostAIState::GetTextureName()
 void NormalGhostAIState::CalculateMove(GameObject* ghost, vector<D3DXVECTOR3> availableMoves)
 {
 	if (availableMoves.size() >= 3)
-		ghost->MoveTo(availableMoves[0]);
+		ghost->Move(availableMoves[0]);
 	else
-		ghost->MoveTo(availableMoves[availableMoves.size() - 1]);
+		ghost->Move(availableMoves[availableMoves.size() - 1]);
 }
 
 string SmartGhostAIState::GetTextureName()
@@ -35,9 +35,9 @@ string SmartGhostAIState::GetTextureName()
 void SmartGhostAIState::CalculateMove(GameObject* ghost, vector<D3DXVECTOR3> availableMoves)
 {
 	if (availableMoves.size() >= 2)
-		ghost->MoveTo(availableMoves[0]);
+		ghost->Move(availableMoves[0]);
 	else
-		ghost->MoveTo(availableMoves[availableMoves.size() - 1]);
+		ghost->Move(availableMoves[availableMoves.size() - 1]);
 }
 
 string GeniusGhostAIState::GetTextureName()
@@ -48,7 +48,7 @@ string GeniusGhostAIState::GetTextureName()
 void GeniusGhostAIState::CalculateMove(GameObject* ghost, vector<D3DXVECTOR3> availableMoves)
 {
 	if (availableMoves.size() >= 1)
-		ghost->MoveTo(availableMoves[0]);
+		ghost->Move(availableMoves[0]);
 }
 
 Ghost::Ghost(void) : GameObject()
