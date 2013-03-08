@@ -2,22 +2,18 @@
 #define GAMEOBJECT_H	
 
 #include "stdafx.h"
+#include "GameObjectState.h"
+
 #include <string>
 
 using namespace std;
 
-enum GameObjectState
-{
-	Alive,
-	Idle,
-	Dead
-};
 
 class GameObject
 {
 private:
 	//	Fields
-	GameObjectState	gState;
+	GameObjectState* gState;
 
 	//	Matrices
 	D3DXMATRIX	gRotation;
@@ -40,16 +36,25 @@ public:
 	D3DXMATRIX		GetWorldMatrix(void);
 	D3DXMATRIX		GetWorldInverseTranspose(void);
 	D3DXMATRIX		GetRotationMatrix(void);
+	D3DXVECTOR3		GetPosition(void);
+
 	virtual string	GetName();
 	virtual string	GetTextureName();
+
+	virtual bool	IsStationary();
+	virtual	float	GetHitRadius();
 
 	bool	IsAlive();
 
 	//	Set methods
 	void	SetRotation(float x, float y, float z);
 	void	SetScale(float x, float y, float z);
+	void	Move(D3DXVECTOR3 pos);
 	void	Move(float dX, float dY, float dZ);
+	void	MoveTo(D3DXVECTOR3 pos);
 	void	MoveTo(float x, float y, float z);
+
+	bool	IsColliding(GameObject* GO);
 };
 
 #endif

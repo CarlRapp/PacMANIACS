@@ -9,7 +9,7 @@ GameObject::GameObject()
 	SetRotation(0, 0, 0);
 	SetScale(1, 1, 1);
 
-	gState	=	Alive;
+	gState	=	new AliveGameObjectState();
 }
 
 GameObject::~GameObject()
@@ -19,12 +19,12 @@ GameObject::~GameObject()
 
 void GameObject::Update(float deltaTime)
 {
-	Move(1*deltaTime, 1*deltaTime, 1*deltaTime);
+	//Move(1*deltaTime, 0*deltaTime, 1*deltaTime);
 }
 
 bool GameObject::IsAlive()
 {
-	return (gState != Dead);
+	return gState->IsAlive();
 }
 
 
@@ -41,6 +41,11 @@ void GameObject::SetScale(float x, float y, float z)
 	UpdateWorldMatrix(true);
 }
 
+void GameObject::Move(D3DXVECTOR3 pos)
+{
+	Move(pos.x, pos.y, pos.z);
+}
+
 void GameObject::Move(float dx, float dy, float dz)
 {
 	gTranslation._41	+=	dx;
@@ -48,6 +53,11 @@ void GameObject::Move(float dx, float dy, float dz)
 	gTranslation._43	+=	dz;
 
 	UpdateWorldMatrix(false);
+}
+
+void GameObject::MoveTo(D3DXVECTOR3 pos)
+{
+	MoveTo(pos.x, pos.y, pos.z);
 }
 
 void GameObject::MoveTo(float x, float y, float z)
@@ -102,4 +112,30 @@ string GameObject::GetName()
 string GameObject::GetTextureName()
 {
 	return "";
+}
+
+bool GameObject::IsStationary()
+{
+	return false;
+}
+
+float GameObject::GetHitRadius()
+{
+	return 0.0f;
+}
+
+bool GameObject::IsColliding(GameObject* GO)
+{
+	D3DXVECTOR3*		p1	=	&GetPosition();
+	D3DXVECTOR3*		p2	=	&GO->GetPosition();
+	D3DXVECTOR3*		p3	=	&(*p2 - *p1);
+
+	float	LengthBetween	=	D3DXVec3Length(p3);
+
+	return (LengthBetween < (GetHitRadius() + GO->GetHitRadius()));
+}
+
+D3DXVECTOR3 GameObject::GetPosition()
+{
+	return D3DXVECTOR3(gTranslation._41, gTranslation._42, gTranslation._43);
 }
