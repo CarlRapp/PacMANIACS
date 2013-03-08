@@ -11,7 +11,7 @@ string Pacman::GetName(){
 };
 
 string Pacman::GetTextureName(){
-	return "Pacman";
+	return "PacMan_Texture.png";
 };
 
 float Pacman::GetHitRadius(){
