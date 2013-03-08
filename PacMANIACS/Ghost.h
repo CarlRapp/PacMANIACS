@@ -4,11 +4,26 @@
 
 #include "GameObject.h"
 
+class GhostTargetState
+{
+protected:
+	string	gTextureName;
+
+public:
+	void	SetTextureName(string TextureName);
+
+	virtual	string GetTextureName();
+};
+
 class GhostAIState
 {
+	GhostTargetState*	gActiveState;
+
 public:
+	string	GetActiveTextureName();
 	virtual string GetTextureName() = 0;
 	virtual void CalculateMove(GameObject* ghost, vector<D3DXVECTOR3> availableMoves) = 0;
+	void	SetTargetState(GhostTargetState* State);
 };
 
 class StupidGhostAIState : public GhostAIState
@@ -44,6 +59,9 @@ class Ghost : public GameObject
 	GhostAIState*	gAIState;
 	GameObject*		gTarget;
 
+	GhostTargetState*	gHuntState;
+	GhostTargetState*	gFleeState;
+
 public:
 	Ghost(void);
 	~Ghost(void);
@@ -58,6 +76,9 @@ public:
 	void	CalculateMove(vector<D3DXVECTOR3> availableMoves);
 	void	SetTarget(GameObject* Target);
 	void	Update(float deltaTime);
+
+	void	HuntTarget(void);
+	void	FleeTarget(void);
 };
 
 #endif
