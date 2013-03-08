@@ -99,8 +99,6 @@ void GameObjectManager::StartConvert(MapManager* MapData)
 				if (gSoundManager != NULL)
 					GO->soundKey = gSoundManager->LoopSound("Cherry", GO->GetPosition());
 			}
-
-	AlertGhosts();
 }
 
 GameObject* GameObjectManager::ConvertStringToGameObject(string GOName)
@@ -203,9 +201,7 @@ void GameObjectManager::Update(float deltaTime)
 					}
 
 				if(A->GetName() == "Cherry")
-				{
-					cout << "RUUUUUUUUNNNNNNN" << endl;
-				}
+					AlertGhosts();
 
 				stationaryObjects->erase(stationaryObjects->begin() + i);
 			}
@@ -214,15 +210,14 @@ void GameObjectManager::Update(float deltaTime)
 
 void GameObjectManager::HandleCollision(GameObject* GoA, GameObject* GoB)
 {
-	AlertGhosts();
 }
 
 void GameObjectManager::AlertGhosts()
 {
 	for each (GameObject *A in *moveableObjects)
 	{
-		//if(A->GetName() == "Ghost")
-		//	((Ghost*)A)->FleeTarget();
+		if(A->GetName() == "Ghost")
+			((Ghost*)A)->FleeTarget();
 	}
 }
 
