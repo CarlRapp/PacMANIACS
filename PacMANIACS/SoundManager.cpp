@@ -18,8 +18,6 @@ SoundManager::SoundManager(Camera* camera, HWND hwnd)
 	if(!result)
 		::MessageBox(0, "Initializing of the SoundManager failed!", "Error", MB_OK);
 
-	if(!result)
-		::MessageBox(0, "Loading of file 'Cherry' failed!", "Error", MB_OK);
 }
 
 
@@ -196,7 +194,6 @@ string SoundManager::PlaySound(string name, D3DXVECTOR3 position)
 string SoundManager::LoopSound(string name, D3DXVECTOR3 position)
 {
 	return PlaySound(name, position, DSBPLAY_LOOPING);
-	bufferSize = 0;
 }
 
 string SoundManager::PlaySound(string name, D3DXVECTOR3 position, DWORD dwFlags)
