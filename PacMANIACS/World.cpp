@@ -10,9 +10,19 @@ World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, ID3D11Ren
 	
 	gInput				=	new InputManager();
 
+	gCamera			=	new Camera(	90 * ((float)D3DX_PI/180), 
+								gResolution.x / gResolution.y, 
+								0.5f, 
+								500.0f
+								);
+
+	gCamera->SetInputManager(gInput);
+
+	gSoundManager = new SoundManager(gCamera, hwnd);
+	gSoundManager->SetSoundPath("Sounds");
 	
 	MapManager*	MM		=	new MapManager();
-	gGOManager			=	new GameObjectManager(MM);
+	gGOManager			=	new GameObjectManager(MM, gSoundManager);
 
 	for(int i = 0; i < gGOManager->GetGameObjects()->size(); i++)
 		if(gGOManager->GetGameObjects()->at(i)->GetName() == "Pacman")
@@ -21,12 +31,7 @@ World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, ID3D11Ren
 
 
 	//	Create the camera, with all its settings
-	gCamera			=	new Camera(	90 * ((float)D3DX_PI/180), 
-									gResolution.x / gResolution.y, 
-									0.5f, 
-									500.0f
-									);
-	gCamera->SetInputManager(gInput);
+
 	gCamera->SetTarget(gPlayerObject);
 
 
@@ -40,11 +45,9 @@ World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, ID3D11Ren
 
 	gGraphicsManager->LoadModels();
 
-	gSoundManager = new SoundManager(gCamera, hwnd);
-	gSoundManager->SetSoundPath("Sounds");
 
-	gSoundManager->LoadSoundFile("LoginScreenIntro4");
-	gSoundManager->LoadSoundFile("Cherry");
+	//gSoundManager->LoadSoundFile("LoginScreenIntro4");
+	//gSoundManager->LoadSoundFile("Cherry");
 
 	D3DXVECTOR3	DEST	=	gGOManager->GetWorldPosition(1, 0, 1);
 	gGOManager->GetGameObjects()->at(14)->SetDestination(DEST.x, 0, DEST.z);

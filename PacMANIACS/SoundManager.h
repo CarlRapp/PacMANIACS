@@ -62,6 +62,7 @@ public:
 	string	PlaySound(string name, D3DXVECTOR3 postion);
 	string	LoopSound(string name, D3DXVECTOR3 postion);
 	void	StopSound(string key);
+	void	SetSoundPosition(string key, D3DXVECTOR3 postion);
 	void	Update();
 
 	void	SetSoundPath(string path);
