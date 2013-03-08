@@ -13,6 +13,7 @@
 #include "Candy.h"
 #include "Wall.h"
 #include "Floor.h"
+#include "Pacman.h"
 
 using namespace std;
 
