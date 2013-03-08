@@ -6,6 +6,8 @@
 
 class Candy : public GameObject
 {
+	float		gTimeLived;
+	D3DXVECTOR3	gStartPosition;
 
 public:
 	Candy(void);
@@ -14,6 +16,8 @@ public:
 	string	GetName();
 	string	GetTextureName();
 	float	GetHitRadius();
+
+	void	Update(float deltaTime);
 };
 
 #endif
