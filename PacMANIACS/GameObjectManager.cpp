@@ -94,7 +94,7 @@ GameObject* GameObjectManager::ConvertStringToGameObject(string GOName)
 	GameObject*	GO	=	NULL;
 
 	if(GOName == "Pacman")
-		GO	=	new GameObject();
+		GO	=	new Pacman();
 	else if(GOName == "Ghost1")
 	{
 		GO	=	new Ghost();
