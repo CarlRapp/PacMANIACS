@@ -19,7 +19,7 @@ string Candy::GetName()
 
 string Candy::GetTextureName()
 {
-	return "Candy.png";
+	return "Candy_Texture.png";
 }
 
 float Candy::GetHitRadius()
