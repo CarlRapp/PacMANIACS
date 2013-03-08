@@ -72,11 +72,13 @@ public:
 
 	void	SetPosition(float x, float y, float z);
 
+	void	SetLook(D3DXVECTOR2 direction);
+
 	bool	IsColliding(GameObject* GO);
 
 	bool	AtDestination(void);
-	void	SetDestination(float x, float y, float z);
-	void	SetDestination(D3DXVECTOR3 Pos);
+	void	virtual SetDestination(float x, float y, float z);
+	void	virtual SetDestination(D3DXVECTOR3 Pos);
 
 	D3DXVECTOR3 GetVelocity(void);
 };
