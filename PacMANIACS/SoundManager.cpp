@@ -231,6 +231,7 @@ bool SoundManager::PlaySound(string name, D3DXVECTOR3 position)
 		if(FAILED(result))
 			return false;
 
+		
 		return true;
 	}
 
