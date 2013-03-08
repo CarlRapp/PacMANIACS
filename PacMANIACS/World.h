@@ -32,6 +32,8 @@ private:
 
 
 	D3DXVECTOR2		gResolution;
+
+	GameObject*		gPlayerObject;
 public:
 	World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, ID3D11RenderTargetView* renderTargetView, HWND hwnd, D3DXVECTOR2 Resolution);
 
