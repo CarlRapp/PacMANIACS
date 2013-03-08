@@ -158,12 +158,17 @@ void Ghost::Update(float deltaTime)
 	GameObject::Update(deltaTime);
 	gAIState->Update(deltaTime);
 
+	D3DXVECTOR2 direction = D3DXVECTOR2(gTarget->GetPosition().x - GetPosition().x, gTarget->GetPosition().z - GetPosition().z);
+
+	SetLook(direction);
+	/*
 	float	dX	=	GetPosition().x - gTarget->GetPosition().x;
 	float	dZ	=	GetPosition().z - gTarget->GetPosition().z;
 
 	float dAngle	=	atan2(dX, dZ);
 
 	SetRotation(0, dAngle, 0);
+	*/
 }
 
 void Ghost::HuntTarget()
