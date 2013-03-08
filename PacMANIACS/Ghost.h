@@ -41,7 +41,8 @@ public:
 
 class Ghost : public GameObject
 {
-	GhostAIState* gAIState;
+	GhostAIState*	gAIState;
+	GameObject*		gTarget;
 
 public:
 	Ghost(void);
@@ -52,7 +53,9 @@ public:
 	float	GetHitRadius();
 
 	void	SetAIState(GhostAIState* AIState);
-	void	CalculateMove(GameObject* target, vector<D3DXVECTOR3> availableMoves);
+	void	CalculateMove(vector<D3DXVECTOR3> availableMoves);
+	void	SetTarget(GameObject* Target);
+	void	Update(float deltaTime);
 };
 
 #endif
