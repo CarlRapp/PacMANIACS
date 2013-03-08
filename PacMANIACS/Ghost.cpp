@@ -149,6 +149,7 @@ void Ghost::Update(float deltaTime)
 	float dAngle	=	atan2(dX, dZ);
 
 	SetRotation(0, dAngle, 0);
+	*/
 }
 
 void Ghost::HuntTarget()
