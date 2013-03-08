@@ -59,12 +59,12 @@ void GhostAIState::SetTargetState(GhostTargetState* State)
 Ghost::Ghost(void) : GameObject()
 {
 	soundKey = "";
-	gAIState	= new NormalGhostAIState();
+	//gAIState	= new NormalGhostAIState();
 
 
 	gHuntState	=	new GhostTargetState();
-	gFleeState	=	new GhostTargetState();
-	gFleeState->SetTextureName("Flee_Texture.png");
+	gFleeState	=	new FleeState();
+	((FleeState*)gFleeState)->SetFleeTexture("Flee_Texture.png");
 }
 
 Ghost::~Ghost(void)
@@ -95,8 +95,26 @@ void Ghost::SetAIState(GhostAIState* AIState)
 {
 	gAIState = AIState;
 	gHuntState->SetTextureName(gAIState->GetTextureName());
+	gFleeState->SetTextureName(gAIState->GetTextureName());
 
 	gAIState->SetTargetState(gHuntState);
+}
+void GhostAIState::Update(float deltaTime)
+{
+	gActiveState->Update(deltaTime);
+}
+
+void GhostTargetState::Update(float deltaTime)
+{
+
+}
+
+void FleeState::Update(float deltaTime)
+{
+	if(gTimeTicked < 0)
+		gTimeTicked	=	rand();
+
+	gTimeTicked	+=	deltaTime;
 }
 
 void Ghost::SetTarget(GameObject* Target)
@@ -138,6 +156,7 @@ void Ghost::CalculateMove(vector<D3DXVECTOR3> availableMoves)
 void Ghost::Update(float deltaTime)
 {
 	GameObject::Update(deltaTime);
+	gAIState->Update(deltaTime);
 
 	float	dX	=	GetPosition().x - gTarget->GetPosition().x;
 	float	dZ	=	GetPosition().z - gTarget->GetPosition().z;
@@ -163,5 +182,19 @@ void GhostTargetState::SetTextureName(string TextureName)
 
 string GhostTargetState::GetTextureName()
 {
+	string t = gTextureName;
 	return gTextureName;
+}
+
+string FleeState::GetTextureName()
+{
+	if(((int)gTimeTicked) % 2 == 0)
+		return	gFleeTexture;
+	else
+		return	gTextureName;
+}
+
+void FleeState::SetFleeTexture(string TextureName)
+{
+	gFleeTexture = TextureName;
 }
