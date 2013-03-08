@@ -35,13 +35,12 @@ World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, ID3D11Ren
 
 	gGraphicsManager->LoadModels();
 
-	gCamera->SetTarget(gGOManager->GetGameObjects()->at(0));
-	gGOManager->GetGameObjects()->at(0)->SetScale(0.05f, 0.05f, 0.05f);
 	gSoundManager = new SoundManager(gCamera, hwnd);
 	gSoundManager->SetSoundPath("Sounds");
 
 	gSoundManager->LoadSoundFile("LoginScreenIntro4");
 	gSoundManager->LoadSoundFile("Cherry");
+
 	D3DXVECTOR3	DEST	=	gGOManager->GetWorldPosition(1, 0, 1);
 	gGOManager->GetGameObjects()->at(14)->SetDestination(DEST.x, 0, DEST.z);
 
@@ -50,6 +49,9 @@ World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, ID3D11Ren
 
 	//gSoundManager->StopSound(key1);
 
+	for(int i = 0; i < gGOManager->GetGameObjects()->size(); i++)
+		if(gGOManager->GetGameObjects()->at(i)->GetName() == "Pacman")
+			gCamera->SetTarget(gGOManager->GetGameObjects()->at(i));
 }
 
 
@@ -59,15 +61,13 @@ void World::Update(float deltaTime)
 	//	what has been pressed this update.
 	gInput->Update();
 
-	GameObject* GO1 = gGOManager->GetGameObjects()->at(14);
-
-	system("cls");
-	cout << GO1->GetPosition().x << endl;
-	cout << GO1->GetPosition().z << endl;
+	GameObject* GO = NULL;
 
 
+	for(int i = 0; i < gGOManager->GetGameObjects()->size(); i++)
+		if(gGOManager->GetGameObjects()->at(i)->GetName() == "Pacman")
+			GO = gGOManager->GetGameObjects()->at(i);
 
-	GameObject* GO = gGOManager->GetGameObjects()->at(0);
 	if(gInput->IsKeyDown('W'))
 	{
 		D3DXVECTOR3	S;
@@ -104,7 +104,7 @@ void World::Update(float deltaTime)
 	if(gInput->IsKeyPressed('H'))
 		gCamera->SetTarget(NULL);
 	if(gInput->IsKeyPressed('G'))
-		gCamera->SetTarget(gGOManager->GetGameObjects()->at(0));
+		gCamera->SetTarget(GO);
 
 	//	Update all the Game Objects
 	gGOManager->Update(deltaTime);
