@@ -201,7 +201,16 @@ string SoundManager::LoopSound(string name, D3DXVECTOR3 position)
 string SoundManager::PlaySound(string name, D3DXVECTOR3 position, DWORD dwFlags)
 {
 	HRESULT result;
-	if(gSoundBufferMap.count(name) != 0)
+
+	if (gSoundBufferMap.count(name) == 0)
+	{
+		char *cstr = new char[name.length() + 1];
+		strcpy(cstr, name.c_str());
+		LoadSoundFile(cstr);
+		delete [] cstr;
+	}
+
+	if (gSoundBufferMap.count(name) != 0)
 	{
 		IDirectSoundBuffer* tempBuffer = 0;
 		IDirectSoundBuffer8* tempBuffer8 = 0;
