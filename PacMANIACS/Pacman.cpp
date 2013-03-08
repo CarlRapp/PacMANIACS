@@ -15,7 +15,7 @@ string Pacman::GetTextureName(){
 };
 
 float Pacman::GetHitRadius(){
-	return 3.0f;
+	return 0.4f;
 };
 
 float Pacman::GetPoints(){
