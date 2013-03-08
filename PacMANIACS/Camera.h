@@ -27,11 +27,9 @@ private:
 
 
 	void	UpdateFollow(float deltaTime);
-
-
 	void	UpdateFree(float deltaTime);
+
 	InputManager*	gInput;
-	D3DXVECTOR2		oldMousePos;
 
 public:
 	Camera(float FoV, float AspectRatio, float Near, float Far);

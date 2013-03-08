@@ -1,17 +1,17 @@
 #pragma once
-#ifndef CANDY_H
-#define CANDY_H	
+#ifndef CHERRY_H
+#define CHERRY_H	
 
 #include "GameObject.h"
 
-class Candy : public GameObject
+class Cherry : public GameObject
 {
 	float		gTimeLived;
 	D3DXVECTOR3	gStartPosition;
 
 public:
-	Candy(void);
-	~Candy(void);
+	Cherry(void);
+	~Cherry(void);
 
 	string	GetName();
 	string	GetTextureName();
@@ -20,5 +20,4 @@ public:
 
 	void	Update(float deltaTime);
 };
-
 #endif

@@ -65,8 +65,11 @@ public:
 	void SetTexturePath(string path);
 
 	void LoadModels();
+	void LoadTexture(string Texture);
+
 	void Render();
 
 	void CreateLevelBuffer(MapManager* Map);
+	
 };
 #endif

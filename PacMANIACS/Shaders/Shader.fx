@@ -92,7 +92,7 @@ float4 PSScene(PSSceneIn input) : SV_Target
 	light.AmbientIntensity	= 0.2f;
 	light.DiffuseIntensity	= 0.8f;
 	light.SpecularIntensity	= 1.0f;
-	light.Direction			= float3(1, -3, 1);
+	light.Direction			= float3(0, -1.0f, 0);
 	
 	ComputeDirectionalLight(input.PosW, input.NormalW, CameraPos, light, Shininess, SpecularIntensity, AD, S);
 	AmbientDiffuse 	+= AD;

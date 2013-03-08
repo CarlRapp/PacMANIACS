@@ -15,6 +15,7 @@
 #include "Wall.h"
 #include "Floor.h"
 #include "Pacman.h"
+#include "Cherry.h"
 
 using namespace std;
 
@@ -39,6 +40,7 @@ private:
 	bool		IsTileCrossing(int X, int Z);
 	bool		IsTileCorner(int X, int Z);
 	bool		IsFloor(int X, int Z);
+	void		AlertGhosts();
 
 public:
 	GameObjectManager(MapManager* MapData, SoundManager* soundManager);

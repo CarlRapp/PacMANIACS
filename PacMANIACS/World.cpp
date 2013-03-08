@@ -1,14 +1,14 @@
 #include "World.h"
 
 
-World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, ID3D11RenderTargetView* renderTargetView, HWND hwnd, D3DXVECTOR2 Resolution)
+World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, ID3D11RenderTargetView* renderTargetView, HWND* hwnd, D3DXVECTOR2 Resolution)
 {
 	gState				=	(WorldState)Paused;
 	gDeviceContext		=	deviceContext;
 	gResolution.x		=	(int)Resolution.x;
 	gResolution.y		=	(int)Resolution.y;
 	
-	gInput				=	new InputManager();
+	gInput				=	new InputManager(hwnd);
 
 	gCamera			=	new Camera(	90 * ((float)D3DX_PI/180), 
 								gResolution.x / gResolution.y, 
@@ -18,7 +18,8 @@ World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, ID3D11Ren
 
 	gCamera->SetInputManager(gInput);
 
-	gSoundManager = new SoundManager(gCamera, hwnd);
+	gSoundManager = new SoundManager(gCamera, *hwnd);
+
 	gSoundManager->SetSoundPath("Sounds");
 	
 	MapManager*	MM		=	new MapManager();
@@ -44,6 +45,7 @@ World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, ID3D11Ren
 	gGraphicsManager->SetGameObjects(gGOManager->GetGameObjects());
 
 	gGraphicsManager->LoadModels();
+	gGraphicsManager->LoadTexture("Flee_Texture.png");
 
 
 	//gSoundManager->LoadSoundFile("LoginScreenIntro4");
