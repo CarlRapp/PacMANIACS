@@ -67,9 +67,6 @@ void World::Update(float deltaTime)
 	//	what has been pressed this update.
 	gInput->Update();
 
-	system("cls");
-	cout << ((Pacman*)gPlayerObject)->GetPoints() << endl;
-
 	if(gInput->IsKeyPressed('H'))
 		gCamera->SetTarget(NULL);
 	if(gInput->IsKeyPressed('G'))
@@ -81,10 +78,10 @@ void World::Update(float deltaTime)
 		if (gInput->IsKeyPressed('W'))
 			gPlayerObject->gNextMove = Pacman::NextMove::Forward;
 
-	else if (gInput->IsKeyDown('A'))
+	else if (gInput->IsKeyPressed('A'))
 			gPlayerObject->gNextMove = Pacman::NextMove::Left;
 
-	else if (gInput->IsKeyDown('D'))
+	else if (gInput->IsKeyPressed('D'))
 			gPlayerObject->gNextMove = Pacman::NextMove::Right;
 
 		else if (gInput->IsKeyPressed('S'))
