@@ -24,7 +24,7 @@ string Candy::GetTextureName()
 
 float Candy::GetHitRadius()
 {
-	return 0.4f;
+	return RescaleHitRadius(0.395);
 }
 
 bool Candy::IsStationary()
