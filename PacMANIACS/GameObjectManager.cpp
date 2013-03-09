@@ -204,6 +204,9 @@ void GameObjectManager::Update(float deltaTime)
 					AlertGhosts();
 
 				stationaryObjects->erase(stationaryObjects->begin() + i);
+				
+				if (tPacman->GetName() == "Pacman")
+					((Pacman*)tPacman)->AddPoints(1);
 			}
 	}
 }
