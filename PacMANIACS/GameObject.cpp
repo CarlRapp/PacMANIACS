@@ -24,8 +24,10 @@ GameObject::~GameObject()
 
 void GameObject::Update(float deltaTime)
 {
-	gReadyForMove	=	false;
+	if(gState->GetName() != "Alive")
+		return;
 
+	gReadyForMove	=	false;
 	Move(gVelocity.x * deltaTime, gVelocity.y * deltaTime, gVelocity.z * deltaTime);
 
 	D3DXVECTOR3	v1	=	gTargetPosition - GetPosition();
@@ -66,13 +68,13 @@ void GameObject::SetVelocity(D3DXVECTOR3 Vel)
 void GameObject::SetDestination(float x, float y, float z)
 {
 	gVelocity.x			=	x - GetPosition().x;
-	gVelocity.y			=	0;
+	gVelocity.y			=	y - GetPosition().y;
 	gVelocity.z			=	z - GetPosition().z;
 	D3DXVec3Normalize(&gVelocity, &gVelocity);
 	gVelocity			*=	GetSpeed();
 
 	gTargetPosition.x	=	x;
-	gTargetPosition.y	=	GetPosition().y;
+	gTargetPosition.y	=	y;
 	gTargetPosition.z	=	z;
 }
 
@@ -237,4 +239,14 @@ D3DXVECTOR3 GameObject::GetPosition()
 D3DXVECTOR3 GameObject::GetVelocity()
 {
 	return gVelocity;
+}
+
+D3DXVECTOR3 GameObject::GetDestination()
+{
+	return gTargetPosition;
+}
+
+GameObjectState* GameObject::GetState()
+{
+	return gState;
 }
