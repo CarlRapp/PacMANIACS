@@ -97,7 +97,7 @@ void GameObjectManager::StartConvert(MapManager* MapData)
 				GO->SetTarget(tPacman);
 				GO->CalculateMove(GetAvailableMoves(POS.x, POS.y));
 				if (gSoundManager != NULL)
-					GO->soundKey = gSoundManager->LoopSound("Cherry", GO->GetPosition());
+					GO->soundKey = gSoundManager->Loop("Cherry", GO->GetPosition());
 			}
 }
 
