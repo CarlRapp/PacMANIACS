@@ -35,6 +35,7 @@ private:
 
 protected:
 	virtual	float	GetSpeed();
+	float			RescaleHitRadius(float radius);
 
 public:
 	GameObject(void);
