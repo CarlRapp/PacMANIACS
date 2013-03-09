@@ -294,7 +294,7 @@ int Run()
 
 void CloseApplication(HWND hWnd)
 {
-
+	gWorld->~World();
 	::DestroyWindow(hWnd);
 }
 
