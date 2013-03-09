@@ -117,5 +117,11 @@ void World::Update(float deltaTime)
 
 void World::Render()
 {
+	ostringstream ss;
+	ss << gPlayerObject->GetPoints();
+	string s(ss.str());
+
+	gGraphicsManager->DrawString("Score:", D3DXVECTOR2(10, 10), D3DXVECTOR3(1,0,0), 20);
+	gGraphicsManager->DrawString(s, D3DXVECTOR2(75,10), D3DXVECTOR3(1,0,0), 20);
 	gGraphicsManager->Render();
 }
