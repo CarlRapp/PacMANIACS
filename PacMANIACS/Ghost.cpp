@@ -92,6 +92,11 @@ float Ghost::GetHitRadius()
 	return RescaleHitRadius(0.858f);
 }
 
+int	Ghost::GetValue()
+{
+	return 1000;
+}
+
 void Ghost::SetAIState(GhostAIState* AIState)
 {
 	gAIState = AIState;
@@ -204,7 +209,7 @@ void Ghost::FleeTarget(float CherryTime)
 
 float Ghost::GetSpeed()
 {
-	return 5;
+	return GameObject::GetSpeed();
 }
 
 
