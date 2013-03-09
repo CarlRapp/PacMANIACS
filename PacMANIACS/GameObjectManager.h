@@ -40,7 +40,7 @@ private:
 	bool		IsTileCrossing(int X, int Z);
 	bool		IsTileCorner(int X, int Z);
 	bool		IsFloor(int X, int Z);
-	void		AlertGhosts();
+	void		AlertGhosts(GameObject* CherryEater);
 
 public:
 	GameObjectManager(MapManager* MapData, SoundManager* soundManager);

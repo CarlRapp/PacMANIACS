@@ -2,8 +2,10 @@
 
 Pacman::Pacman()
 {
-	gNextMove = NextMove::Forward;
-	points = 0;
+	gNextMove 	= NextMove::Forward;
+	points		= 0;
+
+	gCooldown	= 0;
 }
 
 Pacman::~Pacman()
@@ -20,6 +22,11 @@ string Pacman::GetTextureName()
 	return "PacMan_Texture.png";
 }
 
+float Pacman::GetSpeed()
+{
+	return (gCooldown > 0) ? 6 : GameObject::GetSpeed();
+}
+
 float Pacman::GetHitRadius()
 {
 	return RescaleHitRadius(1);
@@ -33,6 +40,11 @@ float Pacman::GetPoints()
 void Pacman::AddPoints(int points)
 {
 	Pacman::points += points;
+}
+
+void Pacman::CherryMode(float CherryTime)
+{
+	gCooldown	=	CherryTime;
 }
 
 void Pacman::SetDestination(float x, float y, float z)
@@ -105,8 +117,17 @@ bool Pacman::TryToMove(D3DXVECTOR3 direction, vector<D3DXVECTOR3> availableMoves
 	return false;
 }
 
-float Pacman::GetSpeed()
+void Pacman::Update(float deltaTime)
 {
-	return 5;
+	GameObject::Update(deltaTime);
+
+	if(gCooldown < 0)
+		gCooldown	=	0;
+	else
+		gCooldown	-=	deltaTime;
 }
 
+bool Pacman::InCherryMode()
+{
+	return (gCooldown > 0);
+}
