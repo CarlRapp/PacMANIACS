@@ -53,6 +53,7 @@ public:
 
 	virtual bool	IsStationary();
 	virtual	float	GetHitRadius();
+	virtual int		GetValue();
 
 	void	SetObjectState(GameObjectState* NewState);
 	bool	IsAlive();

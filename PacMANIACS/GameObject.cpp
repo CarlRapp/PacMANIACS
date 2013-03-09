@@ -213,9 +213,14 @@ float GameObject::GetHitRadius()
 	return 0.0f;
 }
 
+int	GameObject::GetValue()
+{
+	return 0;
+}
+
 float GameObject::GetSpeed()
 {
-	return 3.0f;
+	return 6.0f;
 }
 
 bool GameObject::IsColliding(GameObject* GO)

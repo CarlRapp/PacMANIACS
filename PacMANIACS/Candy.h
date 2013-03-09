@@ -16,6 +16,7 @@ public:
 	string	GetName();
 	string	GetTextureName();
 	float	GetHitRadius();
+	int		GetValue();
 	bool	IsStationary();
 
 	void	Update(float deltaTime);
