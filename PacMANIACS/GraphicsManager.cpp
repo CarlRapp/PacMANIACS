@@ -32,6 +32,9 @@ GraphicsManager::GraphicsManager(ID3D11Device *device, ID3D11DeviceContext *devi
 	descDSV.Texture2D.MipSlice = 0;
 	device->CreateDepthStencilView( depthStencil, &descDSV, &gDepthStencilView );
 
+	IFW1Factory				*pFW1Factory = 0;
+	FW1CreateFactory(FW1_VERSION, &pFW1Factory);
+	pFW1Factory->CreateFontWrapper(gDevice, L"Arial", &pFontWrapper);
 
 	//Laddar shadern
 	D3D11_INPUT_ELEMENT_DESC inputDesc[] = {
@@ -205,6 +208,38 @@ void GraphicsManager::LoadTexture(string Texture)
 	}
 }
 
+UINT GraphicsManager::RGBToColorCode(D3DXVECTOR3 color)
+{
+	color.x < 0 ? 0 : color.x;
+	color.y < 0 ? 0 : color.y;
+	color.z < 0 ? 0 : color.z;
+	color.x > 1 ? 1 : color.x;
+	color.y > 1 ? 1 : color.y;
+	color.z > 1 ? 1 : color.z;
+	color *= 255;
+
+	return (UINT)((255 << 24) | ((int)color.z << 16) | ((int)color.y << 8)  | ((int)color.x << 0));
+}
+
+void GraphicsManager::DrawString(string text, D3DXVECTOR2 position, D3DXVECTOR3 color, float size)
+{
+	WCHAR heasd;
+
+	std::wstring widestr = std::wstring(text.begin(), text.end());
+
+	
+
+	pFontWrapper->DrawString(
+		gDeviceContext,
+		widestr.c_str(),// String
+		size,// Font size
+		position.x,// X position
+		position.y,// Y position
+		RGBToColorCode(color),// Text color, 0xAaBbGgRr
+		0// Flags
+	);
+}
+
 void GraphicsManager::Render()
 {
 	if (!gGameObjects)
@@ -261,4 +296,7 @@ void GraphicsManager::Render()
 		IndexInfo indexInfo = gIndexMap[gameObject->GetName()];
 		gDeviceContext->Draw(indexInfo.count, indexInfo.start);
 	}
+
+
+
 }

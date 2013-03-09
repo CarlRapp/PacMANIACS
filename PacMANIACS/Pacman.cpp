@@ -3,6 +3,7 @@
 Pacman::Pacman()
 {
 	gNextMove = NextMove::Forward;
+	points = 0;
 }
 
 Pacman::~Pacman()
