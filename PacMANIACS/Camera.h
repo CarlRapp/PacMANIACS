@@ -7,7 +7,8 @@
 enum CameraState
 {
 	Follow,
-	Free
+	Free,
+	Idle
 };
 
 class Camera
@@ -39,6 +40,9 @@ public:
 	void	ChangeState(CameraState State);
 
 	void	SetTarget(GameObject* Target);
+	void	SetPosition(D3DXVECTOR3 Position);
+	void	SetForward(D3DXVECTOR3 Vector);
+
 	D3DXVECTOR3 GetPosition();
 	D3DXVECTOR3 GetForward();
 	D3DXVECTOR3 GetUp();
