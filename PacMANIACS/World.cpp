@@ -54,8 +54,6 @@ World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, ID3D11Ren
 	//gSoundManager->LoadSoundFile("LoginScreenIntro4");
 	//gSoundManager->LoadSoundFile("Cherry");
 
-	//D3DXVECTOR3	DEST	=	gGOManager->GetWorldPosition(1, 0, 1);
-	//gGOManager->GetGameObjects()->at(14)->SetDestination(DEST.x, 0, DEST.z);
 
 	//string key1 = gSoundManager->LoopSound("Cherry", D3DXVECTOR3(-10, 0, 0));
 	//string key2 = gSoundManager->PlaySound("LoginScreenIntro4", D3DXVECTOR3(10, 0, 0));
@@ -69,6 +67,9 @@ void World::Update(float deltaTime)
 	//	what has been pressed this update.
 	gInput->Update();
 
+	system("cls");
+	cout << ((Pacman*)gPlayerObject)->GetPoints() << endl;
+
 	if(gInput->IsKeyPressed('H'))
 		gCamera->SetTarget(NULL);
 	if(gInput->IsKeyPressed('G'))
@@ -80,10 +81,10 @@ void World::Update(float deltaTime)
 		if (gInput->IsKeyPressed('W'))
 			gPlayerObject->gNextMove = Pacman::NextMove::Forward;
 
-		else if (gInput->IsKeyPressed('A'))
+	else if (gInput->IsKeyDown('A'))
 			gPlayerObject->gNextMove = Pacman::NextMove::Left;
 
-		else if (gInput->IsKeyPressed('D'))
+	else if (gInput->IsKeyDown('D'))
 			gPlayerObject->gNextMove = Pacman::NextMove::Right;
 
 		else if (gInput->IsKeyPressed('S'))
