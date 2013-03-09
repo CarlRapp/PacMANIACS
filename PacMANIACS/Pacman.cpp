@@ -24,7 +24,7 @@ string Pacman::GetTextureName()
 
 float Pacman::GetSpeed()
 {
-	return (gCooldown > 0) ? 60 : GameObject::GetSpeed();
+	return (gCooldown > 0) ? 6 : GameObject::GetSpeed();
 }
 
 float Pacman::GetHitRadius()
@@ -115,11 +115,6 @@ bool Pacman::TryToMove(D3DXVECTOR3 direction, vector<D3DXVECTOR3> availableMoves
 		}
 	}
 	return false;
-}
-
-float Pacman::GetSpeed()
-{
-	return 5;
 }
 
 void Pacman::Update(float deltaTime)
