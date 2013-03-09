@@ -27,6 +27,11 @@ float Candy::GetHitRadius()
 	return RescaleHitRadius(0.395);
 }
 
+int	Candy::GetValue()
+{
+	return 100;
+}
+
 bool Candy::IsStationary()
 {
 	return true;

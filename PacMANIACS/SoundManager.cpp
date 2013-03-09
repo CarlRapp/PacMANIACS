@@ -280,7 +280,7 @@ string SoundManager::Play(string name, D3DXVECTOR3 position, DWORD dwFlags, DWOR
 
 void SoundManager::Stop(string key)
 {
-	if(gSoundBufferMap.count(key) != 0)
+	if(gSoundBuffer8Map.count(key) != 0)
 	{
 		gSoundBuffer8Map[key]->Stop();
 		Remove(key);

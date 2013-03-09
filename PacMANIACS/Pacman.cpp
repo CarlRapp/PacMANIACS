@@ -24,7 +24,7 @@ string Pacman::GetTextureName()
 
 float Pacman::GetSpeed()
 {
-	return (gCooldown > 0) ? 6 : GameObject::GetSpeed();
+	return (gCooldown > 0) ? GameObject::GetSpeed() * 2 : GameObject::GetSpeed();
 }
 
 float Pacman::GetHitRadius()

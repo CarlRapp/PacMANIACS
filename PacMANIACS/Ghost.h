@@ -91,6 +91,7 @@ public:
 	string	GetName();
 	string	GetTextureName();
 	float	GetHitRadius();
+	int		GetValue();
 
 	void	SetAIState(GhostAIState* AIState);
 	void	CalculateMove(vector<D3DXVECTOR3> availableMoves);

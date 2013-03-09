@@ -266,15 +266,17 @@ void GameObjectManager::Update(float deltaTime)
 				if(A->GetName() == "Cherry")
 					AlertGhosts(tPacman);
 
-				Pacman*	tP	=	((Pacman*)tPacman);
+				
 
-				if(tP != NULL)
-					tP->AddPoints(5);
+				if (tPacman->GetName() == "Pacman")
+				{
+					Pacman*	tP	=	((Pacman*)tPacman);
+					tP->AddPoints(A->GetValue());
+				}
 
 				stationaryObjects->erase(stationaryObjects->begin() + i);
 				
-				if (tPacman->GetName() == "Pacman")
-					((Pacman*)tPacman)->AddPoints(1);
+
 			}
 	}
 }
@@ -291,7 +293,16 @@ void GameObjectManager::HandleCollision(GameObject* GoA, GameObject* GoB)
 		Ghost*	tGhost	=	((Ghost*)GoB);
 
 		if(tPacman->InCherryMode())
+		{
 			tGhost->SetObjectState(new DeadGameObjectState());
+
+			if (tPacman->GetName() == "Pacman")
+			{
+				Pacman*	tP	=	((Pacman*)tPacman);
+				tP->AddPoints(tGhost->GetValue());
+				gSoundManager->Stop(tGhost->soundKey);
+			}
+		}
 		else
 			tPacman->SetObjectState(new DeadGameObjectState());
 	}
