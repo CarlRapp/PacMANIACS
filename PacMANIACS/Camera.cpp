@@ -47,9 +47,9 @@ void Camera::UpdateFollow(float deltaTime)
 	D3DXVec3Cross(&D3DXVECTOR3(0, 1, 0), &gForward, &gRight);
 	D3DXVec3Normalize(&(gForward), &D3DXVECTOR3(gForward.x, 0 , gForward.z));
 
-	gPosition.x	=	gTarget->GetPosition().x - gForward.x * gTarget->GetHitRadius() * 3;
-	gPosition.y	=	gTarget->GetPosition().y + 3 * gTarget->GetHitRadius();
-	gPosition.z	=	gTarget->GetPosition().z - gForward.z * gTarget->GetHitRadius() * 3;
+	gPosition.x	=	gTarget->GetPosition().x - gForward.x * gTarget->GetHitRadius() * 6;
+	gPosition.y	=	gTarget->GetPosition().y + 6 * gTarget->GetHitRadius();
+	gPosition.z	=	gTarget->GetPosition().z - gForward.z * gTarget->GetHitRadius() * 6;
 }
 
 void Camera::UpdateFree(float deltaTime)
