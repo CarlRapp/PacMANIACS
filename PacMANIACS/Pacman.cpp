@@ -24,7 +24,7 @@ string Pacman::GetTextureName()
 
 float Pacman::GetSpeed()
 {
-	return (gCooldown > 0) ? 60 : GameObject::GetSpeed();
+	return (gCooldown > 0) ? 6 : GameObject::GetSpeed();
 }
 
 float Pacman::GetHitRadius()
@@ -94,9 +94,9 @@ bool Pacman::TryToMove(D3DXVECTOR3 direction, vector<D3DXVECTOR3> availableMoves
 	for (int i = 0; i < availableMoves.size(); i++)
 	{
 		D3DXVECTOR3 playerPos	= GetPosition();
-		playerPos.y = 0;
+
 		D3DXVECTOR3 movepos		= availableMoves[i];
-		movepos.y = 0;
+		movepos.y = playerPos.y;
 
 		D3DXVECTOR3 dir = movepos - playerPos;
 
@@ -106,7 +106,9 @@ bool Pacman::TryToMove(D3DXVECTOR3 direction, vector<D3DXVECTOR3> availableMoves
 		
 		if (angle < EPSILON)
 		{
-			SetDestination(availableMoves[i]);
+			D3DXVECTOR3	destination	=	availableMoves[i];
+			destination.y	=	playerPos.y;
+			SetDestination(destination);
 			return true;
 		}
 	}
