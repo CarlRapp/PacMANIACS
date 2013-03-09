@@ -89,7 +89,7 @@ string GhostAIState::GetActiveTextureName()
 
 float Ghost::GetHitRadius()
 {
-	return 0.6f;
+	return RescaleHitRadius(0.858f);
 }
 
 void Ghost::SetAIState(GhostAIState* AIState)
@@ -201,6 +201,12 @@ void Ghost::FleeTarget(float CherryTime)
 	gAIState->SetTargetState(gFleeState);
 	gCooldown	=	CherryTime;
 }
+
+float Ghost::GetSpeed()
+{
+	return 5;
+}
+
 
 void GhostTargetState::SetTextureName(string TextureName)
 {

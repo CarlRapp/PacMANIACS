@@ -97,7 +97,7 @@ void GameObjectManager::StartConvert(MapManager* MapData)
 				GO->SetTarget(tPacman);
 				GO->CalculateMove(GetAvailableMoves(POS.x, POS.y));
 				if (gSoundManager != NULL)
-					GO->soundKey = gSoundManager->LoopSound("Cherry", GO->GetPosition());
+					GO->soundKey = gSoundManager->Loop("Cherry", GO->GetPosition());
 			}
 }
 
@@ -232,6 +232,9 @@ void GameObjectManager::Update(float deltaTime)
 					tP->AddPoints(5);
 
 				stationaryObjects->erase(stationaryObjects->begin() + i);
+				
+				if (tPacman->GetName() == "Pacman")
+					((Pacman*)tPacman)->AddPoints(1);
 			}
 	}
 }

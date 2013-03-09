@@ -2,10 +2,10 @@
 
 Pacman::Pacman()
 {
-	gNextMove = NextMove::Forward;
-	points	=	0;
+	gNextMove 	= NextMove::Forward;
+	points		= 0;
 
-	gCooldown	=	0;
+	gCooldown	= 0;
 }
 
 Pacman::~Pacman()
@@ -29,7 +29,7 @@ float Pacman::GetSpeed()
 
 float Pacman::GetHitRadius()
 {
-	return 0.8f;
+	return RescaleHitRadius(1);
 }
 
 float Pacman::GetPoints()
@@ -50,7 +50,9 @@ void Pacman::CherryMode(float CherryTime)
 void Pacman::SetDestination(float x, float y, float z)
 {
 	GameObject::SetDestination(x, y, z);
-	gNextMove = NextMove::Forward;
+	D3DXVECTOR2 direction = D3DXVECTOR2(x - GetPosition().x, z - GetPosition().z);
+	SetLook(direction);
+	//gNextMove = NextMove::Forward;
 }
 	
 void Pacman::SetDestination(D3DXVECTOR3 Pos)
@@ -86,6 +88,8 @@ void Pacman::CalculateMove(vector<D3DXVECTOR3> availableMoves)
 		
 	if (!moved)
 		TryToMove(front, availableMoves);
+	else
+		gNextMove = NextMove::Forward;
 }
 
 bool Pacman::TryToMove(D3DXVECTOR3 direction, vector<D3DXVECTOR3> availableMoves)
@@ -111,6 +115,11 @@ bool Pacman::TryToMove(D3DXVECTOR3 direction, vector<D3DXVECTOR3> availableMoves
 		}
 	}
 	return false;
+}
+
+float Pacman::GetSpeed()
+{
+	return 5;
 }
 
 void Pacman::Update(float deltaTime)

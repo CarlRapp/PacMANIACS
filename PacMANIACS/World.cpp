@@ -48,8 +48,12 @@ World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, ID3D11Ren
 	gGraphicsManager->LoadTexture("Flee_Texture.png");
 
 
+	string key = gSoundManager->Loop("LoginScreenIntro4");
+	gSoundManager->SetVolume(key, 0.7f);
+
 	//gSoundManager->LoadSoundFile("LoginScreenIntro4");
 	//gSoundManager->LoadSoundFile("Cherry");
+
 
 	//string key1 = gSoundManager->LoopSound("Cherry", D3DXVECTOR3(-10, 0, 0));
 	//string key2 = gSoundManager->PlaySound("LoginScreenIntro4", D3DXVECTOR3(10, 0, 0));
@@ -71,31 +75,34 @@ void World::Update(float deltaTime)
 	if(gInput->IsKeyPressed('G'))
 		gCamera->SetTarget(gPlayerObject);
 
-	//Move gPlayerObject
-	if (gInput->IsKeyPressed('W'))
-		gPlayerObject->gNextMove = Pacman::NextMove::Forward;
+	if (gCamera->GetTarget() == gPlayerObject)
+	{
+		//Move gPlayerObject
+		if (gInput->IsKeyPressed('W'))
+			gPlayerObject->gNextMove = Pacman::NextMove::Forward;
 
 	else if (gInput->IsKeyDown('A'))
-		gPlayerObject->gNextMove = Pacman::NextMove::Left;
+			gPlayerObject->gNextMove = Pacman::NextMove::Left;
 
 	else if (gInput->IsKeyDown('D'))
-		gPlayerObject->gNextMove = Pacman::NextMove::Right;
+			gPlayerObject->gNextMove = Pacman::NextMove::Right;
 
-	else if (gInput->IsKeyPressed('S'))
-	{
-		gPlayerObject->gNextMove	= Pacman::NextMove::Back;
-		D3DXVECTOR2 playerTilePos	= gGOManager->GetTilePosition(gPlayerObject->GetPosition());
-		D3DXVECTOR3 tileWorldPos	= gGOManager->GetWorldPosition(playerTilePos.x, 0, playerTilePos.y);
-		vector<D3DXVECTOR3> availableMoves = gGOManager->GetAvailableMoves(playerTilePos.x, playerTilePos.y);
-		availableMoves.push_back(tileWorldPos);
-		gPlayerObject->CalculateMove(availableMoves);
-	}
+		else if (gInput->IsKeyPressed('S'))
+		{
+			gPlayerObject->gNextMove	= Pacman::NextMove::Back;
+			D3DXVECTOR2 playerTilePos	= gGOManager->GetTilePosition(gPlayerObject->GetPosition());
+			D3DXVECTOR3 tileWorldPos	= gGOManager->GetWorldPosition(playerTilePos.x, 0, playerTilePos.y);
+			vector<D3DXVECTOR3> availableMoves = gGOManager->GetAvailableMoves(playerTilePos.x, playerTilePos.y);
+			availableMoves.push_back(tileWorldPos);
+			gPlayerObject->CalculateMove(availableMoves);
+		}
 
-	if (gPlayerObject->AtDestination())
-	{
-		D3DXVECTOR2 playerTilePos = gGOManager->GetTilePosition(gPlayerObject->GetPosition());
-		vector<D3DXVECTOR3> availableMoves = gGOManager->GetAvailableMoves(playerTilePos.x, playerTilePos.y);
-		gPlayerObject->CalculateMove(availableMoves);			
+		if (gPlayerObject->AtDestination())
+		{
+			D3DXVECTOR2 playerTilePos = gGOManager->GetTilePosition(gPlayerObject->GetPosition());
+			vector<D3DXVECTOR3> availableMoves = gGOManager->GetAvailableMoves(playerTilePos.x, playerTilePos.y);
+			gPlayerObject->CalculateMove(availableMoves);			
+		}
 	}
 
 	//	Update all the Game Objects
@@ -111,5 +118,11 @@ void World::Update(float deltaTime)
 
 void World::Render()
 {
+	ostringstream ss;
+	ss << gPlayerObject->GetPoints();
+	string s(ss.str());
+
+	gGraphicsManager->DrawString("Score:", D3DXVECTOR2(10, 10), D3DXVECTOR3(1,0,0), 20);
+	gGraphicsManager->DrawString(s, D3DXVECTOR2(75,10), D3DXVECTOR3(1,0,0), 20);
 	gGraphicsManager->Render();
 }

@@ -74,11 +74,6 @@ void GameObject::SetDestination(float x, float y, float z)
 	gTargetPosition.x	=	x;
 	gTargetPosition.y	=	GetPosition().y;
 	gTargetPosition.z	=	z;
-
-	D3DXVECTOR2 direction = D3DXVECTOR2(x - GetPosition().x, z - GetPosition().z);
-
-	SetLook(direction);
-
 }
 
 void GameObject::SetDestination(D3DXVECTOR3 Pos)
@@ -206,6 +201,11 @@ string GameObject::GetTextureName()
 bool GameObject::IsStationary()
 {
 	return false;
+}
+
+float GameObject::RescaleHitRadius(float radius)
+{
+	return radius * ((gScale._11 + gScale._33) / 2);
 }
 
 float GameObject::GetHitRadius()
