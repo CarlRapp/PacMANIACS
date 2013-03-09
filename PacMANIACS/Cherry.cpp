@@ -24,7 +24,7 @@ string Cherry::GetTextureName()
 
 float Cherry::GetHitRadius()
 {
-	return 0.4f;
+	return RescaleHitRadius(0.395);
 }
 
 bool Cherry::IsStationary()
