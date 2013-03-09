@@ -30,7 +30,7 @@ class GraphicsManager
 	};
 
 	typedef map<string, vector<Vertex>>				MAP_VERTEX;
-	typedef map<string, IndexInfo>					MAP_INDEX;
+	typedef map<string, IndexInfo*>					MAP_INDEX;
 	typedef map<string, ID3D11ShaderResourceView*>	MAP_RESOURCE;
 
 	MAP_INDEX					gIndexMap;

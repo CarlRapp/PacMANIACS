@@ -165,13 +165,13 @@ void GraphicsManager::LoadModels()
 		//Skapar en IndexInfo.
 		//Start är indexet efter förgående inlaggda modell.
 		//Count är antalet vertexpunkter i modellen.
-		IndexInfo indexInfo;
-		indexInfo.start = start;
-		indexInfo.count = iterator->second.size();
+		IndexInfo* indexInfo = new IndexInfo();
+		indexInfo->start = start;
+		indexInfo->count = iterator->second.size();
 
 		//Lägger in indexinfon.
 		//gIndexMap använder samma nyckel som vertexMap använder (GameObject.GetName()).
-		gIndexMap.insert(pair<string, IndexInfo>(iterator->first, indexInfo));
+		gIndexMap.insert(pair<string, IndexInfo*>(iterator->first, indexInfo));
 
 		//Ökar på startindexet så att nästa modell kan läggas till.
 		start += iterator->second.size();
@@ -268,6 +268,7 @@ void GraphicsManager::Render()
 	gShader->SetMatrix("Projection",	projection);
 	gShader->SetFloat3("CameraPos",		gCamera->GetPosition());
 
+	
 	for each (GameObject* gameObject in *gGameObjects)
 	{
 
@@ -289,14 +290,12 @@ void GraphicsManager::Render()
 		//Set texture.
 		gShader->SetResource("Color", gTextureMap[gameObject->GetTextureName()]);
 		
-
+		
 		gShader->Apply(0);
 
 		//Index för vertexpunkterna
-		IndexInfo indexInfo = gIndexMap[gameObject->GetName()];
-		gDeviceContext->Draw(indexInfo.count, indexInfo.start);
+		IndexInfo *indexInfo = gIndexMap[gameObject->GetName()];
+		gDeviceContext->Draw(indexInfo->count, indexInfo->start);
+		
 	}
-
-
-
 }
