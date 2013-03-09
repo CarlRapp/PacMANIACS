@@ -77,6 +77,7 @@ class Ghost : public GameObject
 
 	GhostTargetState*	gHuntState;
 	GhostTargetState*	gFleeState;
+	float	GetSpeed();
 
 public:
 	Ghost(void);
