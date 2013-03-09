@@ -38,7 +38,8 @@ public:
 	void	Update(float deltaTime);
 	void	ChangeState(CameraState State);
 
-	void	SetTarget(GameObject* Target);
+	void		SetTarget(GameObject* Target);
+	GameObject*	GetTarget();
 	D3DXVECTOR3 GetPosition();
 	D3DXVECTOR3 GetForward();
 	D3DXVECTOR3 GetUp();
