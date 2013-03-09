@@ -48,7 +48,7 @@ void Camera::UpdateFollow(float deltaTime)
 	D3DXVec3Normalize(&(gForward), &D3DXVECTOR3(gForward.x, 0 , gForward.z));
 
 	gPosition.x	=	gTarget->GetPosition().x - gForward.x * gTarget->GetHitRadius() * 10;
-	gPosition.y	=	gTarget->GetPosition().y + gTarget->GetHitRadius() * 5;
+	gPosition.y	=	gTarget->GetPosition().y + gTarget->GetHitRadius() * 6;
 	gPosition.z	=	gTarget->GetPosition().z - gForward.z * gTarget->GetHitRadius() * 10;
 }
 
