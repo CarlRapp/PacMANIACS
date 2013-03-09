@@ -45,7 +45,6 @@ GraphicsManager::GraphicsManager(ID3D11Device *device, ID3D11DeviceContext *devi
 	{
 		::MessageBox(0, "Failed to initalize Shader(GraphicsManager)", "Error", MB_OK);
 	}
-
 }
 
 
@@ -212,22 +211,23 @@ void GraphicsManager::Render()
 
 	//Rensar depthbuffern
 	gDeviceContext->ClearDepthStencilView( gDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
-
-	//Sätter render target
-	gDeviceContext->OMSetRenderTargets( 1, &gRenderTargetView, gDepthStencilView );
-
+	
 	//Sätter buffer
 	gVertexBuffer->Apply();
-
+	
 	//Sätter topologi
 	gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+	
+	//Sätter render target
+	gDeviceContext->OMSetRenderTargets( 1, &gRenderTargetView, gDepthStencilView );
+	
 	D3DXMATRIX world, worldInverseTranspose, view, projection;
 	//View och projection matriserna
 	view		= gCamera->GetViewMatrix();
 	projection	= gCamera->GetProjectionMatrix();
 
-
+	
 	//Set PerFrame data.
 	gShader->SetMatrix("View",			view);
 	gShader->SetMatrix("Projection",	projection);
@@ -235,30 +235,32 @@ void GraphicsManager::Render()
 
 	for each (GameObject* gameObject in *gGameObjects)
 	{
+		if(gameObject->IsAlive())
+		{
+			//world matrisen
+			world					= gameObject->GetWorldMatrix();
 
-		//world matrisen
-		world					= gameObject->GetWorldMatrix();
+			//worldinversetranspose matrisen
+			worldInverseTranspose	= gameObject->GetWorldInverseTranspose();
 
-		//worldinversetranspose matrisen
-		worldInverseTranspose	= gameObject->GetWorldInverseTranspose();
-
-		//WVP-matrisen
-		D3DXMATRIX WVP = world * view * projection;
+			//WVP-matrisen
+			D3DXMATRIX WVP = world * view * projection;
 
 
-		//Set PerObject data.
-		gShader->SetMatrix("World",					world);
-		gShader->SetMatrix("WVP",					WVP);
-		gShader->SetMatrix("WorldInverseTranspose",	worldInverseTranspose);
+			//Set PerObject data.
+			gShader->SetMatrix("World",					world);
+			gShader->SetMatrix("WVP",					WVP);
+			gShader->SetMatrix("WorldInverseTranspose",	worldInverseTranspose);
 		
-		//Set texture.
-		gShader->SetResource("Color", gTextureMap[gameObject->GetTextureName()]);
+			//Set texture.
+			gShader->SetResource("Color", gTextureMap[gameObject->GetTextureName()]);
 		
 
-		gShader->Apply(0);
+			gShader->Apply(0);
 
-		//Index för vertexpunkterna
-		IndexInfo indexInfo = gIndexMap[gameObject->GetName()];
-		gDeviceContext->Draw(indexInfo.count, indexInfo.start);
+			//Index för vertexpunkterna
+			IndexInfo indexInfo = gIndexMap[gameObject->GetName()];
+			gDeviceContext->Draw(indexInfo.count, indexInfo.start);
+		}
 	}
 }
