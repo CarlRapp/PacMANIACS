@@ -48,11 +48,14 @@ World::World(ID3D11Device *device, ID3D11DeviceContext* deviceContext, ID3D11Ren
 	gGraphicsManager->LoadTexture("Flee_Texture.png");
 
 
+	string key = gSoundManager->Loop("LoginScreenIntro4");
+	gSoundManager->SetVolume(key, 0.7f);
+
 	//gSoundManager->LoadSoundFile("LoginScreenIntro4");
 	//gSoundManager->LoadSoundFile("Cherry");
 
-	D3DXVECTOR3	DEST	=	gGOManager->GetWorldPosition(1, 0, 1);
-	gGOManager->GetGameObjects()->at(14)->SetDestination(DEST.x, 0, DEST.z);
+	//D3DXVECTOR3	DEST	=	gGOManager->GetWorldPosition(1, 0, 1);
+	//gGOManager->GetGameObjects()->at(14)->SetDestination(DEST.x, 0, DEST.z);
 
 	//string key1 = gSoundManager->LoopSound("Cherry", D3DXVECTOR3(-10, 0, 0));
 	//string key2 = gSoundManager->PlaySound("LoginScreenIntro4", D3DXVECTOR3(10, 0, 0));
@@ -71,31 +74,34 @@ void World::Update(float deltaTime)
 	if(gInput->IsKeyPressed('G'))
 		gCamera->SetTarget(gPlayerObject);
 
-	//Move gPlayerObject
-	if (gInput->IsKeyPressed('W'))
-		gPlayerObject->gNextMove = Pacman::NextMove::Forward;
-
-	else if (gInput->IsKeyPressed('A'))
-		gPlayerObject->gNextMove = Pacman::NextMove::Left;
-
-	else if (gInput->IsKeyPressed('D'))
-		gPlayerObject->gNextMove = Pacman::NextMove::Right;
-
-	else if (gInput->IsKeyPressed('S'))
+	if (gCamera->GetTarget() == gPlayerObject)
 	{
-		gPlayerObject->gNextMove	= Pacman::NextMove::Back;
-		D3DXVECTOR2 playerTilePos	= gGOManager->GetTilePosition(gPlayerObject->GetPosition());
-		D3DXVECTOR3 tileWorldPos	= gGOManager->GetWorldPosition(playerTilePos.x, 0, playerTilePos.y);
-		vector<D3DXVECTOR3> availableMoves = gGOManager->GetAvailableMoves(playerTilePos.x, playerTilePos.y);
-		availableMoves.push_back(tileWorldPos);
-		gPlayerObject->CalculateMove(availableMoves);
-	}
+		//Move gPlayerObject
+		if (gInput->IsKeyPressed('W'))
+			gPlayerObject->gNextMove = Pacman::NextMove::Forward;
 
-	if (gPlayerObject->AtDestination())
-	{
-		D3DXVECTOR2 playerTilePos = gGOManager->GetTilePosition(gPlayerObject->GetPosition());
-		vector<D3DXVECTOR3> availableMoves = gGOManager->GetAvailableMoves(playerTilePos.x, playerTilePos.y);
-		gPlayerObject->CalculateMove(availableMoves);			
+		else if (gInput->IsKeyPressed('A'))
+			gPlayerObject->gNextMove = Pacman::NextMove::Left;
+
+		else if (gInput->IsKeyPressed('D'))
+			gPlayerObject->gNextMove = Pacman::NextMove::Right;
+
+		else if (gInput->IsKeyPressed('S'))
+		{
+			gPlayerObject->gNextMove	= Pacman::NextMove::Back;
+			D3DXVECTOR2 playerTilePos	= gGOManager->GetTilePosition(gPlayerObject->GetPosition());
+			D3DXVECTOR3 tileWorldPos	= gGOManager->GetWorldPosition(playerTilePos.x, 0, playerTilePos.y);
+			vector<D3DXVECTOR3> availableMoves = gGOManager->GetAvailableMoves(playerTilePos.x, playerTilePos.y);
+			availableMoves.push_back(tileWorldPos);
+			gPlayerObject->CalculateMove(availableMoves);
+		}
+
+		if (gPlayerObject->AtDestination())
+		{
+			D3DXVECTOR2 playerTilePos = gGOManager->GetTilePosition(gPlayerObject->GetPosition());
+			vector<D3DXVECTOR3> availableMoves = gGOManager->GetAvailableMoves(playerTilePos.x, playerTilePos.y);
+			gPlayerObject->CalculateMove(availableMoves);			
+		}
 	}
 
 	//	Update all the Game Objects
