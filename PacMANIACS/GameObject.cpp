@@ -46,6 +46,11 @@ bool GameObject::IsAlive()
 	return gState->IsAlive();
 }
 
+void GameObject::SetObjectState(GameObjectState* NewState)
+{
+	gState	=	NewState;
+}
+
 void GameObject::SetVelocity(float x, float y, float z)
 {
 	gVelocity.x	=	x;
@@ -210,7 +215,7 @@ float GameObject::GetHitRadius()
 
 float GameObject::GetSpeed()
 {
-	return 2.0f;
+	return 3.0f;
 }
 
 bool GameObject::IsColliding(GameObject* GO)
