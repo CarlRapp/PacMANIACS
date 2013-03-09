@@ -79,8 +79,11 @@ public:
 	bool	AtDestination(void);
 	void	virtual SetDestination(float x, float y, float z);
 	void	virtual SetDestination(D3DXVECTOR3 Pos);
+	D3DXVECTOR3	GetDestination(void);
 
 	D3DXVECTOR3 GetVelocity(void);
+
+	GameObjectState*	GetState();
 };
 
 #endif
