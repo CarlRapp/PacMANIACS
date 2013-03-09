@@ -7,8 +7,8 @@ class Pacman : public GameObject
 {
 private:
 	float	points;
-
-	bool TryToMove(D3DXVECTOR3 front, vector<D3DXVECTOR3> availableMoves);
+	bool	TryToMove(D3DXVECTOR3 front, vector<D3DXVECTOR3> availableMoves);
+	float	GetSpeed();
 public:
 	Pacman(void);
 	~Pacman(void);
