@@ -139,50 +139,72 @@ void GameObjectManager::Update(float deltaTime)
 
 	for each (GameObject *A in *moveableObjects)
 	{
-		A->Update(deltaTime);
-
-		if(A->AtDestination())
+		if(A->IsAlive())
 		{
-			if(A->GetName() == "Ghost")
+			A->Update(deltaTime);
+
+			if(A->AtDestination())
 			{
-				Ghost*	GO	=	((Ghost*)(A));
-				D3DXVECTOR2	Pos	=	GetTilePosition(A->GetPosition());
-
-				if(IsTileCrossing(Pos.x, Pos.y) || IsTileCorner(Pos.x, Pos.y))
+				if(A->GetName() == "Ghost")
 				{
-					GO->CalculateMove(GetAvailableMoves(Pos.x, Pos.y));
+					Ghost*	GO		=	((Ghost*)(A));
+					D3DXVECTOR2	Pos	=	GetTilePosition(A->GetPosition());
+
+					if(IsTileCrossing(Pos.x, Pos.y) || IsTileCorner(Pos.x, Pos.y))
+					{
+						GO->CalculateMove(GetAvailableMoves(Pos.x, Pos.y));
+					}
+					else
+					{
+						D3DXVECTOR3 Vel;
+						D3DXVec3Normalize(&Vel, &GO->GetVelocity());
+
+						Vel	*=	mapScale;
+						D3DXVECTOR3	newD	=	GO->GetPosition() + Vel;
+
+						GO->SetDestination(newD);
+					}
+
 				}
-				else
-				{
-					D3DXVECTOR3 Vel;
-					D3DXVec3Normalize(&Vel, &GO->GetVelocity());
+			}
 
-					Vel	*=	mapScale;
-					D3DXVECTOR3	newD	=	GO->GetPosition() + Vel;
+			if(A->GetName() == "Pacman")
+				tPacman	=	A; 
+			else if (A->GetName() == "Ghost")
+			{
+				Ghost* ghost = (Ghost*)A;
+				gSoundManager->SetSoundPosition(ghost->soundKey, ghost->GetPosition());
+			}
 
-					GO->SetDestination(newD);
-				}
+			for each (GameObject *B in *moveableObjects)
+			{
+				if(A != B && B->IsAlive())
+					if(A->IsColliding(B))
+						HandleCollision(A, B);
 
+				if(!A->IsAlive())
+					break;
 			}
 		}
+	}
+	for(int i = moveableObjects->size()-1; i >= 0; --i)
+	{
+		GameObject*	A	=	moveableObjects->at(i);
 
-		if(A->GetName() == "Pacman")
-			tPacman	=	A; 
-
-		else if (A->GetName() == "Ghost")
+		if(!A->IsAlive())
 		{
-			Ghost* ghost = (Ghost*)A;
-			gSoundManager->SetSoundPosition(ghost->soundKey, ghost->GetPosition());
+			for(int n = 0; n < allGameObjects->size(); ++n)
+				if(allGameObjects->at(n) == A)
+				{
+					allGameObjects->erase(allGameObjects->begin() + n);
+					break;
+				}
+
+			moveableObjects->erase(moveableObjects->begin() + i);
+			break;
 		}
-		/*
-		for each (GameObject *B in *moveableObjects)
-			if(A != B)
-				if(A->IsColliding(B))
-					HandleCollision(A, B);
-					*/
 	}
 
-	bool	cherryEaten	=	false;
 	for(int i = stationaryObjects->size() - 1; i >= 0; --i)
 	{
 		GameObject*	A	=	stationaryObjects->at(i);
@@ -199,9 +221,15 @@ void GameObjectManager::Update(float deltaTime)
 						allGameObjects->erase(allGameObjects->begin() + n);
 						break;
 					}
+				
 
 				if(A->GetName() == "Cherry")
-					AlertGhosts();
+					AlertGhosts(tPacman);
+
+				Pacman*	tP	=	((Pacman*)tPacman);
+
+				if(tP != NULL)
+					tP->AddPoints(5);
 
 				stationaryObjects->erase(stationaryObjects->begin() + i);
 				
@@ -213,14 +241,35 @@ void GameObjectManager::Update(float deltaTime)
 
 void GameObjectManager::HandleCollision(GameObject* GoA, GameObject* GoB)
 {
+	if(GoA->GetName() == GoB->GetName())
+		return;
+
+	//	Time to do magic
+	if(GoA->GetName() == "Pacman" && GoB->GetName() == "Ghost")
+	{
+		Pacman*	tPacman	=	((Pacman*)GoA);
+		Ghost*	tGhost	=	((Ghost*)GoB);
+
+		if(tPacman->InCherryMode())
+			tGhost->SetObjectState(new DeadGameObjectState());
+		else
+			tPacman->SetObjectState(new DeadGameObjectState());
+	}
+
+
 }
 
-void GameObjectManager::AlertGhosts()
+void GameObjectManager::AlertGhosts(GameObject* CherryEater)
 {
+	float	cherryTime	=	6.0f;	//	In seconds
+	Pacman*	tP	=	((Pacman*)CherryEater);
+	if(tP != NULL)
+		tP->CherryMode(cherryTime);
+
 	for each (GameObject *A in *moveableObjects)
 	{
 		if(A->GetName() == "Ghost")
-			((Ghost*)A)->FleeTarget();
+			((Ghost*)A)->FleeTarget(cherryTime);
 	}
 }
 

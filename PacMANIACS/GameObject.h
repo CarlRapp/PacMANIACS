@@ -8,7 +8,6 @@
 
 using namespace std;
 
-
 class GameObject
 {
 private:
@@ -55,6 +54,7 @@ public:
 	virtual bool	IsStationary();
 	virtual	float	GetHitRadius();
 
+	void	SetObjectState(GameObjectState* NewState);
 	bool	IsAlive();
 
 	//	Set methods
