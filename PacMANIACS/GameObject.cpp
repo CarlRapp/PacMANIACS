@@ -68,13 +68,13 @@ void GameObject::SetVelocity(D3DXVECTOR3 Vel)
 void GameObject::SetDestination(float x, float y, float z)
 {
 	gVelocity.x			=	x - GetPosition().x;
-	gVelocity.y			=	y - GetPosition().y;
+	gVelocity.y			=	0;
 	gVelocity.z			=	z - GetPosition().z;
 	D3DXVec3Normalize(&gVelocity, &gVelocity);
 	gVelocity			*=	GetSpeed();
 
 	gTargetPosition.x	=	x;
-	gTargetPosition.y	=	y;
+	gTargetPosition.y	=	GetPosition().y;
 	gTargetPosition.z	=	z;
 }
 
