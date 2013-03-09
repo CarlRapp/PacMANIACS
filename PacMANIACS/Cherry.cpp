@@ -27,6 +27,11 @@ float Cherry::GetHitRadius()
 	return RescaleHitRadius(0.395);
 }
 
+int	Cherry::GetValue()
+{
+	return 250;
+}
+
 bool Cherry::IsStationary()
 {
 	return true;
