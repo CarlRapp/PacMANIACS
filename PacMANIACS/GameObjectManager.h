@@ -54,6 +54,9 @@ public:
 	D3DXVECTOR3	GetWorldPosition(int X, int Y, int Z);
 
 	vector<D3DXVECTOR3>	GetAvailableMoves(int X, int Z);
+
+	bool AllCandyGone();
+	D3DXVECTOR3 GetMapInfo();
 };
 
 #endif
