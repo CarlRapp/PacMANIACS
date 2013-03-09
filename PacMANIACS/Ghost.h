@@ -20,6 +20,7 @@ public:
 class FleeState : public GhostTargetState
 {
 private:
+	bool	gDoBlink;
 	float	gTimeTicked;
 	string	gFleeTexture;
 
@@ -77,6 +78,7 @@ class Ghost : public GameObject
 
 	GhostTargetState*	gHuntState;
 	GhostTargetState*	gFleeState;
+	float			gCooldown;
 
 public:
 	Ghost(void);
@@ -94,7 +96,7 @@ public:
 	void	Update(float deltaTime);
 
 	void	HuntTarget(void);
-	void	FleeTarget(void);
+	void	FleeTarget(float CherryTime);
 };
 
 #endif
