@@ -5,11 +5,16 @@
 
 GameObject::GameObject()
 {
+	gRotationFloat	=	D3DXVECTOR3(0, 0, 0);
+	SetVelocity(0, 0, 0);
 	MoveTo(0, 0, 0);
 	SetRotation(0, 0, 0);
 	SetScale(1, 1, 1);
 
-	gState	=	new AliveGameObjectState();
+	gState			=	new AliveGameObjectState();
+
+	gTargetPosition	=	D3DXVECTOR3(0, 0, 0);
+	gReadyForMove	=	false;
 }
 
 GameObject::~GameObject()
@@ -19,7 +24,23 @@ GameObject::~GameObject()
 
 void GameObject::Update(float deltaTime)
 {
-	//Move(1*deltaTime, 0*deltaTime, 1*deltaTime);
+	if(gState->GetName() != "Alive")
+		return;
+
+	gReadyForMove	=	false;
+	Move(gVelocity.x * deltaTime, gVelocity.y * deltaTime, gVelocity.z * deltaTime);
+
+	D3DXVECTOR3	v1	=	gTargetPosition - GetPosition();
+	if(D3DXVec3Dot(&v1, &gVelocity) < 0 || D3DXVec3Length(&gVelocity) == 0)
+	{
+		SetPosition(gTargetPosition.x, gTargetPosition.y, gTargetPosition.z);
+		gReadyForMove	=	true;
+	}
+}
+
+bool GameObject::AtDestination()
+{
+	return gReadyForMove;
 }
 
 bool GameObject::IsAlive()
@@ -27,10 +48,58 @@ bool GameObject::IsAlive()
 	return gState->IsAlive();
 }
 
+void GameObject::SetObjectState(GameObjectState* NewState)
+{
+	gState	=	NewState;
+}
+
+void GameObject::SetVelocity(float x, float y, float z)
+{
+	gVelocity.x	=	x;
+	gVelocity.y =	y;
+	gVelocity.z	=	z;
+}
+
+void GameObject::SetVelocity(D3DXVECTOR3 Vel)
+{
+	SetVelocity(Vel.x, Vel.y, Vel.z);
+}
+
+void GameObject::SetDestination(float x, float y, float z)
+{
+	gVelocity.x			=	x - GetPosition().x;
+	gVelocity.y			=	0;
+	gVelocity.z			=	z - GetPosition().z;
+	D3DXVec3Normalize(&gVelocity, &gVelocity);
+	gVelocity			*=	GetSpeed();
+
+	gTargetPosition.x	=	x;
+	gTargetPosition.y	=	GetPosition().y;
+	gTargetPosition.z	=	z;
+}
+
+void GameObject::SetDestination(D3DXVECTOR3 Pos)
+{
+	SetDestination(Pos.x, Pos.y, Pos.z);
+}
 
 void GameObject::SetRotation(float x, float y, float z)
 {
-	D3DXMatrixRotationYawPitchRoll(&gRotation, x, y, z);
+	D3DXMatrixRotationYawPitchRoll(&gRotation, y, x, z);
+	gRotationFloat.x	=	x;
+	gRotationFloat.y	=	y;
+	gRotationFloat.z	=	z;
+
+	UpdateWorldMatrix(true);
+}
+
+void GameObject::AddRotation(float dx, float dy, float dz)
+{
+	gRotationFloat.x	+=	dx;
+	gRotationFloat.y	+=	dy;
+	gRotationFloat.z	+=	dz;
+
+	D3DXMatrixRotationYawPitchRoll(&gRotation, gRotationFloat.y, gRotationFloat.x, gRotationFloat.z);
 
 	UpdateWorldMatrix(true);
 }
@@ -63,8 +132,25 @@ void GameObject::MoveTo(D3DXVECTOR3 pos)
 void GameObject::MoveTo(float x, float y, float z)
 {
 	D3DXMatrixTranslation(&gTranslation, x, y, z);
-
+	gTargetPosition = GetPosition();
 	UpdateWorldMatrix(false);
+}
+
+void GameObject::SetPosition(float x, float y, float z)
+{
+	D3DXMatrixTranslation(&gTranslation, x, y, z);
+	gTargetPosition = GetPosition();
+	UpdateWorldMatrix(false);
+}
+
+void GameObject::SetLook(D3DXVECTOR2 direction)
+{
+	float	dX	=	-direction.x;
+	float	dZ	=	-direction.y;
+
+	float dAngle	=	atan2(dX, dZ);
+
+	SetRotation(0, dAngle, 0);
 }
 
 void GameObject::UpdateWorldMatrix(bool UpdateInvTrans)
@@ -119,9 +205,24 @@ bool GameObject::IsStationary()
 	return false;
 }
 
+float GameObject::RescaleHitRadius(float radius)
+{
+	return radius * ((gScale._11 + gScale._33) / 2);
+}
+
 float GameObject::GetHitRadius()
 {
 	return 0.0f;
+}
+
+int	GameObject::GetValue()
+{
+	return 0;
+}
+
+float GameObject::GetSpeed()
+{
+	return 6.0f;
 }
 
 bool GameObject::IsColliding(GameObject* GO)
@@ -132,10 +233,25 @@ bool GameObject::IsColliding(GameObject* GO)
 
 	float	LengthBetween	=	D3DXVec3Length(p3);
 
-	return (LengthBetween < (GetHitRadius() + GO->GetHitRadius()));
+	return (LengthBetween < GetHitRadius() + GO->GetHitRadius());
 }
 
 D3DXVECTOR3 GameObject::GetPosition()
 {
 	return D3DXVECTOR3(gTranslation._41, gTranslation._42, gTranslation._43);
+}
+
+D3DXVECTOR3 GameObject::GetVelocity()
+{
+	return gVelocity;
+}
+
+D3DXVECTOR3 GameObject::GetDestination()
+{
+	return gTargetPosition;
+}
+
+GameObjectState* GameObject::GetState()
+{
+	return gState;
 }

@@ -7,6 +7,9 @@ GraphicsManager::GraphicsManager(ID3D11Device *device, ID3D11DeviceContext *devi
 	gDeviceContext = deviceContext;
 	gRenderTargetView = renderTargetView;
 
+	gIndexMap	= new MAP_INDEX();
+	gTextureMap = new MAP_RESOURCE();
+
 	ID3D11Texture2D* depthStencil;
 	// Create depth stencil texture
 	D3D11_TEXTURE2D_DESC descDepth;
@@ -32,6 +35,9 @@ GraphicsManager::GraphicsManager(ID3D11Device *device, ID3D11DeviceContext *devi
 	descDSV.Texture2D.MipSlice = 0;
 	device->CreateDepthStencilView( depthStencil, &descDSV, &gDepthStencilView );
 
+	IFW1Factory				*pFW1Factory = 0;
+	FW1CreateFactory(FW1_VERSION, &pFW1Factory);
+	pFW1Factory->CreateFontWrapper(gDevice, L"Arial", &pFontWrapper);
 
 	//Laddar shadern
 	D3D11_INPUT_ELEMENT_DESC inputDesc[] = {
@@ -45,7 +51,6 @@ GraphicsManager::GraphicsManager(ID3D11Device *device, ID3D11DeviceContext *devi
 	{
 		::MessageBox(0, "Failed to initalize Shader(GraphicsManager)", "Error", MB_OK);
 	}
-
 }
 
 
@@ -112,7 +117,7 @@ void GraphicsManager::LoadModels()
 		return;
 
 
-	MAP_VERTEX vertexMap;
+	MAP_VERTEX *vertexMap = new MAP_VERTEX();
 
 	int totalVertexCount = 0;
 	
@@ -124,7 +129,7 @@ void GraphicsManager::LoadModels()
 	for each (GameObject* gameObject in *gGameObjects)
 	{
 		//Om typen av objektet inte redan är laddad
-		if (vertexMap.count(gameObject->GetName()) == 0)
+		if (vertexMap->count(gameObject->GetName()) == 0)
 		{
 			//Ladda in modellen
 			string path = modelPath + "\\" + gameObject->GetName() + ".obj";
@@ -134,7 +139,7 @@ void GraphicsManager::LoadModels()
 			vector<Vertex> verticies = *objLoader->GetVertices();
 
 			//Sparar vertexpunkterna i vertexMap
-			vertexMap.insert(pair<string, vector<Vertex>>(gameObject->GetName(), verticies));
+			vertexMap->insert(pair<string, vector<Vertex>>(gameObject->GetName(), verticies));
 
 			//Ökar det totala antalet vertexpunkter med antalet vertexpunkter i den här modellen.
 			totalVertexCount += verticies.size();
@@ -142,17 +147,7 @@ void GraphicsManager::LoadModels()
 			//delete objLoader;
 		}
 		
-		
-		//Om texturen inte redan är inladdad
-		if (gTextureMap.count(gameObject->GetTextureName()) == 0) //gameObject.GetTextureName()
-		{
-			//Ladda texturen
-			string path = texturePath + "\\" + gameObject->GetTextureName();
-			ID3D11ShaderResourceView* texture = LoadShaderResourceView(path);	//ÄNDRA!
-
-			//Sparar texturen i gTextureMap
-			gTextureMap.insert(pair<string, ID3D11ShaderResourceView*>(gameObject->GetTextureName(), texture)); //gameObject.GetTextureName()
-		}
+		LoadTexture(gameObject->GetTextureName());
 	}
 	
 	//Lägger in vertexdatan för alla modellerna i en och samma vector.
@@ -161,7 +156,7 @@ void GraphicsManager::LoadModels()
 
 	int start = 0;
 	
-	for(MAP_VERTEX::iterator iterator = vertexMap.begin(); iterator != vertexMap.end(); iterator++) 
+	for(MAP_VERTEX::iterator iterator = vertexMap->begin(); iterator != vertexMap->end(); iterator++) 
 	{
 
 		for each (Vertex vertex in iterator->second)
@@ -172,13 +167,13 @@ void GraphicsManager::LoadModels()
 		//Skapar en IndexInfo.
 		//Start är indexet efter förgående inlaggda modell.
 		//Count är antalet vertexpunkter i modellen.
-		IndexInfo indexInfo;
-		indexInfo.start = start;
-		indexInfo.count = iterator->second.size();
+		IndexInfo* indexInfo = new IndexInfo();
+		indexInfo->start = start;
+		indexInfo->count = iterator->second.size();
 
 		//Lägger in indexinfon.
 		//gIndexMap använder samma nyckel som vertexMap använder (GameObject.GetName()).
-		gIndexMap.insert(pair<string, IndexInfo>(iterator->first, indexInfo));
+		gIndexMap->insert(pair<string, IndexInfo*>(iterator->first, indexInfo));
 
 		//Ökar på startindexet så att nästa modell kan läggas till.
 		start += iterator->second.size();
@@ -201,6 +196,52 @@ void GraphicsManager::LoadModels()
 	}
 }
 
+void GraphicsManager::LoadTexture(string Texture)
+{
+	//Om texturen inte redan är inladdad
+	if (gTextureMap->count(Texture) == 0) //gameObject.GetTextureName()
+	{
+		//Ladda texturen
+		string path = texturePath + "\\" + Texture;
+		ID3D11ShaderResourceView* texture = LoadShaderResourceView(path);	//ÄNDRA!
+
+		//Sparar texturen i gTextureMap
+		gTextureMap->insert(pair<string, ID3D11ShaderResourceView*>(Texture, texture)); //gameObject.GetTextureName()
+	}
+}
+
+UINT GraphicsManager::RGBToColorCode(D3DXVECTOR3 color)
+{
+	color.x < 0 ? 0 : color.x;
+	color.y < 0 ? 0 : color.y;
+	color.z < 0 ? 0 : color.z;
+	color.x > 1 ? 1 : color.x;
+	color.y > 1 ? 1 : color.y;
+	color.z > 1 ? 1 : color.z;
+	color *= 255;
+
+	return (UINT)((255 << 24) | ((int)color.z << 16) | ((int)color.y << 8)  | ((int)color.x << 0));
+}
+
+void GraphicsManager::DrawString(string text, D3DXVECTOR2 position, D3DXVECTOR3 color, float size)
+{
+	WCHAR heasd;
+
+	std::wstring widestr = std::wstring(text.begin(), text.end());
+
+	
+
+	pFontWrapper->DrawString(
+		gDeviceContext,
+		widestr.c_str(),// String
+		size,// Font size
+		position.x,// X position
+		position.y,// Y position
+		RGBToColorCode(color),// Text color, 0xAaBbGgRr
+		0// Flags
+	);
+}
+
 void GraphicsManager::Render()
 {
 	if (!gGameObjects)
@@ -208,53 +249,57 @@ void GraphicsManager::Render()
 
 	//Rensar depthbuffern
 	gDeviceContext->ClearDepthStencilView( gDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0 );
-
-	//Sätter render target
-	gDeviceContext->OMSetRenderTargets( 1, &gRenderTargetView, gDepthStencilView );
-
+	
 	//Sätter buffer
 	gVertexBuffer->Apply();
-
+	
 	//Sätter topologi
 	gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+	
+	//Sätter render target
+	gDeviceContext->OMSetRenderTargets( 1, &gRenderTargetView, gDepthStencilView );
+	
 	D3DXMATRIX world, worldInverseTranspose, view, projection;
 	//View och projection matriserna
 	view		= gCamera->GetViewMatrix();
 	projection	= gCamera->GetProjectionMatrix();
 
-
+	
 	//Set PerFrame data.
 	gShader->SetMatrix("View",			view);
 	gShader->SetMatrix("Projection",	projection);
 	gShader->SetFloat3("CameraPos",		gCamera->GetPosition());
 
+	
 	for each (GameObject* gameObject in *gGameObjects)
 	{
+		if(gameObject->IsAlive())
+		{
+			//world matrisen
+			world					= gameObject->GetWorldMatrix();
 
-		//world matrisen
-		world					= gameObject->GetWorldMatrix();
+			//worldinversetranspose matrisen
+			worldInverseTranspose	= gameObject->GetWorldInverseTranspose();
 
-		//worldinversetranspose matrisen
-		worldInverseTranspose	= gameObject->GetWorldInverseTranspose();
-
-		//WVP-matrisen
-		D3DXMATRIX WVP = world * view * projection;
+			//WVP-matrisen
+			D3DXMATRIX WVP = world * view * projection;
 
 
-		//Set PerObject data.
-		gShader->SetMatrix("World",					world);
-		gShader->SetMatrix("WVP",					WVP);
-		gShader->SetMatrix("WorldInverseTranspose",	worldInverseTranspose);
+			//Set PerObject data.
+			gShader->SetMatrix("World",					world);
+			gShader->SetMatrix("WVP",					WVP);
+			gShader->SetMatrix("WorldInverseTranspose",	worldInverseTranspose);
 		
-		//Set texture.
-		gShader->SetResource("Color", gTextureMap[gameObject->GetTextureName()]);
+			//Set texture.
+			gShader->SetResource("Color", gTextureMap->at(gameObject->GetTextureName()));
 		
+		
+			gShader->Apply(0);
 
-		gShader->Apply(0);
-
-		//Index för vertexpunkterna
-		IndexInfo indexInfo = gIndexMap[gameObject->GetName()];
-		gDeviceContext->Draw(indexInfo.count, indexInfo.start);
+			//Index för vertexpunkterna
+			IndexInfo *indexInfo = gIndexMap->at(gameObject->GetName());
+			gDeviceContext->Draw(indexInfo->count, indexInfo->start);
+		}
 	}
 }

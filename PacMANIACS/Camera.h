@@ -7,7 +7,8 @@
 enum CameraState
 {
 	Follow,
-	Free
+	Free,
+	Idle
 };
 
 class Camera
@@ -27,11 +28,9 @@ private:
 
 
 	void	UpdateFollow(float deltaTime);
-
-
 	void	UpdateFree(float deltaTime);
+
 	InputManager*	gInput;
-	D3DXVECTOR2		oldMousePos;
 
 public:
 	Camera(float FoV, float AspectRatio, float Near, float Far);
@@ -40,7 +39,11 @@ public:
 	void	Update(float deltaTime);
 	void	ChangeState(CameraState State);
 
-	void	SetTarget(GameObject* Target);
+	void		SetTarget(GameObject* Target);
+	GameObject*	GetTarget();
+	void	SetForward(D3DXVECTOR3 Vector);
+	void	SetPosition(D3DXVECTOR3 Position);
+	
 	D3DXVECTOR3 GetPosition();
 	D3DXVECTOR3 GetForward();
 	D3DXVECTOR3 GetUp();
