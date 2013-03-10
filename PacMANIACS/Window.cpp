@@ -78,7 +78,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine, 
 	SetCursorPos(centerX, centerY);
 	ShowCursor(false);	
 
-	gWorld	=	new World(g_Device, g_DeviceContext, g_RenderTargetView, g_hWndMain, D3DXVECTOR2(WINDOW_WIDTH, WINDOW_Height));
+	gWorld	=	new World(g_Device, g_DeviceContext, g_RenderTargetView, &g_hWndMain, D3DXVECTOR2(WINDOW_WIDTH, WINDOW_Height));
 
 	return Run();
 }
@@ -294,7 +294,7 @@ int Run()
 
 void CloseApplication(HWND hWnd)
 {
-
+	gWorld->~World();
 	::DestroyWindow(hWnd);
 }
 
@@ -317,23 +317,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	return ::DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-void CenterMouse()
-{
-	LPRECT Rect = new RECT();
-	GetWindowRect(g_hWndMain, Rect);
-
-	int	centerX	=	(int)((Rect->left + Rect->right) * 0.5f);
-	int	centerY	=	(int)((Rect->top + Rect->bottom) * 0.5f);
-
-	SetCursorPos(centerX, centerY);
-}
-
 HRESULT Update(float deltaTime)
 {
 	gWorld->Update(deltaTime);
-
-	
-	//CenterMouse();
 
 	return S_OK;
 }

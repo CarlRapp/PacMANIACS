@@ -8,9 +8,12 @@
 #include "GameObject.h"
 #include "Camera.h"
 #include "MapManager.h"
+#include "FW1FontWrapper.h"
 
 //for testing
 #include "Ghost.h"
+
+#pragma comment (lib, "FW1FontWrapper.lib")
 
 class GraphicsManager
 {
@@ -27,11 +30,12 @@ class GraphicsManager
 	};
 
 	typedef map<string, vector<Vertex>>				MAP_VERTEX;
-	typedef map<string, IndexInfo>					MAP_INDEX;
+	typedef map<string, IndexInfo*>					MAP_INDEX;
 	typedef map<string, ID3D11ShaderResourceView*>	MAP_RESOURCE;
 
-	MAP_INDEX					gIndexMap;
-	MAP_RESOURCE				gTextureMap;
+	MAP_INDEX					*gIndexMap;
+
+	MAP_RESOURCE				*gTextureMap;
 
 
 	ID3D11DeviceContext		*gDeviceContext;
@@ -49,10 +53,13 @@ class GraphicsManager
 
 	Camera					*gCamera;
 	vector<GameObject*>		*gGameObjects;
+	
+	IFW1FontWrapper			*pFontWrapper;
 
 	ID3D11ShaderResourceView* LoadShaderResourceView(string path);
 
 	void RenderLevel();
+	UINT RGBToColorCode(D3DXVECTOR3 color);
 
 public:
 	GraphicsManager(ID3D11Device *device, ID3D11DeviceContext *deviceContext, ID3D11RenderTargetView* renderTargetView, D3DXVECTOR2 resolution);
@@ -65,8 +72,13 @@ public:
 	void SetTexturePath(string path);
 
 	void LoadModels();
+	void LoadTexture(string Texture);
+
 	void Render();
 
+	void DrawString(string text, D3DXVECTOR2 position, D3DXVECTOR3 color, float size);
+
 	void CreateLevelBuffer(MapManager* Map);
+	
 };
 #endif
