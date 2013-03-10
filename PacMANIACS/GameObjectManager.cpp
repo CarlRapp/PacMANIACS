@@ -8,6 +8,43 @@ GameObjectManager::GameObjectManager(MapManager* MapData, SoundManager* soundMan
 
 	StartConvert(MapData);
 }
+GameObjectManager::~GameObjectManager()
+{
+	for(int i = stationaryObjects->size() - 1; i >= 0; --i)
+	{
+		for(int n = allGameObjects->size() - 1; n >= 0; --n)
+			if(stationaryObjects->at(i) == allGameObjects->at(n))
+				allGameObjects->erase(allGameObjects->begin() + n);
+
+		delete stationaryObjects->at(i);
+		stationaryObjects->erase(stationaryObjects->begin() + i);
+	}
+	stationaryObjects->clear();
+	delete stationaryObjects;
+
+	for(int i = moveableObjects->size() - 1; i >= 0; --i)
+	{
+		for(int n = allGameObjects->size() - 1; n >= 0; --n)
+			if(moveableObjects->at(i) == allGameObjects->at(n))
+				allGameObjects->erase(allGameObjects->begin() + n);
+
+		delete moveableObjects->at(i);
+		moveableObjects->erase(moveableObjects->begin() + i);
+	}
+	moveableObjects->clear();
+	delete moveableObjects;
+
+	for(int i = allGameObjects->size() - 1; i >= 0; --i)
+	{
+		delete	allGameObjects->at(i);
+		allGameObjects->erase(allGameObjects->begin() + i);
+	}
+	allGameObjects->clear();
+	delete allGameObjects;
+	
+	gSoundManager->~SoundManager();
+	gSoundManager	=	0;
+}
 
 void GameObjectManager::StartConvert(MapManager* MapData)
 {
@@ -143,47 +180,50 @@ void GameObjectManager::Update(float deltaTime)
 		{
 			A->Update(deltaTime);
 
-			if(A->AtDestination())
+			if(!AllCandyGone())
 			{
-				if(A->GetName() == "Ghost")
+				if(A->AtDestination())
 				{
-					Ghost*	GO		=	((Ghost*)(A));
-					D3DXVECTOR2	Pos	=	GetTilePosition(A->GetPosition());
-
-					if(IsTileCrossing(Pos.x, Pos.y) || IsTileCorner(Pos.x, Pos.y))
+					if(A->GetName() == "Ghost")
 					{
-						GO->CalculateMove(GetAvailableMoves(Pos.x, Pos.y));
+						Ghost*	GO		=	((Ghost*)(A));
+						D3DXVECTOR2	Pos	=	GetTilePosition(A->GetPosition());
+
+						if(IsTileCrossing(Pos.x, Pos.y) || IsTileCorner(Pos.x, Pos.y))
+						{
+							GO->CalculateMove(GetAvailableMoves(Pos.x, Pos.y));
+						}
+						else
+						{
+							D3DXVECTOR3 Vel;
+							D3DXVec3Normalize(&Vel, &GO->GetVelocity());
+
+							Vel	*=	mapScale;
+							D3DXVECTOR3	newD	=	GO->GetPosition() + Vel;
+
+							GO->SetDestination(newD);
+						}
+
 					}
-					else
-					{
-						D3DXVECTOR3 Vel;
-						D3DXVec3Normalize(&Vel, &GO->GetVelocity());
-
-						Vel	*=	mapScale;
-						D3DXVECTOR3	newD	=	GO->GetPosition() + Vel;
-
-						GO->SetDestination(newD);
-					}
-
 				}
-			}
 
-			if(A->GetName() == "Pacman")
-				tPacman	=	A; 
-			else if (A->GetName() == "Ghost")
-			{
-				Ghost* ghost = (Ghost*)A;
-				gSoundManager->SetSoundPosition(ghost->soundKey, ghost->GetPosition());
-			}
+				if(A->GetName() == "Pacman")
+					tPacman	=	A; 
+				else if (A->GetName() == "Ghost")
+				{
+					Ghost* ghost = (Ghost*)A;
+					gSoundManager->SetSoundPosition(ghost->soundKey, ghost->GetPosition());
+				}
 
-			for each (GameObject *B in *moveableObjects)
-			{
-				if(A != B && B->IsAlive())
-					if(A->IsColliding(B))
-						HandleCollision(A, B);
+				for each (GameObject *B in *moveableObjects)
+				{
+					if(A != B && B->IsAlive())
+						if(A->IsColliding(B))
+							HandleCollision(A, B);
 
-				if(!A->IsAlive())
-					break;
+					if(!A->IsAlive())
+						break;
+				}
 			}
 		}
 	}
@@ -364,4 +404,13 @@ vector<D3DXVECTOR3> GameObjectManager::GetAvailableMoves(int X, int Z)
 		moves.push_back(GetWorldPosition(X, 0, Z + 1));
 
 	return moves;
+}
+
+bool GameObjectManager::AllCandyGone()
+{
+	return (stationaryObjects->size() == 0);
+}
+D3DXVECTOR3 GameObjectManager::GetMapInfo()
+{
+	return D3DXVECTOR3(mapWidth, mapHeight, mapScale);
 }
