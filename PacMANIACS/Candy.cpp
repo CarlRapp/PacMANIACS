@@ -45,7 +45,7 @@ void Candy::Update(float deltaTime)
 		gTimeLived		+=	rand();
 	}
 
-	GameObject::Update(deltaTime);
+	//GameObject::Update(deltaTime);
 
 	SetPosition(gStartPosition.x + sin(4 * gTimeLived) * 0.2f, gStartPosition.y + sin(8 * gTimeLived) * 0.3f, gStartPosition.z + cos(4 * gTimeLived) * 0.2f - 0.1f);
 
