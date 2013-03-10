@@ -152,7 +152,16 @@ void World::Render()
 	ss << gPlayerObject->GetPoints();
 	string s(ss.str());
 
-	gGraphicsManager->DrawString("Score:", D3DXVECTOR2(10, 10), D3DXVECTOR3(1,0,0), 20);
-	gGraphicsManager->DrawString(s, D3DXVECTOR2(75,10), D3DXVECTOR3(1,0,0), 20);
+
+	if(!gPlayerObject->IsAlive())
+	{
+		string str = "Game over!";
+		gGraphicsManager->DrawString(str, D3DXVECTOR2(gResolution.x * 0.5f - 50*str.length()*0.25f, gResolution.y * 0.3f), D3DXVECTOR3(0.5f, 0.5f, 0.5f), 50);
+	}
+	else
+	{
+		gGraphicsManager->DrawString("Score:", D3DXVECTOR2(10, 10), D3DXVECTOR3(1,0,0), 20);
+		gGraphicsManager->DrawString(s, D3DXVECTOR2(75,10), D3DXVECTOR3(1,0,0), 20);
+	}
 	gGraphicsManager->Render();
 }
