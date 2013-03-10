@@ -23,9 +23,19 @@ SoundManager::SoundManager(Camera* camera, HWND hwnd)
 
 SoundManager::~SoundManager(void)
 {
-	gDirectSound = 0;
-	gPrimaryBuffer = 0;
-	gListener = 0;
+	if(gDirectSound != NULL)
+	{
+		gDirectSound->Release();
+		gDirectSound = 0;
+	}
+	if(gPrimaryBuffer != NULL)
+	{
+		gPrimaryBuffer = 0;
+	}	
+	if(gListener != NULL)
+	{
+		gListener = 0;
+	}
 
 	gSoundBuffer8Map.clear();
 	gSound3DBuffer8Map.clear();
