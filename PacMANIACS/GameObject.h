@@ -8,7 +8,6 @@
 
 using namespace std;
 
-
 class GameObject
 {
 private:
@@ -35,6 +34,7 @@ private:
 
 protected:
 	virtual	float	GetSpeed();
+	float			RescaleHitRadius(float radius);
 
 public:
 	GameObject(void);
@@ -53,7 +53,9 @@ public:
 
 	virtual bool	IsStationary();
 	virtual	float	GetHitRadius();
+	virtual int		GetValue();
 
+	void	SetObjectState(GameObjectState* NewState);
 	bool	IsAlive();
 
 	//	Set methods
@@ -72,13 +74,18 @@ public:
 
 	void	SetPosition(float x, float y, float z);
 
+	void	SetLook(D3DXVECTOR2 direction);
+
 	bool	IsColliding(GameObject* GO);
 
 	bool	AtDestination(void);
-	void	SetDestination(float x, float y, float z);
-	void	SetDestination(D3DXVECTOR3 Pos);
+	void	virtual SetDestination(float x, float y, float z);
+	void	virtual SetDestination(D3DXVECTOR3 Pos);
+	D3DXVECTOR3	GetDestination(void);
 
 	D3DXVECTOR3 GetVelocity(void);
+
+	GameObjectState*	GetState();
 };
 
 #endif

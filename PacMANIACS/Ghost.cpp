@@ -51,11 +51,22 @@ void GeniusGhostAIState::CalculateMove(GameObject* ghost, vector<D3DXVECTOR3> av
 		ghost->SetDestination(availableMoves[0]);
 }
 
-Ghost::Ghost(void) : GameObject()
+void GhostAIState::SetTargetState(GhostTargetState* State)
 {
-	gAIState = new NormalGhostAIState();
+	gActiveState	=	State;
 }
 
+Ghost::Ghost(void) : GameObject()
+{
+	soundKey = "";
+	//gAIState	= new NormalGhostAIState();
+
+
+	gHuntState	=	new GhostTargetState();
+	gFleeState	=	new FleeState();
+	((FleeState*)gFleeState)->SetFleeTexture("Flee_Texture.png");
+	gCooldown	=	0.0f;
+}
 
 Ghost::~Ghost(void)
 {
@@ -68,17 +79,57 @@ string Ghost::GetName()
 
 string Ghost::GetTextureName()
 {
-	return gAIState->GetTextureName();
+	return gAIState->GetActiveTextureName();
+}
+
+string GhostAIState::GetActiveTextureName()
+{
+	return gActiveState->GetTextureName();
 }
 
 float Ghost::GetHitRadius()
 {
-	return 3.0f;
+	return RescaleHitRadius(0.858f);
+}
+
+int	Ghost::GetValue()
+{
+	return 1000;
 }
 
 void Ghost::SetAIState(GhostAIState* AIState)
 {
 	gAIState = AIState;
+	gHuntState->SetTextureName(gAIState->GetTextureName());
+	gFleeState->SetTextureName(gAIState->GetTextureName());
+
+	gAIState->SetTargetState(gHuntState);
+}
+void GhostAIState::Update(float deltaTime)
+{
+	gActiveState->Update(deltaTime);
+}
+
+void GhostTargetState::Update(float deltaTime)
+{
+
+}
+
+void FleeState::Update(float deltaTime)
+{
+	if(gTimeTicked < 0)
+	{
+		gDoBlink	=	((rand()%100)>50);
+		gTimeTicked	=	((rand()%100)/100);
+	}
+
+	gTimeTicked	+=	deltaTime;
+
+	if(gTimeTicked > 0.25f)
+	{
+		gDoBlink	=	(gDoBlink) ? false : true;
+		gTimeTicked	=	0;
+	}
 }
 
 void Ghost::SetTarget(GameObject* Target)
@@ -120,11 +171,68 @@ void Ghost::CalculateMove(vector<D3DXVECTOR3> availableMoves)
 void Ghost::Update(float deltaTime)
 {
 	GameObject::Update(deltaTime);
+	gAIState->Update(deltaTime);
 
+	if(gCooldown > 0)
+		gCooldown	-=	deltaTime;
+
+	D3DXVECTOR2 direction = D3DXVECTOR2(gTarget->GetPosition().x - GetPosition().x, gTarget->GetPosition().z - GetPosition().z);
+
+	SetLook(direction);
+	/*
 	float	dX	=	GetPosition().x - gTarget->GetPosition().x;
 	float	dZ	=	GetPosition().z - gTarget->GetPosition().z;
 
 	float dAngle	=	atan2(dX, dZ);
 
 	SetRotation(0, dAngle, 0);
+	*/
+
+	//	Go back to hunt mode
+	//	if cherry time is over....
+	if(gCooldown < 0)
+	{
+		gAIState->SetTargetState(gHuntState);
+		gCooldown	=	0.0f;
+	}
+}
+
+void Ghost::HuntTarget()
+{
+	gAIState->SetTargetState(gHuntState);
+}
+void Ghost::FleeTarget(float CherryTime)
+{
+	gAIState->SetTargetState(gFleeState);
+	gCooldown	=	CherryTime;
+}
+
+float Ghost::GetSpeed()
+{
+	return GameObject::GetSpeed();
+}
+
+
+void GhostTargetState::SetTextureName(string TextureName)
+{
+	gTextureName	=	TextureName;
+}
+
+string GhostTargetState::GetTextureName()
+{
+	string t = gTextureName;
+	return gTextureName;
+}
+
+string FleeState::GetTextureName()
+{
+	if(gDoBlink)
+		return	gFleeTexture;
+	else
+		return	gTextureName;
+}
+
+void FleeState::SetFleeTexture(string TextureName)
+{
+	gFleeTexture = TextureName;
 }

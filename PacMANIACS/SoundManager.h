@@ -49,8 +49,8 @@ private:
 
 	string soundPath;
 
-	string	PlaySound(string name, D3DXVECTOR3 postion, DWORD dwFlags);
-	void	RemoveSound(string key);
+	string	Play(string name, D3DXVECTOR3 postion, DWORD dwFlags, DWORD mode);
+	void	Remove(string key);
 	string GenerateKey(string name);
 
 public:
@@ -58,9 +58,12 @@ public:
 	~SoundManager(void);
 
 	bool	LoadSoundFile(char* filename);
-	string	PlaySound(string name, D3DXVECTOR3 postion);
-	string	LoopSound(string name, D3DXVECTOR3 postion);
-	void	StopSound(string key);
+	string	Play(string name);
+	string	Play(string name, D3DXVECTOR3 postion);
+	string	Loop(string name);
+	string	Loop(string name, D3DXVECTOR3 postion);
+	void	Stop(string key);
+	void	SetVolume(string key, float factor);
 	void	SetSoundPosition(string key, D3DXVECTOR3 postion);
 	void	Update();
 

@@ -24,12 +24,14 @@ GameObject::~GameObject()
 
 void GameObject::Update(float deltaTime)
 {
-	gReadyForMove	=	false;
+	if(gState->GetName() != "Alive")
+		return;
 
+	gReadyForMove	=	false;
 	Move(gVelocity.x * deltaTime, gVelocity.y * deltaTime, gVelocity.z * deltaTime);
 
 	D3DXVECTOR3	v1	=	gTargetPosition - GetPosition();
-	if(D3DXVec3Dot(&v1, &gVelocity) < 0)
+	if(D3DXVec3Dot(&v1, &gVelocity) < 0 || D3DXVec3Length(&gVelocity) == 0)
 	{
 		SetPosition(gTargetPosition.x, gTargetPosition.y, gTargetPosition.z);
 		gReadyForMove	=	true;
@@ -44,6 +46,11 @@ bool GameObject::AtDestination()
 bool GameObject::IsAlive()
 {
 	return gState->IsAlive();
+}
+
+void GameObject::SetObjectState(GameObjectState* NewState)
+{
+	gState	=	NewState;
 }
 
 void GameObject::SetVelocity(float x, float y, float z)
@@ -125,15 +132,25 @@ void GameObject::MoveTo(D3DXVECTOR3 pos)
 void GameObject::MoveTo(float x, float y, float z)
 {
 	D3DXMatrixTranslation(&gTranslation, x, y, z);
-
+	gTargetPosition = GetPosition();
 	UpdateWorldMatrix(false);
 }
 
 void GameObject::SetPosition(float x, float y, float z)
 {
 	D3DXMatrixTranslation(&gTranslation, x, y, z);
-
+	gTargetPosition = GetPosition();
 	UpdateWorldMatrix(false);
+}
+
+void GameObject::SetLook(D3DXVECTOR2 direction)
+{
+	float	dX	=	-direction.x;
+	float	dZ	=	-direction.y;
+
+	float dAngle	=	atan2(dX, dZ);
+
+	SetRotation(0, dAngle, 0);
 }
 
 void GameObject::UpdateWorldMatrix(bool UpdateInvTrans)
@@ -188,14 +205,24 @@ bool GameObject::IsStationary()
 	return false;
 }
 
+float GameObject::RescaleHitRadius(float radius)
+{
+	return radius * ((gScale._11 + gScale._33) / 2);
+}
+
 float GameObject::GetHitRadius()
 {
 	return 0.0f;
 }
 
+int	GameObject::GetValue()
+{
+	return 0;
+}
+
 float GameObject::GetSpeed()
 {
-	return 2.0f;
+	return 6.0f;
 }
 
 bool GameObject::IsColliding(GameObject* GO)
@@ -217,4 +244,14 @@ D3DXVECTOR3 GameObject::GetPosition()
 D3DXVECTOR3 GameObject::GetVelocity()
 {
 	return gVelocity;
+}
+
+D3DXVECTOR3 GameObject::GetDestination()
+{
+	return gTargetPosition;
+}
+
+GameObjectState* GameObject::GetState()
+{
+	return gState;
 }

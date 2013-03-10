@@ -8,7 +8,7 @@
 
 using namespace std;
 
-const string MAPNAME = "../Data/test.txt";
+const string MAPNAME = "../Data/original.txt";
 
 const string MAPTOKEN = "#";
 const string GAMEOBJECTTOKEN = "-";

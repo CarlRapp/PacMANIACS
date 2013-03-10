@@ -9,11 +9,13 @@
 #include <map>
 #include "GameObject.h"
 #include "MapManager.h"
+#include "SoundManager.h"
 #include "Ghost.h"
 #include "Candy.h"
 #include "Wall.h"
 #include "Floor.h"
 #include "Pacman.h"
+#include "Cherry.h"
 
 using namespace std;
 
@@ -24,10 +26,11 @@ private:
 	vector<GameObject*>*	moveableObjects;
 	vector<GameObject*>*	stationaryObjects;
 
-	float	mapScale;
-	int		mapWidth;
-	int		mapHeight;
-	char**	gMap;
+	SoundManager*	gSoundManager;
+	float			mapScale;
+	int				mapWidth;
+	int				mapHeight;
+	char**			gMap;
 
 	void		StartConvert(MapManager* MapData);
 	GameObject*	ConvertStringToGameObject(string GameObjectName);
@@ -37,11 +40,11 @@ private:
 	bool		IsTileCrossing(int X, int Z);
 	bool		IsTileCorner(int X, int Z);
 	bool		IsFloor(int X, int Z);
+	void		AlertGhosts(GameObject* CherryEater);
 
 public:
-	GameObjectManager(MapManager* MapData);
+	GameObjectManager(MapManager* MapData, SoundManager* soundManager);
 	~GameObjectManager();
-
 
 	void Update(float deltaTime);
 
@@ -51,6 +54,9 @@ public:
 	D3DXVECTOR3	GetWorldPosition(int X, int Y, int Z);
 
 	vector<D3DXVECTOR3>	GetAvailableMoves(int X, int Z);
+
+	bool AllCandyGone();
+	D3DXVECTOR3 GetMapInfo();
 };
 
 #endif

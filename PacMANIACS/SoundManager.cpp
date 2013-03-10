@@ -15,7 +15,6 @@ SoundManager::SoundManager(Camera* camera, HWND hwnd)
 	bool result;
 
 	result = Initialize(hwnd);
-	if(!result)
 		::MessageBox(0, "Initializing of the SoundManager failed!", "Error", MB_OK);
 
 }
@@ -23,9 +22,19 @@ SoundManager::SoundManager(Camera* camera, HWND hwnd)
 
 SoundManager::~SoundManager(void)
 {
-	gDirectSound = 0;
-	gPrimaryBuffer = 0;
-	gListener = 0;
+	if(gDirectSound != NULL)
+	{
+		gDirectSound->Release();
+		gDirectSound = 0;
+	}
+	if(gPrimaryBuffer != NULL)
+	{
+		gPrimaryBuffer = 0;
+	}	
+	if(gListener != NULL)
+	{
+		gListener = 0;
+	}
 
 	gSoundBuffer8Map.clear();
 	gSound3DBuffer8Map.clear();
@@ -186,20 +195,41 @@ bool SoundManager::LoadSoundFile(char* filename)
 	gSoundBufferMap.insert(pair<string, IDirectSoundBuffer*>(filename, tempBuffer));
 }
 
-string SoundManager::PlaySound(string name, D3DXVECTOR3 position)
+string SoundManager::Play(string name)
 {
-	return PlaySound(name, position, 0);
+	return Play(name, D3DXVECTOR3(0, 0, 0), 0, DS3DMODE_DISABLE);
 }
 
-string SoundManager::LoopSound(string name, D3DXVECTOR3 position)
+string SoundManager::Play(string name, D3DXVECTOR3 position)
 {
-	return PlaySound(name, position, DSBPLAY_LOOPING);
+	return Play(name, position, 0, DS3DMODE_NORMAL);
 }
 
-string SoundManager::PlaySound(string name, D3DXVECTOR3 position, DWORD dwFlags)
+string SoundManager::Loop(string name)
+{
+	return Play(name, D3DXVECTOR3(0, 0, 0), DSBPLAY_LOOPING, DS3DMODE_DISABLE);
+}
+
+string SoundManager::Loop(string name, D3DXVECTOR3 position)
+{
+	return Play(name, position, DSBPLAY_LOOPING, DS3DMODE_NORMAL);
+}
+
+
+
+string SoundManager::Play(string name, D3DXVECTOR3 position, DWORD dwFlags, DWORD mode)
 {
 	HRESULT result;
-	if(gSoundBufferMap.count(name) != 0)
+
+	if (gSoundBufferMap.count(name) == 0)
+	{
+		char *cstr = new char[name.length() + 1];
+		strcpy(cstr, name.c_str());
+		LoadSoundFile(cstr);
+		delete [] cstr;
+	}
+
+	if (gSoundBufferMap.count(name) != 0)
 	{
 		IDirectSoundBuffer* tempBuffer = 0;
 		IDirectSoundBuffer8* tempBuffer8 = 0;
@@ -230,6 +260,8 @@ string SoundManager::PlaySound(string name, D3DXVECTOR3 position, DWORD dwFlags)
 		if(FAILED(result))
 			return "";
 
+		temp3DBuffer8->SetMode(mode, DS3D_DEFERRED);
+
 		result = tempBuffer8->Play(0, 0, dwFlags);
 		if(FAILED(result))
 			return "";
@@ -245,21 +277,33 @@ string SoundManager::PlaySound(string name, D3DXVECTOR3 position, DWORD dwFlags)
 	return "";
 }
 
-void SoundManager::StopSound(string key)
+void SoundManager::Stop(string key)
 {
-	if(gSoundBufferMap.count(key) != 0)
+	if(gSoundBuffer8Map.count(key) != 0)
 	{
 		gSoundBuffer8Map[key]->Stop();
-		RemoveSound(key);
+		Remove(key);
 	}
 }
 
-void SoundManager::RemoveSound(string key)
+void SoundManager::Remove(string key)
 {
 	gSoundBuffer8Map[key]->Release();
 	gSound3DBuffer8Map[key]->Release();
 	gSoundBuffer8Map.erase(key);
 	gSound3DBuffer8Map.erase(key);
+}
+
+void SoundManager::SetVolume(string key, float factor)
+{
+	if(gSound3DBuffer8Map.count(key) != 0)
+	{
+		factor < 0 ? 0 : factor;
+		factor > 1 ? 1 : factor;
+
+		long soundLevel = DSBVOLUME_MIN + ((DSBVOLUME_MAX - DSBVOLUME_MIN) * factor);
+		gSoundBuffer8Map[key]->SetVolume(soundLevel);
+	}
 }
 
 void SoundManager::SetSoundPosition(string key, D3DXVECTOR3 postion)
@@ -295,7 +339,7 @@ void SoundManager::Update()
 
 	for each (string key in keys)
 	{
-		RemoveSound(key);
+		Remove(key);
 	}
 }
 

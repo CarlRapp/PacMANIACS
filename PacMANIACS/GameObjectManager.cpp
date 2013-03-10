@@ -1,12 +1,49 @@
 #include "GameObjectManager.h"
 
-GameObjectManager::GameObjectManager(MapManager* MapData)
+GameObjectManager::GameObjectManager(MapManager* MapData, SoundManager* soundManager)
 {
-	mapScale	=	3.0f;
-	gMap		=	MapData->GetMap();
-
+	mapScale		=	3.0f;
+	gMap			=	MapData->GetMap();
+	gSoundManager	=	soundManager;
 
 	StartConvert(MapData);
+}
+GameObjectManager::~GameObjectManager()
+{
+	for(int i = stationaryObjects->size() - 1; i >= 0; --i)
+	{
+		for(int n = allGameObjects->size() - 1; n >= 0; --n)
+			if(stationaryObjects->at(i) == allGameObjects->at(n))
+				allGameObjects->erase(allGameObjects->begin() + n);
+
+		delete stationaryObjects->at(i);
+		stationaryObjects->erase(stationaryObjects->begin() + i);
+	}
+	stationaryObjects->clear();
+	delete stationaryObjects;
+
+	for(int i = moveableObjects->size() - 1; i >= 0; --i)
+	{
+		for(int n = allGameObjects->size() - 1; n >= 0; --n)
+			if(moveableObjects->at(i) == allGameObjects->at(n))
+				allGameObjects->erase(allGameObjects->begin() + n);
+
+		delete moveableObjects->at(i);
+		moveableObjects->erase(moveableObjects->begin() + i);
+	}
+	moveableObjects->clear();
+	delete moveableObjects;
+
+	for(int i = allGameObjects->size() - 1; i >= 0; --i)
+	{
+		delete	allGameObjects->at(i);
+		allGameObjects->erase(allGameObjects->begin() + i);
+	}
+	allGameObjects->clear();
+	delete allGameObjects;
+	
+	gSoundManager->~SoundManager();
+	gSoundManager	=	0;
 }
 
 void GameObjectManager::StartConvert(MapManager* MapData)
@@ -33,7 +70,7 @@ void GameObjectManager::StartConvert(MapManager* MapData)
 				string	ObjectName	=	MapData->GetGameObjectList().at(currentChar);
 				GameObject*	GO	=	NULL;
 				GO	=	ConvertStringToGameObject(ObjectName);
-				GO->SetScale(0.5f, 0.5f, 0.5f);
+				GO->SetScale(1.0f, 1.0f, 1.0f);
 				GO->MoveTo(xPos, 1, yPos);
 
 				if(ObjectName == "Pacman")
@@ -51,40 +88,38 @@ void GameObjectManager::StartConvert(MapManager* MapData)
 					moveableObjects->push_back(GO);
 					allGameObjects->push_back(GO);
 
-
-					GameObject*	GO2	=	new Candy();
-					GO2->SetScale(0.5f, 0.5f, 0.5f);
-					GO2->MoveTo(xPos, 1, yPos);
+					GameObject*	candy	=	new Candy();
+					candy->SetScale(0.5f, 0.5f, 0.5f);
+					candy->MoveTo(xPos, 1, yPos);
 
 					//	Add candy to both lists
-				//	stationaryObjects->push_back(GO2);
-				//	allGameObjects->push_back(GO2);
+					stationaryObjects->push_back(candy);
+					allGameObjects->push_back(candy);
 				}
 			}
-			else if (currentChar == '0')
+			else if(currentChar != '1')
 			{
-				GameObject*	GO2	=	new Candy();
-				GO2->SetScale(0.5f, 0.5f, 0.5f);
-				GO2->MoveTo(xPos, 1, yPos);
+				GameObject*	candy	=	new Candy();
+				candy->SetScale(0.5f, 0.5f, 0.5f);
+				candy->MoveTo(xPos, 1, yPos);
 
 				//	Add candy to both lists
-				stationaryObjects->push_back(GO2);
-				allGameObjects->push_back(GO2);
+				stationaryObjects->push_back(candy);
+				allGameObjects->push_back(candy);
 			}
-
 
 			if(currentChar == '1')
 			{
 				GameObject*	WALL	=	new Wall();
 				WALL->MoveTo(xPos, 0, yPos);
-				WALL->SetScale(3, 1, 3);
+				WALL->SetScale(mapScale, 1, mapScale);
 				allGameObjects->push_back(WALL); 
 			}
 			else
 			{
 				GameObject* FLOOR = new Floor();
 				FLOOR->MoveTo(xPos, 0, yPos);
-				FLOOR->SetScale(3, 3, 3);
+				FLOOR->SetScale(mapScale, 3, mapScale);
 				allGameObjects->push_back(FLOOR);
 			}
 		}
@@ -98,6 +133,8 @@ void GameObjectManager::StartConvert(MapManager* MapData)
 				D3DXVECTOR2	POS	=	GetTilePosition(GO->GetPosition());
 				GO->SetTarget(tPacman);
 				GO->CalculateMove(GetAvailableMoves(POS.x, POS.y));
+				if (gSoundManager != NULL)
+					GO->soundKey = gSoundManager->Loop("Cherry", GO->GetPosition());
 			}
 }
 
@@ -107,6 +144,8 @@ GameObject* GameObjectManager::ConvertStringToGameObject(string GOName)
 
 	if(GOName == "Pacman")
 		GO	=	new Pacman();
+	else if(GOName == "Cherry")
+		GO	=	new Cherry();
 	else if(GOName == "Ghost1")
 	{
 		GO	=	new Ghost();
@@ -137,40 +176,73 @@ void GameObjectManager::Update(float deltaTime)
 
 	for each (GameObject *A in *moveableObjects)
 	{
-		A->Update(deltaTime);
-
-		if(A->AtDestination())
+		if(A->IsAlive())
 		{
-			if(A->GetName() == "Ghost")
+			A->Update(deltaTime);
+
+			if(!AllCandyGone())
 			{
-				Ghost*	GO	=	((Ghost*)(A));
-				D3DXVECTOR2	Pos	=	GetTilePosition(A->GetPosition());
-
-				if(IsTileCrossing(Pos.x, Pos.y) || IsTileCorner(Pos.x, Pos.y))
+				if(A->AtDestination())
 				{
-					GO->CalculateMove(GetAvailableMoves(Pos.x, Pos.y));
+					if(A->GetName() == "Ghost")
+					{
+						Ghost*	GO		=	((Ghost*)(A));
+						D3DXVECTOR2	Pos	=	GetTilePosition(A->GetPosition());
+
+						if(IsTileCrossing(Pos.x, Pos.y) || IsTileCorner(Pos.x, Pos.y))
+						{
+							GO->CalculateMove(GetAvailableMoves(Pos.x, Pos.y));
+						}
+						else
+						{
+							D3DXVECTOR3 Vel;
+							D3DXVec3Normalize(&Vel, &GO->GetVelocity());
+
+							Vel	*=	mapScale;
+							D3DXVECTOR3	newD	=	GO->GetPosition() + Vel;
+
+							GO->SetDestination(newD);
+						}
+
+					}
 				}
-				else
+
+				if(A->GetName() == "Pacman")
+					tPacman	=	A; 
+				else if (A->GetName() == "Ghost")
 				{
-					D3DXVECTOR3 Vel;
-					D3DXVec3Normalize(&Vel, &GO->GetVelocity());
-
-					Vel	*=	mapScale;
-					D3DXVECTOR3	newD	=	GO->GetPosition() + Vel;
-
-					GO->SetDestination(newD);
+					Ghost* ghost = (Ghost*)A;
+					gSoundManager->SetSoundPosition(ghost->soundKey, ghost->GetPosition());
 				}
 
+				for each (GameObject *B in *moveableObjects)
+				{
+					if(A != B && B->IsAlive())
+						if(A->IsColliding(B))
+							HandleCollision(A, B);
+
+					if(!A->IsAlive())
+						break;
+				}
 			}
 		}
+	}
+	for(int i = moveableObjects->size()-1; i >= 0; --i)
+	{
+		GameObject*	A	=	moveableObjects->at(i);
 
-		if(A->GetName() == "Pacman")
-			tPacman	=	A; 
+		if(!A->IsAlive())
+		{
+			for(int n = 0; n < allGameObjects->size(); ++n)
+				if(allGameObjects->at(n) == A)
+				{
+					allGameObjects->erase(allGameObjects->begin() + n);
+					break;
+				}
 
-		for each (GameObject *B in *moveableObjects)
-			if(A != B)
-				if(A->IsColliding(B))
-					HandleCollision(A, B);
+			moveableObjects->erase(moveableObjects->begin() + i);
+			break;
+		}
 	}
 
 	for(int i = stationaryObjects->size() - 1; i >= 0; --i)
@@ -183,21 +255,73 @@ void GameObjectManager::Update(float deltaTime)
 		if(tPacman != NULL)
 			if(A->IsColliding(tPacman))
 			{
-				HandleCollision(tPacman, A);
 				for(int n = 0; n < allGameObjects->size(); ++n)
 					if(allGameObjects->at(n) == A)
 					{
 						allGameObjects->erase(allGameObjects->begin() + n);
 						break;
 					}
+				
+
+				if(A->GetName() == "Cherry")
+					AlertGhosts(tPacman);
+
+				
+
+				if (tPacman->GetName() == "Pacman")
+				{
+					Pacman*	tP	=	((Pacman*)tPacman);
+					tP->AddPoints(A->GetValue());
+				}
+
 				stationaryObjects->erase(stationaryObjects->begin() + i);
+				
+
 			}
 	}
 }
 
 void GameObjectManager::HandleCollision(GameObject* GoA, GameObject* GoB)
 {
+	if(GoA->GetName() == GoB->GetName())
+		return;
 
+	//	Time to do magic
+	if(GoA->GetName() == "Pacman" && GoB->GetName() == "Ghost")
+	{
+		Pacman*	tPacman	=	((Pacman*)GoA);
+		Ghost*	tGhost	=	((Ghost*)GoB);
+
+		if(tPacman->InCherryMode())
+		{
+			tGhost->SetObjectState(new DeadGameObjectState());
+
+			if (tPacman->GetName() == "Pacman")
+			{
+				Pacman*	tP	=	((Pacman*)tPacman);
+				tP->AddPoints(tGhost->GetValue());
+				gSoundManager->Stop(tGhost->soundKey);
+			}
+		}
+		else
+			tPacman->SetObjectState(new DeadGameObjectState());
+	}
+
+
+}
+
+void GameObjectManager::AlertGhosts(GameObject* CherryEater)
+{
+	float	cherryTime	=	6.0f;	//	In seconds
+	Pacman*	tP	=	((Pacman*)CherryEater);
+	if(tP != NULL)
+		tP->CherryMode(cherryTime);
+
+	for each (GameObject *A in *moveableObjects)
+	{
+		if(A->GetName() == "Ghost")
+			((Ghost*)A)->FleeTarget(cherryTime);
+	}
 }
 
 vector<GameObject*>* GameObjectManager::GetGameObjects()
@@ -280,4 +404,13 @@ vector<D3DXVECTOR3> GameObjectManager::GetAvailableMoves(int X, int Z)
 		moves.push_back(GetWorldPosition(X, 0, Z + 1));
 
 	return moves;
+}
+
+bool GameObjectManager::AllCandyGone()
+{
+	return (stationaryObjects->size() == 0);
+}
+D3DXVECTOR3 GameObjectManager::GetMapInfo()
+{
+	return D3DXVECTOR3(mapWidth, mapHeight, mapScale);
 }
