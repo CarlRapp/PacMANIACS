@@ -15,6 +15,7 @@ SoundManager::SoundManager(Camera* camera, HWND hwnd)
 	bool result;
 
 	result = Initialize(hwnd);
+	if(!result)
 		::MessageBox(0, "Initializing of the SoundManager failed!", "Error", MB_OK);
 
 }
